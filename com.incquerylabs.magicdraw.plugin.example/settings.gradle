@@ -15,4 +15,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'com.incquerylabs.magicdraw.plugin.example'
+rootProject.name = 'magicdraw2gamma'

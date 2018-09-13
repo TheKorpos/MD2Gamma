@@ -1,6 +1,6 @@
 <plugin
-        id="com.incquerylabs.magicdraw.plugin.example"
-        name="IncQuery Labs MagicDraw Plugin Example"
+        id="magicdraw2gamma"
+        name="MagicDraw2Gamma Plugin"
         internalVersion="${internal.version}"
         version="${human.version}"
         provider-name="IncQuery Labs Ltd."

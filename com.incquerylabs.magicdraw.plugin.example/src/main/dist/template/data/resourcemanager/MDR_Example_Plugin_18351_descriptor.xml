@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resourceDescriptor critical="false"
                     date="${build.timestamp}"
-                    description="Example MagicDraw plug-in"
+                    description="MagicDraw2Gamma plug-in"
                     id="17151"
                     mdVersionMax="higher"
                     mdVersionMin="19.0 beta"
-                    name="Example Plug-in"
+                    name="MagicDraw2Gamma"
                     product="Example Product"
                     type="Plugin">
     <version human="${human.version}" resource="${internal.version}" internal="${internal.version}"/>
