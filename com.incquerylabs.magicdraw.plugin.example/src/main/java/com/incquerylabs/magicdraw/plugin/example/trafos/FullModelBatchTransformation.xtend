@@ -7,6 +7,12 @@ import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransforma
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
 import com.incquerylabs.magicdraw.plugin.example.queries.DeduciblePortType
+import com.incquerylabs.magicdraw.plugin.example.queries.BlockWithStateMachine
+import com.google.common.collect.Lists
+import hu.bme.mit.gamma.statechart.model.StatechartDefinition
+import java.util.List
+import hu.bme.mit.gamma.statechart.model.StatechartModelFactory
+import java.util.Collection
 
 class FullModelBatchTransformation {
 
@@ -21,10 +27,17 @@ class FullModelBatchTransformation {
     protected ViatraQueryEngine engine
     
     /** VIATRA Query Pattern Group */
-    val extension DeduciblePortType deduciblePortType = DeduciblePortType.instance
+    val extension BlockWithStateMachine deduciblePortType = BlockWithStateMachine.instance
+    
+    val List<StatechartDefinition> gammaStateDefs = Lists.newArrayList
     
     /** Rules */
-    val portTypeCorrectorRule = createRule.precondition(deduciblePortType).action[ it.port.type = it.type ].build
+    val portTypeCorrectorRule = createRule.precondition(deduciblePortType).action[
+    	
+    	val stateDef = StatechartModelFactory.eINSTANCE.createStatechartDefinition
+    	gammaStateDefs += stateDef
+    	
+    ].build
 
     new(ViatraQueryEngine engine) {
         this.engine = engine
@@ -43,6 +56,10 @@ class FullModelBatchTransformation {
         transformation = BatchTransformation.forEngine(engine).build
         //Initialize batch transformation statements
         statements = transformation.transformationStatements
+    }
+    
+     public def Collection<StatechartDefinition> getStateChartDefinitions(){
+    	gammaStateDefs
     }
     
 

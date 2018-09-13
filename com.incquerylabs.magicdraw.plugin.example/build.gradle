@@ -70,7 +70,9 @@ dependencies {
     compile files(classpathLibraries.collect { 'build/dependency-cache/extracted/' + it })
     compile fileTree(dir: 'build/dependency-cache/extracted', include: ['lib/**/*.jar', 'plugins/**/*.jar'], exclude: ([ classpathLibraries, ['plugins/com.nomagic.collaborator.publisher/**/*.jar', 'plugins/com.nomagic.magicdraw.emfuml2xmi*/**/*.jar'] ]).flatten())
     compile fileTree(dir: 'lib', include: ['**/*.jar'])
-}
+    compile fileTree(dir: '../vendor', include: ['**/*.jar'])
+    
+    }
 
 task extractDependencies {
     configurations.preCompile.resolvedConfiguration.resolvedArtifacts.each { artifact ->
@@ -195,6 +197,14 @@ class PreDist extends DefaultTask {
             filter { String line -> line.replace('${build.timestamp}', buildTimestamp) }
             into 'build/generated-dist/data/resourcemanager'
         }
+        
+        
+        project.copy {
+        	from '../vendor'
+        	include '**/*.jar'
+        	into "build/generated-dist/plugins/${groupName}/vendor"
+        }
+
     }
 }
 
@@ -249,7 +259,7 @@ def platformConfigSetting =
 
 tasks.withType(JavaExec) {
 	doFirst {
-        classpath fileTree(dir: 'build/install', include: ['lib/**/*.jar'])
+        classpath fileTree(dir: 'build/install', include: ['lib/**/*.jar', "plugins/${magicdDrawGroupName}/vendor/**/*.jar"])
     }
 
 	workingDir 'build/install'

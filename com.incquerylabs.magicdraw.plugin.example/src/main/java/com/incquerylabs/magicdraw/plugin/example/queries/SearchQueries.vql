@@ -1,7 +1,12 @@
 package com.incquerylabs.magicdraw.plugin.example.queries
 
-import "http://www.nomagic.com/magicdraw/UML/2.5.1";
+import "http://www.nomagic.com/magicdraw/UML/2.5.0";
 
+
+pattern BlockWithStateMachine(block: Class, stateMachine: StateMachine){
+	Class.appliedStereotypeInstance.classifier.name(block, "Block");
+	Class.ownedBehavior(block, stateMachine);
+}
 
 pattern DeduciblePortType(port : Port, type : Type){
 	neg find PortWithSpecifiedType(port);

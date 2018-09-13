@@ -10,6 +10,8 @@ import org.eclipse.viatra.transformation.evm.specific.crud.CRUDActivationStateEn
 import org.eclipse.viatra.transformation.evm.specific.Lifecycles
 import com.incquerylabs.magicdraw.plugin.example.queries.DeduciblePortType
 import java.util.Map
+import java.util.Collection
+import hu.bme.mit.gamma.statechart.model.StatechartDefinition
 
 class FullModelEventDrivenTransformation {
 
@@ -32,7 +34,7 @@ class FullModelEventDrivenTransformation {
         
         createTransformation
 
-    }
+    } 
     
     private static val Map<ViatraQueryEngine, FullModelEventDrivenTransformation> projectTrafoMap = newHashMap
     
@@ -67,6 +69,8 @@ class FullModelEventDrivenTransformation {
             .addRule(portTypeCorrectorRule)
             .build
     }
+    
+  
 
     // Dispose model transformation
     def dispose() {
