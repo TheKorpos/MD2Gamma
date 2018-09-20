@@ -13,4 +13,13 @@ pattern StatechartDefinitions(statechartDefinition: Class, stateMachine: StateMa
 pattern MainRegions(statechartDefinition: Class, region: Region){
 	find StatechartDefinitions(statechartDefinition, stateMachine);
 	StateMachine.region(stateMachine, region);
+} 
+
+pattern StatesInRegions(region: Region, vertex: Vertex){
+	Region.subvertex(region, vertex);
+}
+
+
+pattern RegionsInStates(state: State, region: Region){
+	State.region(state, region);
 }
