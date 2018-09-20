@@ -3,25 +3,14 @@ package com.incquerylabs.magicdraw.plugin.example.queries
 import "http://www.nomagic.com/magicdraw/UML/2.5.0";
 
 
-pattern BlockWithStateMachine(block: Class, stateMachine: StateMachine){
-	Class.appliedStereotypeInstance.classifier.name(block, "Block");
-	Class.ownedBehavior(block, stateMachine);
+pattern StatechartDefinitions(statechartDefinition: Class, stateMachine: StateMachine){
+	Class.appliedStereotypeInstance.classifier.name(statechartDefinition, "Block");
+	Class.ownedBehavior(statechartDefinition, stateMachine);
+	Class.name(statechartDefinition, className);
+	StateMachine.name(stateMachine, className);
 }
 
-pattern DeduciblePortType(port : Port, type : Type){
-	neg find PortWithSpecifiedType(port);
-	find ConnectedPort(port, other);
-	Port.type(other, type);
-}
-
-private pattern PortWithSpecifiedType(port : Port) {
-	Port.type(port, _);
-}
-
-private pattern ConnectedPort(one : Port, other : Port) {
-	Port.end(one, oneEnd);
-	ConnectorEnd._connectorOfEnd(oneEnd, conn);
-	Connector.end(conn, otherEnd);
-	oneEnd != otherEnd;
-	Port.end(other, otherEnd);
+pattern MainRegions(statechartDefinition: Class, region: Region){
+	find StatechartDefinitions(statechartDefinition, stateMachine);
+	StateMachine.region(stateMachine, region);
 }

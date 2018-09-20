@@ -15,7 +15,7 @@ import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.plugins.Plugin;
 import com.nomagic.magicdraw.ui.dialogs.MDDialogParentProvider;
 
-public class ExamplePlugin extends Plugin {
+public class Gamma2MagicDrawPlugin extends Plugin {
 	@Override
 	public boolean close() {
 		return true;
@@ -23,11 +23,8 @@ public class ExamplePlugin extends Plugin {
 
 	@Override
 	public void init() {
-
 		ActionsConfiguratorsManager manager = ActionsConfiguratorsManager.getInstance();
-		manager.addMainMenuConfigurator(new ExampleMainMenuConfigurator(new PortTypeCorrectorAction("PORT_CORRECTOR_TRANSFORMATION", "Correct all port type")));
-		manager.addContainmentBrowserContextConfigurator(new EventDrivenPortTypeCorrectorConfigurator());
-		
+		manager.addMainMenuConfigurator(new MainMenuConfigurator(new PortTypeCorrectorAction("PORT_CORRECTOR_TRANSFORMATION", "Correct all port type")));	
 	}
 
 	@Override
