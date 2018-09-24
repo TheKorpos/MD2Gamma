@@ -1,4 +1,4 @@
-package com.incquerylabs.magicdraw.plugin.example;
+package hu.bme.mit.magicdraw2gamma.plugin;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -11,7 +11,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 
-import com.incquerylabs.magicdraw.plugin.example.trafos.FullModelBatchTransformation;
 import com.incquerylabs.v4md.ViatraQueryAdapter;
 import com.nomagic.magicdraw.actions.ActionsConfiguratorsManager;
 import com.nomagic.magicdraw.actions.MDAction;
@@ -20,7 +19,9 @@ import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.plugins.Plugin;
 import com.nomagic.magicdraw.ui.dialogs.MDDialogParentProvider;
 
-public class Gamma2MagicDrawPlugin extends Plugin {
+import hu.bme.mit.magicdraw2gamma.plugin.trafos.FullModelBatchTransformation;
+
+public class MagicDraw2GammaPlugin extends Plugin {
 	@Override
 	public boolean close() {
 		return true;

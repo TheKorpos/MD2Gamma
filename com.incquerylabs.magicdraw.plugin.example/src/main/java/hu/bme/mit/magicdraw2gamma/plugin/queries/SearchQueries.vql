@@ -1,4 +1,4 @@
-package com.incquerylabs.magicdraw.plugin.example.queries
+package hu.bme.mit.magicdraw2gamma.plugin.queries
 
 import "http://www.nomagic.com/magicdraw/UML/2.5.0";
 

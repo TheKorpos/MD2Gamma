@@ -1,8 +1,6 @@
-package com.incquerylabs.magicdraw.plugin.example.trafos
+package hu.bme.mit.magicdraw2gamma.plugin.trafos
 
 import com.google.common.collect.Maps
-import com.incquerylabs.magicdraw.plugin.example.queries.MainRegions
-import com.incquerylabs.magicdraw.plugin.example.queries.StatechartDefinitions
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element
 import hu.bme.mit.gamma.statechart.model.Region
 import hu.bme.mit.gamma.statechart.model.StatechartDefinition
@@ -16,11 +14,15 @@ import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchT
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
 import java.util.List
 import com.google.common.collect.Lists
-import com.incquerylabs.magicdraw.plugin.example.queries.StatesInRegions
+
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.State
 import hu.bme.mit.gamma.statechart.model.StateNode
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Pseudostate
-import com.incquerylabs.magicdraw.plugin.example.queries.RegionsInStates
+
+import hu.bme.mit.magicdraw2gamma.plugin.queries.StatechartDefinitions
+import hu.bme.mit.magicdraw2gamma.plugin.queries.MainRegions
+import hu.bme.mit.magicdraw2gamma.plugin.queries.StatesInRegions
+import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStates
 
 class FullModelBatchTransformation {
 

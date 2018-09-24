@@ -3,7 +3,7 @@
  * Copyright (c) 2002 NoMagic, Inc. All Rights Reserved.
  */
 
-package com.incquerylabs.magicdraw.plugin.example;
+package hu.bme.mit.magicdraw2gamma.plugin;
 
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
@@ -13,7 +13,7 @@ import com.nomagic.magicdraw.actions.MDActionsCategory;
 
 public class MainMenuConfigurator implements AMConfigurator {
 
-	String G2MD = "G2MD";
+	String MD2G = "MD2G";
 
 	/**
 	 * Action will be added to manager.
@@ -37,11 +37,11 @@ public class MainMenuConfigurator implements AMConfigurator {
 	@Override
 	public void configure(ActionsManager manager) {
 		// searching for Examples action category
-		ActionsCategory category = (ActionsCategory) manager.getActionFor(G2MD);
+		ActionsCategory category = (ActionsCategory) manager.getActionFor(MD2G);
 
 		if (category == null) {
 			// creating new category
-			category = new MDActionsCategory(G2MD, G2MD);
+			category = new MDActionsCategory(MD2G, MD2G);
 			category.setNested(true);
 			manager.addCategory(category);
 		}
