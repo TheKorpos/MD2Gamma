@@ -1,0 +1,25 @@
+package hu.bme.mit.magicdraw2gamma.plugin.queries
+
+import "http://www.nomagic.com/magicdraw/UML/2.5.0";
+
+
+pattern StatechartDefinitions(statechartDefinition: Class, stateMachine: StateMachine){
+	Class.appliedStereotypeInstance.classifier.name(statechartDefinition, "Block");
+	Class.ownedBehavior(statechartDefinition, stateMachine);
+	Class.name(statechartDefinition, className);
+	StateMachine.name(stateMachine, className);
+}
+
+pattern MainRegions(statechartDefinition: Class, region: Region){
+	find StatechartDefinitions(statechartDefinition, stateMachine);
+	StateMachine.region(stateMachine, region);
+} 
+
+pattern StatesInRegions(region: Region, vertex: Vertex){
+	Region.subvertex(region, vertex);
+}
+
+
+pattern RegionsInStates(state: State, region: Region){
+	State.region(state, region);
+}
