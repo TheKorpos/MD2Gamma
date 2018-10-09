@@ -25,7 +25,7 @@ import hu.bme.mit.magicdraw2gamma.plugin.queries.StatesInRegions
 import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStates
 
 class FullModelBatchTransformation {
-
+ 
     /* Transformation-related extensions */
     extension BatchTransformation transformation
     extension BatchTransformationStatements statements

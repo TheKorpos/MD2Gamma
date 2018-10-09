@@ -16,6 +16,7 @@ import com.nomagic.magicdraw.core.Project;
 
 import hu.bme.mit.magicdraw2gamma.plugin.trafos.FullModelBatchTransformation;
 
+
 public class TransformToGammaAction extends MDAction {
 		private static final long serialVersionUID = 8437220468635496371L;
 

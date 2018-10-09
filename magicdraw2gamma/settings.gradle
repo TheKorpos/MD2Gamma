@@ -16,3 +16,6 @@ include 'services:webservice'
 */
 
 rootProject.name = 'magicdraw2gamma'
+
+include ":hu.bme.mit.gamma.api"
+project(":hu.bme.mit.gamma.api").projectDir = new File(rootProject.projectDir, '../hu.bme.mit.gamma.api')

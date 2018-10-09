@@ -66,13 +66,12 @@ dependencies {
     preCompile group: 'com.nomagic', name: 'sysml', version: '185', classifier: 'SysML_Plugin_185_bundle', ext: 'zip'
     preCompile group: 'com.incquerylabs.v4md', name: 'com.incquerylabs.v4md', version: viatraVersion, classifier: 'plugin', ext: 'zip'
     
+    
     // This ensures classpath load order to match the MagicDraw provided order and then includes extras needed for non-OpenAPI stuff.
     compile files(classpathLibraries.collect { 'build/dependency-cache/extracted/' + it })
     compile fileTree(dir: 'build/dependency-cache/extracted', include: ['lib/**/*.jar', 'plugins/**/*.jar'], exclude: ([ classpathLibraries, ['plugins/com.nomagic.collaborator.publisher/**/*.jar', 'plugins/com.nomagic.magicdraw.emfuml2xmi*/**/*.jar'] ]).flatten())
     compile fileTree(dir: 'lib', include: ['**/*.jar'])
-    compile fileTree(dir: '../vendor', include: ['**/*.jar'])
-    
-    }
+ }
 
 task extractDependencies {
     configurations.preCompile.resolvedConfiguration.resolvedArtifacts.each { artifact ->
@@ -172,6 +171,7 @@ class PreDist extends DefaultTask {
             file.renameTo(project.file(file.getAbsolutePath().replace('${group}', "${groupName}")))
         }
 
+
         String pluginLibraries = ''
         project.fileTree(dir: "build/generated-dist/plugins/${groupName}", include: '**/*.jar').each { file ->
             pluginLibraries += '\t\t<library name=\"' + file.absolutePath.replaceAll(~/.*build\/generated-dist\/plugins\/${groupName}\//, '') + '\"/>' + System.lineSeparator()
@@ -199,11 +199,7 @@ class PreDist extends DefaultTask {
         }
         
         
-        project.copy {
-        	from '../vendor'
-        	include '**/*.jar'
-        	into "build/generated-dist/plugins/${groupName}/vendor"
-        }
+      
 
     }
 }
@@ -259,7 +255,7 @@ def platformConfigSetting =
 
 tasks.withType(JavaExec) {
 	doFirst {
-        classpath fileTree(dir: 'build/install', include: ['lib/**/*.jar', "plugins/${magicdDrawGroupName}/vendor/**/*.jar"])
+        classpath fileTree(dir: 'build/install', include: ['lib/**/*.jar'])
     }
 
 	workingDir 'build/install'

@@ -9,6 +9,7 @@ public class MagicDraw2GammaPlugin extends Plugin {
 	@Override
 	public boolean close() {
 		return true;
+		
 	}
 
 	@Override

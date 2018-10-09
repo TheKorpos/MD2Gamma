@@ -1,11 +1,13 @@
 package hu.bme.mit.magicdraw2gamma.plugin.ui.action;
 
 import java.awt.event.ActionEvent;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Scanner;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -70,7 +72,7 @@ public class TestVerificationAction extends MDAction {
 		
 		final String mdHome = Application.environment().getInstallRoot();
 		
-		UppaalModelSerializer.saveToXML(entry.getKey(), mdHome + "\\gammaOut\\something");
+		UppaalModelSerializer.saveToXML(entry.getKey(), mdHome + "\\gammaOut", "something.xml");
 		
 		
 		String query = "A[] not deadlock";
@@ -89,6 +91,8 @@ public class TestVerificationAction extends MDAction {
 			
 			process = Runtime.getRuntime().exec(command.toString());
 			InputStream ips = process.getErrorStream();
+			Scanner scanner = new Scanner(ips);
+			scanner.forEachRemaining(System.out::println);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
