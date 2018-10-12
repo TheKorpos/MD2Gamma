@@ -23,9 +23,11 @@ import hu.bme.mit.magicdraw2gamma.plugin.queries.StatechartDefinitions
 import hu.bme.mit.magicdraw2gamma.plugin.queries.MainRegions
 import hu.bme.mit.magicdraw2gamma.plugin.queries.StatesInRegions
 import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStates
+import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.FinalState
+import hu.bme.mit.magicdraw2gamma.plugin.queries.OwnedTransitions
 
-class FullModelBatchTransformation {
- 
+class MagicDrawToGammaTransformation {
+  
     /* Transformation-related extensions */
     extension BatchTransformation transformation
     extension BatchTransformationStatements statements
@@ -67,6 +69,10 @@ class FullModelBatchTransformation {
     	var StateNode statenode
     	if (vertex instanceof State) statenode = f.createState
     	if (vertex instanceof Pseudostate) statenode = f.createInitialState
+    	if (vertex instanceof FinalState){ 
+    		statenode = f.createState
+    		statenode.name = "FinalState"
+    	}
     	if (processedRegions.contains(match.region)) {
     		gammaRegions.get(match.region).stateNodes += statenode
     	} else {
@@ -83,6 +89,17 @@ class FullModelBatchTransformation {
     	statenode.name = vertex.name
     	gammaStateNode.put(match.vertex, statenode)
     	
+    ].build
+    
+    val transitionsCreationRule = createRule.precondition(OwnedTransitions.instance).action[match |
+    	val mdStatechartDef = match.stmt
+    	val gammaStatechartDef = gammaStateDefs.get(mdStatechartDef)
+    	val tra = f.createTransition
+    	val source = match.transition.source
+    	val target = match.transition.target
+    	tra.sourceState = gammaStateNode.get(source)
+    	tra.targetState = gammaStateNode.get(target)
+    	gammaStatechartDef.transitions += tra
     ].build
 
     new(ViatraQueryEngine engine) {
@@ -112,6 +129,7 @@ class FullModelBatchTransformation {
     	mainRegionsCreationRule.fireAllCurrent
     	statesInRegionsCreationRule.fireAllCurrent
     	processRemainingRegions()
+    	transitionsCreationRule.fireAllCurrent
     }
 
     private def createTransformation() {

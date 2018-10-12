@@ -10,6 +10,9 @@
       <query-specification fqn="hu.bme.mit.magicdraw2gamma.plugin.queries.MainRegions"/>
       <query-specification fqn="hu.bme.mit.magicdraw2gamma.plugin.queries.StatesInRegions"/>
       <query-specification fqn="hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStates"/>
+      <query-specification fqn="hu.bme.mit.magicdraw2gamma.plugin.queries.Transitions"/>
+      <query-specification fqn="hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStatechart"/>
+      <query-specification fqn="hu.bme.mit.magicdraw2gamma.plugin.queries.OwnedTransitions"/>
     </group>
   </extension>
 </plugin>

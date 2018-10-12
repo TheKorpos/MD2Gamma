@@ -3,6 +3,7 @@ package hu.bme.mit.magicdraw2gamma.plugin.trafos;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
+import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.FinalState;
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Pseudostate;
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.State;
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Vertex;
@@ -10,7 +11,9 @@ import hu.bme.mit.gamma.statechart.model.Region;
 import hu.bme.mit.gamma.statechart.model.StateNode;
 import hu.bme.mit.gamma.statechart.model.StatechartDefinition;
 import hu.bme.mit.gamma.statechart.model.StatechartModelFactory;
+import hu.bme.mit.gamma.statechart.model.Transition;
 import hu.bme.mit.magicdraw2gamma.plugin.queries.MainRegions;
+import hu.bme.mit.magicdraw2gamma.plugin.queries.OwnedTransitions;
 import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStates;
 import hu.bme.mit.magicdraw2gamma.plugin.queries.StatechartDefinitions;
 import hu.bme.mit.magicdraw2gamma.plugin.queries.StatesInRegions;
@@ -28,7 +31,7 @@ import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchT
 import org.eclipse.xtext.xbase.lib.Extension;
 
 @SuppressWarnings("all")
-public class FullModelBatchTransformation {
+public class MagicDrawToGammaTransformation {
   /**
    * Transformation-related extensions
    */
@@ -94,6 +97,10 @@ public class FullModelBatchTransformation {
     if ((vertex instanceof Pseudostate)) {
       statenode = this.f.createInitialState();
     }
+    if ((vertex instanceof FinalState)) {
+      statenode = this.f.createState();
+      statenode.setName("FinalState");
+    }
     boolean _contains = this.processedRegions.contains(match.getRegion());
     if (_contains) {
       EList<StateNode> _stateNodes = this.gammaRegions.get(match.getRegion()).getStateNodes();
@@ -114,7 +121,19 @@ public class FullModelBatchTransformation {
     this.gammaStateNode.put(match.getVertex(), statenode);
   })).build();
   
-  public FullModelBatchTransformation(final ViatraQueryEngine engine) {
+  private final BatchTransformationRule<OwnedTransitions.Match, OwnedTransitions.Matcher> transitionsCreationRule = this._batchTransformationRuleFactory.<OwnedTransitions.Match, OwnedTransitions.Matcher>createRule().precondition(OwnedTransitions.instance()).action(((Consumer<OwnedTransitions.Match>) (OwnedTransitions.Match match) -> {
+    final com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class mdStatechartDef = match.getStmt();
+    final StatechartDefinition gammaStatechartDef = this.gammaStateDefs.get(mdStatechartDef);
+    final Transition tra = this.f.createTransition();
+    final Vertex source = match.getTransition().getSource();
+    final Vertex target = match.getTransition().getTarget();
+    tra.setSourceState(this.gammaStateNode.get(source));
+    tra.setTargetState(this.gammaStateNode.get(target));
+    EList<Transition> _transitions = gammaStatechartDef.getTransitions();
+    _transitions.add(tra);
+  })).build();
+  
+  public MagicDrawToGammaTransformation(final ViatraQueryEngine engine) {
     this.engine = engine;
     this.createTransformation();
   }
@@ -140,6 +159,7 @@ public class FullModelBatchTransformation {
     this.statements.<MainRegions.Match>fireAllCurrent(this.mainRegionsCreationRule);
     this.statements.<StatesInRegions.Match>fireAllCurrent(this.statesInRegionsCreationRule);
     this.processRemainingRegions();
+    this.statements.<OwnedTransitions.Match>fireAllCurrent(this.transitionsCreationRule);
   }
   
   private BatchTransformationStatements createTransformation() {

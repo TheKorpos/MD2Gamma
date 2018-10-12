@@ -11,6 +11,7 @@ import com.nomagic.actions.ActionsManager;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
 
+import hu.bme.mit.magicdraw2gamma.plugin.ui.action.SetGammaWorkdirAction;
 import hu.bme.mit.magicdraw2gamma.plugin.ui.action.TestVerificationAction;
 import hu.bme.mit.magicdraw2gamma.plugin.ui.action.TransformToGammaAction;
 
@@ -46,6 +47,7 @@ public class MainMenuConfigurator implements AMConfigurator {
 			category.setNested(true);
 			manager.addCategory(category);
 		}
+		category.addAction(new SetGammaWorkdirAction("SET_GAMMA_WORKDIR", "Set Gamma working directory"));
 		category.addAction(new TransformToGammaAction("TRANSFORM", "Transform to Gamma"));
 		category.addAction(new TestVerificationAction("TESTACTION", "TEST"));
 	}
@@ -54,5 +56,7 @@ public class MainMenuConfigurator implements AMConfigurator {
 	public int getPriority() {
 		return AMConfigurator.MEDIUM_PRIORITY;
 	}
+	
+	
 
 }

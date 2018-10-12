@@ -25,6 +25,7 @@ import hu.bme.mit.gamma.statechart.model.StatechartModelFactory;
 import hu.bme.mit.gamma.statechart.model.Transition;
 import hu.bme.mit.gamma.uppaal.serializer.UppaalModelSerializer;
 import hu.bme.mit.gamma.uppaal.transformation.batch.StatechartToUppaalTransformer;
+import hu.bme.mit.gamma.uppaal.transformation.queries.internal.ErrorPatternsAll;
 import hu.bme.mit.gamma.uppaal.transformation.traceability.G2UTrace;
 import uppaal.NTA;
 
@@ -32,6 +33,8 @@ public class TestVerificationAction extends MDAction {
 
 	public TestVerificationAction(String id, String name) {
 		super(id, name, null, null);
+		
+		
 	}
 	
 	@Override

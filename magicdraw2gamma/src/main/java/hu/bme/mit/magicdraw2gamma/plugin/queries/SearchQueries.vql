@@ -23,3 +23,26 @@ pattern StatesInRegions(region: Region, vertex: Vertex){
 pattern RegionsInStates(state: State, region: Region){
 	State.region(state, region);
 }
+
+pattern Transitions(source: Vertex, transition: Transition, target: Vertex){
+	Transition.source(transition, source);
+	Transition.target(transition, target);
+}
+
+
+private pattern InnerRegion(region: Region, innerRegion: Region){
+	find StatesInRegions(region, state);
+	find RegionsInStates(state, innerRegion);
+}
+
+pattern RegionsInStatechart(stmt: Class, region: Region){
+	find MainRegions(stmt, region);
+} or {
+	find MainRegions(stmt, outerRegion);
+	find InnerRegion+(outerRegion, region);
+}
+
+pattern OwnedTransitions(stmt: Class, transition: Transition){
+	find RegionsInStatechart(stmt, region);
+	Region.transition(region, transition);
+}
