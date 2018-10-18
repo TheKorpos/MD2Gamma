@@ -1,10 +1,26 @@
 package hu.bme.mit.magicdraw2gamma.plugin.trafos
 
+import com.google.common.collect.Lists
 import com.google.common.collect.Maps
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element
+import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.SignalEvent
+import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.FinalState
+import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Pseudostate
+import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.State
 import hu.bme.mit.gamma.statechart.model.Region
+import hu.bme.mit.gamma.statechart.model.StateNode
 import hu.bme.mit.gamma.statechart.model.StatechartDefinition
 import hu.bme.mit.gamma.statechart.model.StatechartModelFactory
+import hu.bme.mit.gamma.statechart.model.Transition
+import hu.bme.mit.gamma.statechart.model.interface_.Event
+import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory
+import hu.bme.mit.magicdraw2gamma.plugin.queries.MainRegions
+import hu.bme.mit.magicdraw2gamma.plugin.queries.OwnedTransitions
+import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStates
+import hu.bme.mit.magicdraw2gamma.plugin.queries.StatechartDefinitions
+import hu.bme.mit.magicdraw2gamma.plugin.queries.StatesInRegions
+import hu.bme.mit.magicdraw2gamma.plugin.queries.Triggers
+import java.util.List
 import java.util.Map
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations
@@ -12,19 +28,8 @@ import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleMod
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRuleFactory
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
-import java.util.List
-import com.google.common.collect.Lists
-
-import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.State
-import hu.bme.mit.gamma.statechart.model.StateNode
-import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Pseudostate
-
-import hu.bme.mit.magicdraw2gamma.plugin.queries.StatechartDefinitions
-import hu.bme.mit.magicdraw2gamma.plugin.queries.MainRegions
-import hu.bme.mit.magicdraw2gamma.plugin.queries.StatesInRegions
-import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStates
-import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.FinalState
-import hu.bme.mit.magicdraw2gamma.plugin.queries.OwnedTransitions
+import hu.bme.mit.gamma.statechart.model.interface_.InterfacePackage
+import hu.bme.mit.magicdraw2gamma.plugin.queries.Signals
 
 class MagicDrawToGammaTransformation {
   
@@ -46,14 +51,34 @@ class MagicDrawToGammaTransformation {
     val Map<Element, StatechartDefinition> gammaStateDefs = Maps.newHashMap
     val Map<Element, Region> gammaRegions = Maps.newHashMap
     val Map<Element, StateNode> gammaStateNode = Maps.newHashMap
-
+	val Map<Element, Transition> gammaTransitions = Maps.newHashMap
+	val Map<Element, Event> gammaEvents = Maps.newHashMap
+	
+	hu.bme.mit.gamma.statechart.model.Package statechartsPackage
+	
     val List<Element> processedRegions = Lists.newArrayList
     val List<Element> unProcessedRegions = Lists.newArrayList
     
+    val defInterface = InterfaceFactory.eINSTANCE.createInterface
+    
     /** Rules */
     val statechartDefinitionCreationRule = createRule.precondition(statechartDefinitions).action[ match |
+    	
     	val statechartDef = f.createStatechartDefinition
+    	//TODO: this port and iterface should be removed once composite features are added
+    	val defPort = f.createPort
+    		
+    	val interFaceRealization = f.createInterfaceRealization
+    
+    	defPort.name = "PlaceHolderPort"
+    	
+    	interFaceRealization.interface = defInterface
+    	defPort.interfaceRealization = interFaceRealization
+    	statechartDef.ports += defPort
+    	
     	gammaStateDefs.put(match.statechartDefinition, statechartDef);
+    	statechartsPackage.components += statechartDef
+    	
     ].build
     
     val mainRegionsCreationRule = createRule.precondition(MainRegions.instance).action[match |
@@ -100,6 +125,30 @@ class MagicDrawToGammaTransformation {
     	tra.sourceState = gammaStateNode.get(source)
     	tra.targetState = gammaStateNode.get(target)
     	gammaStatechartDef.transitions += tra
+    	gammaTransitions.put(match.transition, tra)
+    ].build
+        
+    val triggerCreationRule = createRule.precondition(Triggers.instance).action[match | 
+    	val mdTra = match.transition
+    	val mdTrigger = match.trigger
+    	val tra = gammaTransitions.get(mdTra)
+    	
+    	val mdTriggerEvent = mdTrigger.event
+    	
+    	if (mdTriggerEvent instanceof SignalEvent){
+    		val mdSignalEvent = mdTriggerEvent as SignalEvent
+    		//mdSignalEvent.signal
+    		//mdSignalEvent.signal
+    		val gammaEvent = gammaEvents.get(mdSignalEvent.signal)
+    		val gammaEventTrigger = f.createEventTrigger
+    		tra.trigger = gammaEventTrigger
+    		
+    		val portEventReference = f.createPortEventReference
+			portEventReference.event = gammaEvent
+			    		
+    		gammaEventTrigger.eventReference = portEventReference
+    	}
+    	
     ].build
 
     new(ViatraQueryEngine engine) {
@@ -125,11 +174,31 @@ class MagicDrawToGammaTransformation {
 
     public def execute() {
     	// Fire the defined rules here
+    	statechartsPackage = f.createPackage
+    	statechartsPackage.name = "statecharts"
+    	
+    	//create dummy interface for all events
+    	
+    	defInterface.name = "IPlaceHolder"
+    	
+    	//and just collect all used signals and add them to every statechart
+    	engine.getMatcher(Signals.instance).forEachMatch([m | 
+    		val event = InterfaceFactory.eINSTANCE.createEvent
+    		event.name = m.signal.name
+    		val eventDecl = InterfaceFactory.eINSTANCE.createEventDeclaration
+    		eventDecl.event = event
+    		defInterface.events += eventDecl
+    		gammaEvents.put(m.signal, event)
+    	])
+    	
+    	statechartsPackage.interfaces += defInterface
+    	
     	statechartDefinitionCreationRule.fireAllCurrent
     	mainRegionsCreationRule.fireAllCurrent
     	statesInRegionsCreationRule.fireAllCurrent
     	processRemainingRegions()
     	transitionsCreationRule.fireAllCurrent
+    	triggerCreationRule.fireAllCurrent
     }
 
     private def createTransformation() {
@@ -143,6 +212,10 @@ class MagicDrawToGammaTransformation {
     
     def getStatechartDefs(){
     	gammaStateDefs
+    }
+    
+    def getStatechartsPackage(){
+    	statechartsPackage
     }
 
     def dispose() {

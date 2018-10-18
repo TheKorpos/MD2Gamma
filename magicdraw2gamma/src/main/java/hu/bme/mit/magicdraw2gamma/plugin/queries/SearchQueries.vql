@@ -46,3 +46,17 @@ pattern OwnedTransitions(stmt: Class, transition: Transition){
 	find RegionsInStatechart(stmt, region);
 	Region.transition(region, transition);
 }
+
+pattern Triggers(transition: Transition, trigger: Trigger){
+	Transition.trigger(transition, trigger);
+}
+
+pattern Signals(trigger: Trigger, signal: Signal){
+	Trigger.event(trigger, signalEvent);
+	SignalEvent.signal(signalEvent, signal);
+}
+
+/*pattern PortsOnBlock(block: Class, port: Port){
+	Class.ownedAttribute(block, port);
+}*/
+
