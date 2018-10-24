@@ -5,16 +5,24 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Scanner;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.options.ProjectOptions;
 import com.nomagic.magicdraw.properties.Property;
 
+import hu.bme.mit.gamma.querygenerator.application.AppMain;
 import hu.bme.mit.magicdraw2gamma.plugin.options.GammaProjectOptionsConfigurator;
 
 public class UppaalVerificationAction extends MDAction {
@@ -26,10 +34,23 @@ public class UppaalVerificationAction extends MDAction {
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		String queryString = JOptionPane.showInputDialog(Application.getInstance().getMainFrame(), "Upaal Query");
+		//String queryString = JOptionPane.showInputDialog(Application.getInstance().getMainFrame(), "Upaal Query");
 		
 		JFileChooser filechooser = new JFileChooser();
 		filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		
+		filechooser.setFileFilter(new FileFilter() {
+			
+			@Override
+			public String getDescription() {
+				return "Gamma files";
+			}
+			
+			@Override
+			public boolean accept(File f) {
+				return f.getName().endsWith(".gsm");
+			}
+		});
 		
 		Property prop = Application.getInstance().getProject().getOptions().getProperty(
 				ProjectOptions.PROJECT_GENERAL_PROPERTIES,
@@ -37,6 +58,10 @@ public class UppaalVerificationAction extends MDAction {
 				);
 		
 		String workdir = prop.getValueStringRepresentation();
+		
+		AppMain gammaVerificationApp = new AppMain();
+		
+		
 		
 		if (!"".equals(prop.getValueStringRepresentation())) {
 			filechooser.setCurrentDirectory(new File(prop.getValueStringRepresentation()));
@@ -46,25 +71,37 @@ public class UppaalVerificationAction extends MDAction {
 		int state = filechooser.showOpenDialog(Application.getInstance().getMainFrame());
 		
 		if (state == JFileChooser.APPROVE_OPTION) {
+			
 			try {
-				FileWriter fw = new FileWriter(new File(workdir + "\\temp.q"));
-				fw.write(queryString);
-				fw.close();
 				
-				StringBuilder command = new StringBuilder();
-				// verifyta -t1 TestOneComponent.xml asd.q 
-				command.append("verifyta " + getParameters() + " \"" + filechooser.getSelectedFile().getAbsolutePath() + "\" \"" + workdir + "\\temp.q" + "\"");
-				// Executing the command
+				ResourceSet rs = new ResourceSetImpl();
+				Resource r = rs.getResource(URI.createFileURI(filechooser.getSelectedFile().getAbsolutePath()), true);
+				r.load(Collections.EMPTY_MAP);
 				
-				Process process = Runtime.getRuntime().exec(command.toString());
-				InputStream ips = process.getErrorStream();
-				Scanner scanner = new Scanner(ips);
-				
-				scanner.forEachRemaining(System.out::println);
-				
+				gammaVerificationApp.start(rs, filechooser.getSelectedFile(), false, workdir);
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		
+			
+			
+			/*FileWriter fw = new FileWriter(new File(workdir + "\\temp.q"));
+			fw.write(queryString);
+			fw.close();
+			
+			StringBuilder command = new StringBuilder();
+			// verifyta -t1 TestOneComponent.xml asd.q 
+			command.append("verifyta " + getParameters() + " \"" + filechooser.getSelectedFile().getAbsolutePath() + "\" \"" + workdir + "\\temp.q" + "\"");
+			// Executing the command
+			
+			Process process = Runtime.getRuntime().exec(command.toString());
+			InputStream ips = process.getErrorStream();
+			Scanner scanner = new Scanner(ips);
+			
+			scanner.forEachRemaining(System.out::println);*/
+				
+		
 		}
 		
 	}

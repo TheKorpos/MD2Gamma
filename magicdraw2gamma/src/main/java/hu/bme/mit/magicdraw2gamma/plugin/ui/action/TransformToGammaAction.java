@@ -62,7 +62,7 @@ public class TransformToGammaAction extends MDAction {
 			//trafo.getStatechartDefs().forEach((md, ga) -> {
 				try {
 					ResourceSet rs = new ResourceSetImpl();
-					Resource r = rs.createResource(URI.createFileURI(saveDir + "\\package.xml"));
+					Resource r = rs.createResource(URI.createFileURI(saveDir + "/package.gsm"));
 					
 					r.getContents().add(trafo.getStatechartsPackage());
 					r.save(null);
@@ -82,41 +82,12 @@ public class TransformToGammaAction extends MDAction {
 					});*/
 					
 					
-					if (!SessionManager.getInstance().isSessionCreated(project))
-						SessionManager.getInstance().createSession(project, "Creating Gamma Package");
-					
-					Optional<com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package> optionalPackage = project.getPrimaryModel().getNestedPackage().stream().filter(p -> "Gamma".equals(p.getName())).findFirst();
-					com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package p = null;
-					ElementsFactory ef = project.getElementsFactory();
-					if (!optionalPackage.isPresent()) {
-					
-						p = ef.createPackageInstance();
-						p.setName("Gamma");
-						p.setOwner(project.getPrimaryModel());
-					}
-					
-					
-					Optional<Class> ref = p.getOwnedElement().stream().filter(Class.class::isInstance)
-						.map(Class.class::cast)
-						.filter(cl -> "gamma_package".equals(cl.getName())).findFirst();
-					
-					Class gammaFilePointer = null;
-					if (!ref.isPresent()) {
-						gammaFilePointer = ef.createClassInstance();
-						gammaFilePointer.setName("gamma_package");
-						gammaFilePointer.setOwner(p);
-					}
-					
-					
-					SessionManager.getInstance().closeSession(project);
-					
-					
 				} catch (IOException exception) {
 					exception.printStackTrace();
 				}
 			//});
 			
-			Application.getInstance().getGUILog().showMessage("Exported as XML to" + saveDir);
+			Application.getInstance().getGUILog().showMessage("Exported as GSM to" + saveDir);
 				
 		}
 	
