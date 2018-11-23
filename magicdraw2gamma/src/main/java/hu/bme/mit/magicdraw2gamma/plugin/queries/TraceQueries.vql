@@ -1,0 +1,34 @@
+package hu.bme.mit.magicdraw2gamma.plugin.queries
+
+import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://www.mit.bme.hu/magicdraw2gamma/trace"
+import "http://www.mit.bme.hu/gamma/statechart/Model"
+import "http://www.mit.bme.hu/gamma/statechart/Model/Interface"
+import "http://www.mit.bme.hu/gamma/statechart/Model/Composite"
+import "http://www.mit.bme.hu/gamma/constraint/Model"
+import "http://www.nomagic.com/magicdraw/UML/2.5";
+
+pattern TraceRoot(root: MD2GTrace, trace: AbstractTrace){
+	MD2GTrace.traces(root, trace);
+}
+
+pattern StatechartTrace(source: StateMachine, target: StatechartDefinition, trace: Trace){
+	Trace.source(trace, source);
+	Trace.target(trace, target);
+}
+
+
+pattern RegionTrace(source: Region, target: EObject, trace: Trace){
+	Trace.source(trace, source);
+	Trace.target(trace, target);
+}
+
+pattern StateTrace(state: State, target: EObject, trace: Trace){
+	Trace.source(trace, state);
+	Trace.target(trace, target);
+}
+
+pattern VertexTrace(vertex: Vertex, target: EObject, trace: Trace){
+	Trace.source(trace, vertex);
+	Trace.target(trace, target);
+}

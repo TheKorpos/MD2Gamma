@@ -1,7 +1,11 @@
 package hu.bme.mit.magicdraw2gamma.plugin.queries
 
 import "http://www.nomagic.com/magicdraw/UML/2.5.0";
+ 
 
+pattern stateMachines(stateMachine: StateMachine, name: java String){
+	StateMachine.name(stateMachine, name); 
+}
 
 pattern StatechartDefinitions(statechartDefinition: Class, stateMachine: StateMachine){
 	Class.appliedStereotypeInstance.classifier.name(statechartDefinition, "Block");
@@ -10,18 +14,50 @@ pattern StatechartDefinitions(statechartDefinition: Class, stateMachine: StateMa
 	StateMachine.name(stateMachine, className);
 }
 
-pattern MainRegions(statechartDefinition: Class, region: Region){
-	find StatechartDefinitions(statechartDefinition, stateMachine);
+pattern RegionsInRegion(container: Region, region: Region){
+	Region.subvertex(container, vertex);
+	State.region(vertex, region);
+}
+
+pattern RegionsInStatemachine(stateMachine: StateMachine, subregion: Region){
+	find MainRegions(stateMachine, subregion);
+} or {
+	find RegionsInRegion+(region, subregion);
 	StateMachine.region(stateMachine, region);
+}
+
+pattern TranisitonsInStateMachine(stateMachine: StateMachine, transition: Transition){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.transition(region, transition);
+}
+
+pattern MainRegions(stateMachine: StateMachine, region: Region){
+	StateMachine.region(stateMachine, region);
+}
+
+pattern StatesInMainRegion(region: Region, state: State){
+	find MainRegions(_, region);
+	Region.subvertex(region, state);
 } 
 
-pattern StatesInRegions(region: Region, vertex: Vertex){
-	Region.subvertex(region, vertex);
+pattern StatesInRegions(containingRegion: Region, state: State){
+	Region.subvertex(containingRegion, state);
+}
+
+pattern PseudoStates(containingRegion: Region, pseudoState: Pseudostate, kind: PseudostateKind){
+	Region.subvertex(containingRegion, pseudoState);
+	Pseudostate.kind(pseudoState, kind);
+
+}
+
+pattern FinalStates(containingRegion: Region, finalState: FinalState){
+	Region.subvertex(containingRegion, finalState);
 }
 
 
-pattern RegionsInStates(state: State, region: Region){
-	State.region(state, region);
+
+pattern RegionsInStates(containingState: State, region: Region){
+	State.region(containingState, region);
 }
 
 pattern Transitions(source: Vertex, transition: Transition, target: Vertex){
@@ -54,6 +90,11 @@ pattern Triggers(transition: Transition, trigger: Trigger){
 pattern Signals(trigger: Trigger, signal: Signal){
 	Trigger.event(trigger, signalEvent);
 	SignalEvent.signal(signalEvent, signal);
+}
+
+pattern Guard(transition: Transition, opaqueExpression: OpaqueExpression){
+	Transition.guard(transition, guard);
+	Constraint.specification(guard, opaqueExpression);
 }
 
 /*pattern PortsOnBlock(block: Class, port: Port){

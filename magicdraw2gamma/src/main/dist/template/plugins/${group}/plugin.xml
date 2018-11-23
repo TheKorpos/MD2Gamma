@@ -5,6 +5,7 @@
         version="${human.version}"
         provider-name="IncQuery Labs Ltd."
         class-lookup="LocalFirst"
+        ownClassloader="true"
         class="hu.bme.mit.magicdraw2gamma.plugin.MagicDraw2GammaPlugin">
     
 	<requires>

@@ -51,7 +51,7 @@ public class MainMenuConfigurator implements AMConfigurator {
 		}
 		category.addAction(new SetGammaWorkdirAction("SET_GAMMA_WORKDIR", "Set Gamma working directory"));
 		category.addAction(new TransformToGammaAction("TRANSFORM", "Transform to Gamma"));
-		//category.addAction(new TestVerificationAction("TESTACTION", "TEST"));
+		category.addAction(new TestVerificationAction("TESTACTION", "TEST"));
 		category.addAction(new GammaToUppaalAction("GAMMA_TO_UPPAAL", "Gamma to Uppaal"));
 		category.addAction(new UppaalVerificationAction("UPAAL_VERIF", "Uppaal Verification"));
 	}

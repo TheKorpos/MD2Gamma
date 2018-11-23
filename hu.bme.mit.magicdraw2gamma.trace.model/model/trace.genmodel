@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel"
+    modelDirectory="/hu.bme.mit.magicdraw2gamma.trace.model/src-gen"
+    creationIcons="false" editDirectory="/hu.bme.mit.magicdraw2gamma.trace.model.edit/src-gen"
+    editorDirectory="/hu.bme.mit.magicdraw2gamma.trace.model.editor/src-gen" modelPluginID="hu.bme.mit.magicdraw2gamma.trace.model"
+    modelName="Trace" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    codeFormatting="true" importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0"
+    copyrightFields="false" operationReflection="true" importOrganizing="true">
+  <foreignModel>trace.ecore</foreignModel>
+  <testsDirectory xsi:nil="true"/>
+  <genPackages prefix="Trace" basePackage="hu.bme.mit.magicdraw2gamma.trace.model"
+      disposableProviderFactory="true" ecorePackage="trace.ecore#/">
+    <genClasses ecoreClass="trace.ecore#//MD2GTrace">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trace.ecore#//MD2GTrace/traces"/>
+    </genClasses>
+    <genClasses ecoreClass="trace.ecore#//AbstractTrace"/>
+    <genClasses ecoreClass="trace.ecore#//Trace">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference trace.ecore#//Trace/target"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference trace.ecore#//Trace/source"/>
+    </genClasses>
+    <genClasses ecoreClass="trace.ecore#//InterfaceTrace">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference trace.ecore#//InterfaceTrace/target"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference trace.ecore#//InterfaceTrace/source"/>
+    </genClasses>
+    <genClasses ecoreClass="trace.ecore#//ConstraintTrace">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference trace.ecore#//ConstraintTrace/source"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference trace.ecore#//ConstraintTrace/target"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

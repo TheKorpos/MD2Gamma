@@ -2,32 +2,20 @@ package hu.bme.mit.magicdraw2gamma.plugin.ui.action;
 
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Scanner;
+import java.io.InputStreamReader;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.antlr.runtime.Token;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.parser.IParseResult;
 
+import com.google.inject.Injector;
 import com.nomagic.magicdraw.actions.MDAction;
-import com.nomagic.magicdraw.core.Application;
 
-import hu.bme.mit.gamma.statechart.model.InitialState;
-import hu.bme.mit.gamma.statechart.model.Region;
-import hu.bme.mit.gamma.statechart.model.State;
-import hu.bme.mit.gamma.statechart.model.StatechartDefinition;
-import hu.bme.mit.gamma.statechart.model.StatechartModelFactory;
-import hu.bme.mit.gamma.statechart.model.Transition;
-import hu.bme.mit.gamma.uppaal.serializer.UppaalModelSerializer;
-import hu.bme.mit.gamma.uppaal.transformation.batch.StatechartToUppaalTransformer;
-import hu.bme.mit.gamma.uppaal.transformation.queries.internal.ErrorPatternsAll;
-import hu.bme.mit.gamma.uppaal.transformation.traceability.G2UTrace;
-import uppaal.NTA;
+import akka.dispatch.AbstractBoundedNodeQueue.Node;
+import hu.bme.mit.gamma.constraint.language.ConstraintLanguageStandaloneSetup;
+import hu.bme.mit.gamma.constraint.language.parser.antlr.ConstraintLanguageParser;
+import hu.bme.mit.gamma.constraint.model.ConstraintModelPackage;
 
 public class TestVerificationAction extends MDAction {
 
@@ -36,70 +24,33 @@ public class TestVerificationAction extends MDAction {
 		
 		
 	}
-	
+		
+
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		StatechartModelFactory f = StatechartModelFactory.eINSTANCE;
-		hu.bme.mit.gamma.statechart.model.Package p = f.createPackage();
-		StatechartDefinition def = f.createStatechartDefinition();
-		p.getComponents().add(def);
-		p.setName("main");
+		
+		Token token;
+		
+		ConstraintModelPackage.eINSTANCE.getNsURI();
 		
 		
-		Region region = f.createRegion();
-		region.setName("MainRegion");
+		Injector injector = new ConstraintLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+		//XtextResourceSet resourceSet = injector.getInstance(XtextResourceSet.class);
 		
-		def.getRegions().add(region);
+		String proba = "specification something() {constraint true}";
+		InputStreamReader ips = new InputStreamReader(new ByteArrayInputStream(proba.getBytes()));
 		
-		InitialState is = f.createInitialState();
-		region.getStateNodes().add(is);
+		IParseResult ps = injector.getInstance(ConstraintLanguageParser.class).parse(ips);
 		
-		State state = f.createState();
-		state.setName("First State");
-		
-		region.getStateNodes().add(state);
-		
-		Transition trans = f.createTransition();
-		
-		trans.setSourceState(is);
-		trans.setTargetState(state);
-		
-		def.getTransitions().add(trans);
-		
-		ResourceSet rs = new ResourceSetImpl();
-		Resource r = rs.createResource(URI.createURI("gammastatechart"));
-		r.getContents().add(p);
-		
-		StatechartToUppaalTransformer transformer = new StatechartToUppaalTransformer(p);
-		SimpleEntry<NTA, G2UTrace> entry = transformer.execute();
-		
-		final String mdHome = Application.environment().getInstallRoot();
-		
-		UppaalModelSerializer.saveToXML(entry.getKey(), mdHome + "\\gammaOut", "something.xml");
-		
-		
-		String query = "A[] not deadlock";
-
-		
-		Process process;
-		try {
-			FileWriter fw = new FileWriter(new File(mdHome + "\\gammaOut\\query.q"));
-			fw.write(query);
-			fw.close();
-			
-			StringBuilder command = new StringBuilder();
-			// verifyta -t1 TestOneComponent.xml asd.q 
-			command.append("verifyta " + getParameters() + " \"" + mdHome + "\\gammaOut\\something.xml" + "\" \"" + mdHome + "\\gammaOut\\query.q" + "\"");
-			// Executing the command
-			
-			process = Runtime.getRuntime().exec(command.toString());
-			InputStream ips = process.getErrorStream();
-			Scanner scanner = new Scanner(ips);
-			scanner.forEachRemaining(System.out::println);
-		} catch (IOException e) {
-			e.printStackTrace();
+		for (INode node: ps.getSyntaxErrors()) {
+			System.err.println(node.getText());
 		}
 		
+		ps.getRootNode().getFirstChild();
+		
+		EObject object = ps.getRootASTElement();
+			
+		return;
 	}
 	
 	
