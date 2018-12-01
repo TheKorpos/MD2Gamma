@@ -1,0 +1,31 @@
+package hu.bme.mit.magicdraw2gamma.plugin.queries
+
+import "http://www.mit.bme.hu/gamma/statechart/Model"
+import "http://www.mit.bme.hu/gamma/statechart/Model/Interface"
+import "http://www.mit.bme.hu/gamma/statechart/Model/Composite"
+import "http://www.mit.bme.hu/gamma/constraint/Model"
+
+pattern EventByName(interfaceName: java String, eventName: java String, event: Event){
+	Interface.name(interface, interfaceName);
+	Interface.events(interface, eventDecl);
+	EventDeclaration.event(eventDecl, event);
+	Event.name(event, eventName);
+}
+
+pattern RegionWithEmptyName(parent: State, region: Region){
+	State.regions(parent, region);
+	Region.name(region, regionName);
+	check ("".equals(regionName));
+}
+
+pattern DeclarationsByName(statechartDefinition: StatechartDefinition, name: java String, declaration: Declaration){
+	StatechartDefinition.variableDeclarations(statechartDefinition, declaration);
+	Declaration.name(declaration, name);
+} or {
+	StatechartDefinition.parameterDeclarations(statechartDefinition, declaration);
+	Declaration.name(declaration, name);
+}
+
+pattern TimeoutDeclarationsWithEmptyName(declaration: TimeoutDeclaration){
+	TimeoutDeclaration(declaration);
+}

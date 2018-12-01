@@ -8,12 +8,10 @@ package hu.bme.mit.magicdraw2gamma.plugin.ui;
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
-import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
 
 import hu.bme.mit.magicdraw2gamma.plugin.ui.action.GammaToUppaalAction;
 import hu.bme.mit.magicdraw2gamma.plugin.ui.action.SetGammaWorkdirAction;
-import hu.bme.mit.magicdraw2gamma.plugin.ui.action.TestVerificationAction;
 import hu.bme.mit.magicdraw2gamma.plugin.ui.action.TransformToGammaAction;
 import hu.bme.mit.magicdraw2gamma.plugin.ui.action.UppaalVerificationAction;
 
@@ -51,7 +49,6 @@ public class MainMenuConfigurator implements AMConfigurator {
 		}
 		category.addAction(new SetGammaWorkdirAction("SET_GAMMA_WORKDIR", "Set Gamma working directory"));
 		category.addAction(new TransformToGammaAction("TRANSFORM", "Transform to Gamma"));
-		category.addAction(new TestVerificationAction("TESTACTION", "TEST"));
 		category.addAction(new GammaToUppaalAction("GAMMA_TO_UPPAAL", "Gamma to Uppaal"));
 		category.addAction(new UppaalVerificationAction("UPAAL_VERIF", "Uppaal Verification"));
 	}

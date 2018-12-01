@@ -1,34 +1,40 @@
 package hu.bme.mit.magicdraw2gamma.plugin.queries
 
 import "http://www.eclipse.org/emf/2002/Ecore"
+import "http://www.mit.bme.hu/gamma/statechart/Model/Composite" as CompositGamma
 import "http://www.mit.bme.hu/magicdraw2gamma/trace"
-import "http://www.mit.bme.hu/gamma/statechart/Model"
-import "http://www.mit.bme.hu/gamma/statechart/Model/Interface"
-import "http://www.mit.bme.hu/gamma/statechart/Model/Composite"
+import "http://www.mit.bme.hu/gamma/statechart/Model" as Gamma
+import "http://www.mit.bme.hu/gamma/statechart/Model/Interface" as GammaInterface
 import "http://www.mit.bme.hu/gamma/constraint/Model"
 import "http://www.nomagic.com/magicdraw/UML/2.5";
+
 
 pattern TraceRoot(root: MD2GTrace, trace: AbstractTrace){
 	MD2GTrace.traces(root, trace);
 }
 
-pattern StatechartTrace(source: StateMachine, target: StatechartDefinition, trace: Trace){
+pattern StatechartTrace(source: StateMachine, target: StatechartDefinition){
+	Trace.source(trace, source);
+	Trace.target(trace, target);
+}
+ 
+
+pattern RegionTrace(source: Region, target: Gamma::Region){
 	Trace.source(trace, source);
 	Trace.target(trace, target);
 }
 
-
-pattern RegionTrace(source: Region, target: EObject, trace: Trace){
-	Trace.source(trace, source);
-	Trace.target(trace, target);
-}
-
-pattern StateTrace(state: State, target: EObject, trace: Trace){
+pattern StateTrace(state: State, target: Gamma::State){
 	Trace.source(trace, state);
 	Trace.target(trace, target);
 }
 
-pattern VertexTrace(vertex: Vertex, target: EObject, trace: Trace){
+pattern VertexTrace(vertex: Vertex, target: Gamma::StateNode){
 	Trace.source(trace, vertex);
+	Trace.target(trace, target);
+}
+
+pattern TransitionTrace(transition: Transition, target: Gamma::Transition){
+	Trace.source(trace, transition);
 	Trace.target(trace, target);
 }

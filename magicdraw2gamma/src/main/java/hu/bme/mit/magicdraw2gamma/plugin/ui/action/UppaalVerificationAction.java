@@ -27,6 +27,8 @@ import hu.bme.mit.magicdraw2gamma.plugin.options.GammaProjectOptionsConfigurator
 
 public class UppaalVerificationAction extends MDAction {
 	
+	private static final long serialVersionUID = 20181120L;
+
 	public UppaalVerificationAction(String id, String name) {
 		super(id, name, null, null);
 		
@@ -37,20 +39,8 @@ public class UppaalVerificationAction extends MDAction {
 		//String queryString = JOptionPane.showInputDialog(Application.getInstance().getMainFrame(), "Upaal Query");
 		
 		JFileChooser filechooser = new JFileChooser();
-		filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
-		filechooser.setFileFilter(new FileFilter() {
-			
-			@Override
-			public String getDescription() {
-				return "Gamma files";
-			}
-			
-			@Override
-			public boolean accept(File f) {
-				return f.getName().endsWith(".gsm");
-			}
-		});
 		
 		Property prop = Application.getInstance().getProject().getOptions().getProperty(
 				ProjectOptions.PROJECT_GENERAL_PROPERTIES,
@@ -72,19 +62,15 @@ public class UppaalVerificationAction extends MDAction {
 		
 		if (state == JFileChooser.APPROVE_OPTION) {
 			
-			try {
-				
-				ResourceSet rs = new ResourceSetImpl();
-				Resource r = rs.getResource(URI.createFileURI(filechooser.getSelectedFile().getAbsolutePath()), true);
-				r.load(Collections.EMPTY_MAP);
-				
-				gammaVerificationApp.start(rs, filechooser.getSelectedFile(), false, workdir);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+		File selectedFile = filechooser.getSelectedFile();
+		String gsmPath = selectedFile.getAbsolutePath() + "/" + selectedFile.getName() + ".gsm";
+		ResourceSet rs = new ResourceSetImpl();
+		Resource r = rs.getResource(URI.createFileURI(gsmPath), true);
+		Resource interfaces = rs.getResource(URI.createFileURI(workdir + "/interfaces.gsm"), true);
+
 		
-			
+		gammaVerificationApp.start(rs, new File(gsmPath), false, workdir);			
 			
 			/*FileWriter fw = new FileWriter(new File(workdir + "\\temp.q"));
 			fw.write(queryString);
@@ -106,35 +92,4 @@ public class UppaalVerificationAction extends MDAction {
 		
 	}
 	
-	private String getParameters() {
-		return getSearchOrder("Breadth First") + " " + getDiagnosticTrace("Some");
-	}
-	
-	private String getSearchOrder(String type) {
-		switch (type) {
-		case "Breadth First":
-			// BFS
-			return "-o 0";
-		case "Depth First":
-			// DFS
-			return "-o 1";
-		default: //"Random Depth First":
-			// Random DFS
-			return "-o 2";
-		}
-	}
-	
-	private String getDiagnosticTrace(String type) {
-		switch (type) {
-		case "Some":
-			// Some trace
-			return "-t0";
-		case "Shortest":
-			// Shortest trace
-			return "-t1";
-		default:// "Fastest":
-			// Fastest trace
-			return "-t2";
-		}
-	}
 }

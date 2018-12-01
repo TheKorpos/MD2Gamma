@@ -26,10 +26,8 @@ import javax.swing.SwingWorker;
 //import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import org.eclipse.viatra.query.runtime.emf.EMFScope;
 import org.eclipse.viatra.query.runtime.exception.ViatraQueryException;
@@ -46,7 +44,6 @@ import hu.bme.mit.gamma.statechart.model.State;
 //import hu.bme.mit.gamma.trace.language.ui.serializer.TraceLanguageSerializer;
 import hu.bme.mit.gamma.trace.model.ExecutionTrace;
 import hu.bme.mit.gamma.uppaal.backannotation.StringTraceBackAnnotator;
-import hu.bme.mit.gamma.uppaal.backannotation.TestGenerator;
 
 public class Controller {
 
@@ -514,6 +511,7 @@ public class Controller {
 					// No back annotation of empty lines
 					return handleEmptyLines(uppaalQuery);
 				}
+				//we don't use this feature yet so we basically return here always
 				if (!needsBackAnnotation) {
 					// If back-annotation is not needed, we return
 					return handleEmptyLines(uppaalQuery).opposite();
@@ -523,11 +521,12 @@ public class Controller {
 				logger.log(Level.INFO, "Resource set content for string trace back-annotation: " + traceabilitySet);
 				StringTraceBackAnnotator backAnnotator = new StringTraceBackAnnotator(traceabilitySet, trace);
 				ExecutionTrace traceModel = backAnnotator.execute();
-				Entry<String, Integer> fileNameAndId = getFileName("get"); // File extension could be gtr or get		
+				Entry<String, Integer> fileNameAndId = getFileName("get"); // File extension could be gtr or get
+				//This is changed in Gamma, but not getting used anyway
 				//fileNameAndId = saveModel(traceModel, fileNameAndId);
 				// Have to be the SAME resource set as before (traceabilitySet) otherwise the trace model contains references to dead objects
-				TestGenerator testGenerator = new TestGenerator("", traceabilitySet, traceModel, fileNameAndId.getValue());
-				testGenerator.execute();
+				//new TestGenerator().execute(file.getAbsolutePath(), resourceSet, backAnnotatedTrace, fileNameAndId.getValue());
+				//testGenerator.execute();
 				logger.log(Level.INFO, "Test generation has been finished.");
 				// There is a generated trace, so the result is the opposite of the empty trace
 				return handleEmptyLines(uppaalQuery).opposite();

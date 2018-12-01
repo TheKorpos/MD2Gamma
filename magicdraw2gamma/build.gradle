@@ -86,6 +86,12 @@ dependencies {
     compile fileTree(dir: 'build/dependency-cache/extracted', include: ['lib/**/*.jar', 'plugins/**/*.jar'], exclude: ([ classpathLibraries, ['plugins/com.nomagic.collaborator.publisher/**/*.jar', 'plugins/com.nomagic.magicdraw.emfuml2xmi*/**/*.jar'] ]).flatten())
     compile fileTree(dir: 'lib', include: ['**/*.jar'])
     
+    compile (project(':hu.bme.mit.magicdraw2gamma.trace.model')){
+    	exclude module:  'org.eclipse.emf.ecore'
+    	exclude module:  'org.eclipse.emf.common'
+    }
+    
+    
    	
  }
 

@@ -48,20 +48,9 @@ public class GammaToUppaalAction extends MDAction{
 		String workdirPath = prop.getValueStringRepresentation();
 		
 		JFileChooser filechooser = new JFileChooser();
-		filechooser.setFileSelectionMode(JFileChooser.FILES_ONLY);	
+		filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);	
 		filechooser.setMultiSelectionEnabled(false);
-		filechooser.setFileFilter(new FileFilter() {
-			
-			@Override
-			public String getDescription() {
-				return "Gamma files";
-			}
-			
-			@Override
-			public boolean accept(File f) {
-				return f.getName().endsWith(".gsm");
-			}
-		});
+
 		
 		if (!"".equals(prop.getValueStringRepresentation())) {
 			filechooser.setCurrentDirectory(new File(prop.getValueStringRepresentation()));
@@ -72,13 +61,14 @@ public class GammaToUppaalAction extends MDAction{
 		try {
 			if (state == JFileChooser.APPROVE_OPTION) {
 				File selected = filechooser.getSelectedFile();
-				String filePath = selected.getAbsolutePath();
+				String filePath = selected.getAbsolutePath() + "/" + selected.getName() + ".gsm";
 				
 				
-				String name = selected.getAbsolutePath().substring(filePath.lastIndexOf(File.separator) + 1, filePath.lastIndexOf("."));
+				String name = selected.getName();//selected.getAbsolutePath().substring(filePath.lastIndexOf(File.separator) + 1, filePath.lastIndexOf("."));
 				
 				ResourceSet rs = new ResourceSetImpl();
-				Resource r = rs.getResource(URI.createFileURI(selected.getPath()), true);
+				Resource r = rs.getResource(URI.createFileURI(filePath), true);
+				Resource interfaces = rs.getResource(URI.createFileURI(workdirPath + "/interfaces.gsm"), true);
 				
 				Optional<Package> optO = r.getContents().stream().filter(Package.class::isInstance).map(Package.class::cast).findFirst();
 				
@@ -87,15 +77,15 @@ public class GammaToUppaalAction extends MDAction{
 					StatechartToUppaalTransformer transformer = new StatechartToUppaalTransformer(p);
 					SimpleEntry<NTA, G2UTrace> entry = transformer.execute();
 					
-					Resource nta = rs.createResource(URI.createFileURI(workdirPath + "/" + name + ".nta"));
+					Resource nta = rs.createResource(URI.createFileURI(selected.getAbsolutePath() + "/" + selected.getName() + ".nta"));
 					nta.getContents().add(entry.getKey());
 					nta.save(Collections.EMPTY_MAP);
 					
-					Resource trace = rs.createResource(URI.createFileURI(workdirPath + "/./" + name + ".g2u"));
+					Resource trace = rs.createResource(URI.createFileURI(selected.getAbsolutePath() + "/./" + selected.getName() + ".g2u"));
 					trace.getContents().add(entry.getValue());
 					trace.save(Collections.EMPTY_MAP);
 					
-					UppaalModelSerializer.saveToXML(entry.getKey(), workdirPath , name +".xml");
+					UppaalModelSerializer.saveToXML(entry.getKey(), selected.getPath() , name +".xml");
 				}
 			
 			}	

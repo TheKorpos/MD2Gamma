@@ -3,15 +3,8 @@ package hu.bme.mit.magicdraw2gamma.plugin.queries
 import "http://www.nomagic.com/magicdraw/UML/2.5.0";
  
 
-pattern stateMachines(stateMachine: StateMachine, name: java String){
+pattern StateMachines(stateMachine: StateMachine, name: java String){
 	StateMachine.name(stateMachine, name); 
-}
-
-pattern StatechartDefinitions(statechartDefinition: Class, stateMachine: StateMachine){
-	Class.appliedStereotypeInstance.classifier.name(statechartDefinition, "Block");
-	Class.ownedBehavior(statechartDefinition, stateMachine);
-	Class.name(statechartDefinition, className);
-	StateMachine.name(stateMachine, className);
 }
 
 pattern RegionsInRegion(container: Region, region: Region){
@@ -26,9 +19,23 @@ pattern RegionsInStatemachine(stateMachine: StateMachine, subregion: Region){
 	StateMachine.region(stateMachine, region);
 }
 
+pattern StatesInStatemachine(stateMachine: StateMachine, state: State){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.state(region, state);
+}
+
 pattern TranisitonsInStateMachine(stateMachine: StateMachine, transition: Transition){
 	find RegionsInStatemachine(stateMachine, region);
 	Region.transition(region, transition);
+}
+
+pattern SignalsInStateMachine(stateMachine: StateMachine, transition: Transition, signal: Signal){
+	/*find TranisitonsInStateMachine(stateMachine, transition);
+	Transition.trigger.event(transition, event);
+	SignalEvent.signal(event, signal);*/
+	StateMachine.event(stateMachine, event);
+	Transition.trigger.event(transition, event);
+	SignalEvent.signal(event, signal);
 }
 
 pattern MainRegions(stateMachine: StateMachine, region: Region){
@@ -54,8 +61,6 @@ pattern FinalStates(containingRegion: Region, finalState: FinalState){
 	Region.subvertex(containingRegion, finalState);
 }
 
-
-
 pattern RegionsInStates(containingState: State, region: Region){
 	State.region(containingState, region);
 }
@@ -71,14 +76,14 @@ private pattern InnerRegion(region: Region, innerRegion: Region){
 	find RegionsInStates(state, innerRegion);
 }
 
-pattern RegionsInStatechart(stmt: Class, region: Region){
+pattern RegionsInStatechart(stmt: StateMachine, region: Region){
 	find MainRegions(stmt, region);
 } or {
 	find MainRegions(stmt, outerRegion);
 	find InnerRegion+(outerRegion, region);
 }
 
-pattern OwnedTransitions(stmt: Class, transition: Transition){
+pattern OwnedTransitions(stmt: StateMachine, transition: Transition){
 	find RegionsInStatechart(stmt, region);
 	Region.transition(region, transition);
 }
@@ -92,9 +97,44 @@ pattern Signals(trigger: Trigger, signal: Signal){
 	SignalEvent.signal(signalEvent, signal);
 }
 
-pattern Guard(transition: Transition, opaqueExpression: OpaqueExpression){
+pattern GuardsInStateMachine(stateMachine: StateMachine, transition: Transition, opaqueExpression: OpaqueExpression, body: java String){
+	find TranisitonsInStateMachine(stateMachine, transition);
 	Transition.guard(transition, guard);
 	Constraint.specification(guard, opaqueExpression);
+	OpaqueExpression.body(opaqueExpression, body);
+	check(!"".equals(body));
+}
+
+pattern TimeEventsInStateMachine(stateMachine: StateMachine, transition: Transition, event: TimeEvent){
+	StateMachine.event(stateMachine, event);
+	Transition.trigger(transition, trigger);
+	Trigger.event(trigger, event);
+}
+
+pattern PropertiesInStateMachine(stateMachine: StateMachine, prop: Property){
+	StateMachine.ownedAttribute(stateMachine, prop);
+}
+
+pattern ActionsOnTransitions(expression: FunctionBehavior, transition: Transition, statemachine: StateMachine, body: java String){
+	Transition.effect(transition, expression);
+	find TranisitonsInStateMachine(statemachine, transition);
+	FunctionBehavior.body(expression, body);
+	check(!"".equals(body));
+}
+
+pattern EntryActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior){
+	State.entry(state, expression);
+	find StatesInStatemachine(stateMachine, state);
+}
+
+pattern ExitActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior){
+	State.exit(state, expression);
+	find StatesInStatemachine(stateMachine, state);
+}
+
+pattern DoActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior){
+	State.doActivity(state, expression);
+	find StatesInStatemachine(stateMachine, state);
 }
 
 /*pattern PortsOnBlock(block: Class, port: Port){

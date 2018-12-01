@@ -1,0 +1,33 @@
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'distribution'
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies{
+	compile group: 'org.eclipse.emf', name: 'org.eclipse.emf.ecore', version: '2.10.1'
+	compile group: 'org.eclipse.emf', name: 'org.eclipse.emf.common', version: '2.10.1'
+}
+
+
+sourceSets{
+	main{
+		java{
+			srcDir 'src-gen'
+		}
+	}
+}
+
+javadoc {
+    options.addStringOption("sourcepath", "")
+    options.tags = [ "generated", "noreference", "model", "ordered"]
+}
+
+
+
+
