@@ -47,10 +47,10 @@ public class MainMenuConfigurator implements AMConfigurator {
 			category.setNested(true);
 			manager.addCategory(category);
 		}
-		category.addAction(new SetGammaWorkdirAction("SET_GAMMA_WORKDIR", "Set Gamma working directory"));
-		category.addAction(new TransformToGammaAction("TRANSFORM", "Transform to Gamma"));
-		category.addAction(new GammaToUppaalAction("GAMMA_TO_UPPAAL", "Gamma to Uppaal"));
-		category.addAction(new UppaalVerificationAction("UPAAL_VERIF", "Uppaal Verification"));
+		category.addAction(new SetGammaWorkdirAction("SET_GAMMA_WORKDIR", "Setup Gamma Workspace"));
+		category.addAction(new TransformToGammaAction("TRANSFORM", "Perform Gamma Transformation"));
+		category.addAction(new GammaToUppaalAction("GAMMA_TO_UPPAAL", "Generate formal model"));
+		category.addAction(new UppaalVerificationAction("UPAAL_VERIF", "Open Query Generator"));
 	}
 
 	@Override

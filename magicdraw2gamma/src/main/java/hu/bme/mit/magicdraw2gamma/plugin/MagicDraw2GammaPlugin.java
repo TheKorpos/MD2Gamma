@@ -14,6 +14,7 @@ import com.nomagic.magicdraw.ui.MagicDrawProgressStatusRunner;
 import com.nomagic.task.RunnableWithProgress;
 
 import hu.bme.mit.magicdraw2gamma.plugin.options.GammaProjectOptionsConfigurator;
+import hu.bme.mit.magicdraw2gamma.plugin.queries.SearchQueries;
 import hu.bme.mit.magicdraw2gamma.plugin.trafos.InterfaceTransformer;
 import hu.bme.mit.magicdraw2gamma.plugin.trafos.MagicdrawToGammaTransformer;
 import hu.bme.mit.magicdraw2gamma.plugin.trafos.TransformationServiceProvider;
@@ -37,12 +38,8 @@ public class MagicDraw2GammaPlugin extends Plugin {
 					progress.setMin(0);
 					progress.setMax(1);
 					ViatraQueryEngine engine = ViatraQueryAdapter.getOrCreateAdapter(project).getEngine();
-					
-					/*TransformationServiceProvider.getInstance()
-						.registerMDTOGammaTransformer(new MagicdrawToGammaTransformer(engine));
-					TransformationServiceProvider.getInstance()
-						.registerInterfaceTransformer(new InterfaceTransformer(engine));*/
-	
+					//adding these so the firt transformation takes less time
+					SearchQueries.instance().prepare(engine);
 					
 					progress.setCurrent(1);
 					

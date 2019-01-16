@@ -42,7 +42,7 @@ public class ActionParser {
 	}
 	
 	public Expression parseGuard(ViatraQueryEngine engine, StatechartDefinition statechartDefinition, String s) throws Exception {
-		ParserRule rule = injector.getInstance(StatechartLanguageGrammarAccess.class).getAndExpressionRule();
+		ParserRule rule = injector.getInstance(StatechartLanguageGrammarAccess.class).getExpressionRule();
 		IParseResult result = injector.getInstance(StatechartLanguageParser.class).parse(rule, new StringReader(s));
 		
 		for (INode node: result.getSyntaxErrors()) {

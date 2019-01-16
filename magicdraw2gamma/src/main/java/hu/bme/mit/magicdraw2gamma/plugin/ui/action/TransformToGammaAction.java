@@ -66,6 +66,8 @@ public class TransformToGammaAction extends MDAction {
 				SessionManager.getInstance().createSession(project, "Gamma Transformation");
 			}*/
 			
+			long start = System.currentTimeMillis();
+			
 			//loading packages
 			StatechartModelPackage.eINSTANCE.getNsURI();
 			TracePackage.eINSTANCE.getNsURI();
@@ -164,6 +166,7 @@ public class TransformToGammaAction extends MDAction {
 				}
 				
 				
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
@@ -195,6 +198,8 @@ public class TransformToGammaAction extends MDAction {
 			
 			
 			//SessionManager.getInstance().closeSession(project);
+			
+			System.out.println(System.currentTimeMillis() - start);
 			
 		}
 	

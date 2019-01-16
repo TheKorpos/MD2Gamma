@@ -4,7 +4,7 @@ import "http://www.nomagic.com/magicdraw/UML/2.5.0";
  
 
 pattern StateMachines(stateMachine: StateMachine, name: java String){
-	StateMachine.name(stateMachine, name); 
+	StateMachine.name(stateMachine, name);
 }
 
 pattern RegionsInRegion(container: Region, region: Region){
@@ -136,6 +136,8 @@ pattern DoActions(stateMachine: StateMachine, state: State, expression: Function
 	State.doActivity(state, expression);
 	find StatesInStatemachine(stateMachine, state);
 }
+
+
 
 /*pattern PortsOnBlock(block: Class, port: Port){
 	Class.ownedAttribute(block, port);
