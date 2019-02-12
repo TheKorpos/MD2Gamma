@@ -1,6 +1,6 @@
 package hu.bme.mit.magicdraw2gamma.plugin.queries
 
-import "http://www.nomagic.com/magicdraw/UML/2.5.0";
+import "http://www.nomagic.com/magicdraw/UML/2.5.1"
  
 
 pattern StateMachines(stateMachine: StateMachine, name: java String){
@@ -122,9 +122,11 @@ pattern ActionsOnTransitions(expression: FunctionBehavior, transition: Transitio
 	check(!"".equals(body));
 }
 
-pattern EntryActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior){
+pattern EntryActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior, body: java String){
 	State.entry(state, expression);
 	find StatesInStatemachine(stateMachine, state);
+	FunctionBehavior.body(expression, body);
+	check(!"".equals(body));
 }
 
 pattern ExitActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior){

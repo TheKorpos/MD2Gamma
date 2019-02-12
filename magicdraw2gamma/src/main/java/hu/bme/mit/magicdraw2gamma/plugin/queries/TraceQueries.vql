@@ -6,7 +6,7 @@ import "http://www.mit.bme.hu/magicdraw2gamma/trace"
 import "http://www.mit.bme.hu/gamma/statechart/Model" as Gamma
 import "http://www.mit.bme.hu/gamma/statechart/Model/Interface" as GammaInterface
 import "http://www.mit.bme.hu/gamma/constraint/Model"
-import "http://www.nomagic.com/magicdraw/UML/2.5";
+import "http://www.nomagic.com/magicdraw/UML/2.5.1";
 
 
 pattern TraceRoot(root: MD2GTrace, trace: AbstractTrace){
