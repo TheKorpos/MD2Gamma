@@ -1,7 +1,6 @@
 package hu.bme.mit.magicdraw2gamma.plugin.queries
 
 import "http://www.nomagic.com/magicdraw/UML/2.5.1"
- 
 
 pattern StateMachines(stateMachine: StateMachine, name: java String){
 	StateMachine.name(stateMachine, name);

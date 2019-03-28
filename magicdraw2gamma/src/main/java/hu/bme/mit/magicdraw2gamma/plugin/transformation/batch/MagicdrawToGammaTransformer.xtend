@@ -1,20 +1,27 @@
-package hu.bme.mit.magicdraw2gamma.plugin.trafos
+package hu.bme.mit.magicdraw2gamma.plugin.transformation.batch
 
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralString
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.PseudostateKindEnum
+import hu.bme.mit.gamma.constraint.model.ConstraintModelFactory
+import hu.bme.mit.gamma.constraint.model.TypeDefinition
 import hu.bme.mit.gamma.statechart.model.Region
 import hu.bme.mit.gamma.statechart.model.State
 import hu.bme.mit.gamma.statechart.model.StateNode
 import hu.bme.mit.gamma.statechart.model.StatechartDefinition
 import hu.bme.mit.gamma.statechart.model.StatechartModelFactory
+import hu.bme.mit.gamma.statechart.model.TimeSpecification
 import hu.bme.mit.gamma.statechart.model.Transition
-import hu.bme.mit.magicdraw2gamma.plugin.parsing.SimpleGuardParser
+import hu.bme.mit.magicdraw2gamma.plugin.parsing.ActionParser
+import hu.bme.mit.magicdraw2gamma.plugin.queries.EventByName
 import hu.bme.mit.magicdraw2gamma.plugin.queries.GuardsInStateMachine
 import hu.bme.mit.magicdraw2gamma.plugin.queries.MainRegions
 import hu.bme.mit.magicdraw2gamma.plugin.queries.PseudoStates
 import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionsInStates
+import hu.bme.mit.magicdraw2gamma.plugin.queries.SearchQueries
 import hu.bme.mit.magicdraw2gamma.plugin.queries.SignalsInStateMachine
 import hu.bme.mit.magicdraw2gamma.plugin.queries.StatesInRegions
 import hu.bme.mit.magicdraw2gamma.plugin.queries.TranisitonsInStateMachine
+import hu.bme.mit.magicdraw2gamma.plugin.trafos.Tracer
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.MD2GTrace
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
@@ -23,14 +30,6 @@ import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleMod
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRuleFactory
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
-import hu.bme.mit.magicdraw2gamma.plugin.queries.SearchQueries
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralString
-import hu.bme.mit.gamma.statechart.model.TimeSpecification
-import hu.bme.mit.gamma.constraint.model.ConstraintModelFactory
-import hu.bme.mit.magicdraw2gamma.plugin.queries.EventByName
-import hu.bme.mit.magicdraw2gamma.plugin.parsing.ActionParser
-import hu.bme.mit.gamma.constraint.model.TypeDefinition
-import hu.bme.mit.gamma.statechart.model.Action
 
 class MagicdrawToGammaTransformer {
 

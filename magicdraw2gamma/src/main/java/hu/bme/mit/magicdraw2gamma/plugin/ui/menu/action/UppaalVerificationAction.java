@@ -1,4 +1,4 @@
-package hu.bme.mit.magicdraw2gamma.plugin.ui.action;
+package hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action;
 
 import java.awt.event.ActionEvent;
 import java.io.File;

@@ -1,9 +1,11 @@
-package hu.bme.mit.magicdraw2gamma.plugin.ui.action;
+package hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
 
 import javax.swing.JFileChooser;
+
+import org.eclipse.emf.ecore.resource.Resource;
 
 import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.core.Application;
@@ -19,6 +21,10 @@ public class SetGammaWorkdirAction extends MDAction{
 	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		
+		Resource resource = Application.getInstance().getProject().getPrimaryModel().eResource();
+		
+		
 		JFileChooser filechooser = new JFileChooser();
 		filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		

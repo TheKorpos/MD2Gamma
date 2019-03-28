@@ -59,7 +59,6 @@ class InterfaceTransformer {
     }
     
  
-
     private def createTransformation() {
         //Create VIATRA model manipulations
         this.manipulation = new SimpleModelManipulations(engine)

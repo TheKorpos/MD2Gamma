@@ -1,0 +1,23 @@
+package hu.bme.mit.magicdraw2gamma.plugin.profilehelper.queries
+
+import "http://www.nomagic.com/magicdraw/UML/2.5.1"
+
+pattern GammaProfileElements(element: NamedElement){
+	Profile.name(profile, "Gamma");
+	Package.packagedElement+(profile, element);
+} 
+
+pattern GammaStereotypeByName(name: java String, stereotype: Stereotype){
+	find GammaProfileElements(stereotype);
+	Stereotype.name(stereotype, name);
+}
+
+pattern StatechartDefinitions(class: Class){
+	Class.appliedStereotypeInstance.classifier(class, stereotype);
+	find  GammaStereotypeByName("StatechartDefinition", stereotype);
+}
+
+pattern SuperClasses(class: Classifier, superClass: Classifier){
+	Classifier.generalization.general+(class, superClass);
+	class != superClass;
+}

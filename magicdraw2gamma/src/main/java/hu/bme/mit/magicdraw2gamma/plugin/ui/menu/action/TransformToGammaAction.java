@@ -1,4 +1,4 @@
-package hu.bme.mit.magicdraw2gamma.plugin.ui.action;
+package hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action;
 
 import java.awt.event.ActionEvent;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.core.options.ProjectOptions;
-import com.nomagic.magicdraw.openapi.uml.SessionManager;
+import com.nomagic.magicdraw.plugins.Plugin;
 
 import hu.bme.mit.gamma.statechart.model.Package;
 import hu.bme.mit.gamma.statechart.model.Port;
@@ -36,8 +36,7 @@ import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionWithEmptyName;
 import hu.bme.mit.magicdraw2gamma.plugin.queries.StateMachines;
 import hu.bme.mit.magicdraw2gamma.plugin.queries.TimeoutDeclarationsWithEmptyName;
 import hu.bme.mit.magicdraw2gamma.plugin.trafos.InterfaceTransformer;
-import hu.bme.mit.magicdraw2gamma.plugin.trafos.MagicdrawToGammaTransformer;
-import hu.bme.mit.magicdraw2gamma.plugin.trafos.TransformationServiceProvider;
+import hu.bme.mit.magicdraw2gamma.plugin.transformation.batch.MagicdrawToGammaTransformer;
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.MD2GTrace;
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.Trace;
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.TraceFactory;
@@ -71,6 +70,7 @@ public class TransformToGammaAction extends MDAction {
 			//loading packages
 			StatechartModelPackage.eINSTANCE.getNsURI();
 			TracePackage.eINSTANCE.getNsURI();
+		
 			
 			final String saveDir = Application.getInstance().getProject()
 					.getOptions().getProperty(ProjectOptions.PROJECT_GENERAL_PROPERTIES, GammaProjectOptionsConfigurator.GAMMA_WORK_DIR_ID).getValueStringRepresentation();

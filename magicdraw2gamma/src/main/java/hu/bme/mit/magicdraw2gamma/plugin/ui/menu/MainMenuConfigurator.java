@@ -3,17 +3,18 @@
  * Copyright (c) 2002 NoMagic, Inc. All Rights Reserved.
  */
 
-package hu.bme.mit.magicdraw2gamma.plugin.ui;
+package hu.bme.mit.magicdraw2gamma.plugin.ui.menu;
 
 import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
 import com.nomagic.magicdraw.actions.MDActionsCategory;
 
-import hu.bme.mit.magicdraw2gamma.plugin.ui.action.GammaToUppaalAction;
-import hu.bme.mit.magicdraw2gamma.plugin.ui.action.SetGammaWorkdirAction;
-import hu.bme.mit.magicdraw2gamma.plugin.ui.action.TransformToGammaAction;
-import hu.bme.mit.magicdraw2gamma.plugin.ui.action.UppaalVerificationAction;
+import hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action.GammaToUppaalAction;
+import hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action.OpenGammaProfileAction;
+import hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action.SetGammaWorkdirAction;
+import hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action.TransformToGammaAction;
+import hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action.UppaalVerificationAction;
 
 public class MainMenuConfigurator implements AMConfigurator {
 
@@ -47,6 +48,8 @@ public class MainMenuConfigurator implements AMConfigurator {
 			category.setNested(true);
 			manager.addCategory(category);
 		}
+		
+		category.addAction(new OpenGammaProfileAction("OPEN_GAMMA_PROFILE", "Import Gamma Profile"));
 		category.addAction(new SetGammaWorkdirAction("SET_GAMMA_WORKDIR", "Setup Gamma Workspace"));
 		category.addAction(new TransformToGammaAction("TRANSFORM", "Perform Gamma Transformation"));
 		category.addAction(new GammaToUppaalAction("GAMMA_TO_UPPAAL", "Generate formal model"));

@@ -120,6 +120,7 @@ task extractDependencies {
         }
     }
 }
+
 compileJava.dependsOn extractDependencies
 
 processResources {
@@ -277,7 +278,7 @@ def platformConfigSetting =
 
 tasks.withType(JavaExec) {
 	doFirst {
-        classpath fileTree(dir: 'build/install', include: ['lib/**/*.jar'])
+        classpath fileTree(dir: 'build/install', include: ['lib/**/*.jar'], exclude: ['lib/**/com.typesafe.akka.*.jar', 'lib/**/org.scala.*.jar', 'lib/**/com.nomagic.esi.*.jar'])
     }
 
 	workingDir 'build/install'
@@ -298,8 +299,13 @@ runJava.dependsOn installDist
 task debugJava(type: JavaExec) {
     jvmArgs += ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099', '-Dcom.sun.management.jmxremote.port=1099', '-Dcom.sun.management.jmxremote.authenticate=false', '-Dcom.sun.management.jmxremote.ssl=false']
 }
+
+
 debugJava.dependsOn installDist
 
+task instantDebugJava(type: JavaExec) {
+    jvmArgs += ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099', '-Dcom.sun.management.jmxremote.port=1099', '-Dcom.sun.management.jmxremote.authenticate=false', '-Dcom.sun.management.jmxremote.ssl=false']
+}
 
 task preparePluginDistributions {
 	configurations.preCompile.resolvedConfiguration.resolvedArtifacts.each { artifact ->
