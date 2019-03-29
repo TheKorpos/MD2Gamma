@@ -20,7 +20,7 @@ pattern RegionsInStatemachine(stateMachine: StateMachine, subregion: Region){
 
 pattern StatesInStatemachine(stateMachine: StateMachine, state: State){
 	find RegionsInStatemachine(stateMachine, region);
-	Region.state(region, state);
+	Region.subvertex(region, state);
 }
 
 pattern TranisitonsInStateMachine(stateMachine: StateMachine, transition: Transition){

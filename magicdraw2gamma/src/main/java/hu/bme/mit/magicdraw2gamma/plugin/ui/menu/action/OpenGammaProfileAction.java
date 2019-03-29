@@ -44,7 +44,7 @@ public class OpenGammaProfileAction extends MDAction {
 		
 		ViatraQueryEngine engine = ViatraQueryAdapter.getOrCreateAdapter(project).getEngine();
 		
-		Test test = new Test(engine, new ResourceSetImpl());
+		//Test test = new Test(engine, new ResourceSetImpl());
 		
 	}
 

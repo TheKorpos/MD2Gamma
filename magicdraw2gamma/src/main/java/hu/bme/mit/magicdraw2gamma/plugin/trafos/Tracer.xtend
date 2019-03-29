@@ -15,15 +15,20 @@ import hu.bme.mit.magicdraw2gamma.plugin.queries.TransitionTrace
 import java.util.Optional
 import hu.bme.mit.magicdraw2gamma.plugin.queries.StateTrace
 import java.util.Collection
+import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.State
+import hu.bme.mit.magicdraw2gamma.trace.model.trace.TracePackage
 
 class Tracer {
 	
 	val ViatraQueryEngine engine
 	val MD2GTrace root;
 	
+	extension TracePackage tracePackage = TracePackage.eINSTANCE
+	
 	new (MD2GTrace root, ViatraQueryEngine engine){
 		this.engine = engine
 		this.root = root;
+		nsURI
 	}
 	
 	public def createTrace(EObject source, EObject target){
@@ -77,10 +82,26 @@ class Tracer {
 	}
 	
 	
-	public def trace(Vertex vertex){
+	 def trace(Vertex vertex){
 		val matcher = VertexTrace.instance.getMatcher(engine)
 		val topMatch = matcher.getAllMatches(vertex, null).head
 		if (topMatch !== null) return Optional.of(topMatch.target);
 		return Optional.empty
-	}	
+	}
+	
+	def pairs(StateMachine stateMachine){
+		StatechartTrace.Matcher.on(engine).getAllValuesOftarget(stateMachine)
+	}
+	
+	def pairs(Vertex state){
+		VertexTrace.Matcher.on(engine).getAllValuesOftarget(state)
+	}
+	
+	def pairs(Region region){
+		RegionTrace.Matcher.on(engine).getAllValuesOftarget(region)
+	}
+	
+	def pairs(Transition transition){
+		TransitionTrace.Matcher.on(engine).getAllValuesOftarget(transition)
+	}
 }

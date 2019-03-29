@@ -134,48 +134,48 @@ public class TransformToGammaAction extends MDAction {
 			AdvancedViatraQueryEngine commonEngine = AdvancedViatraQueryEngine.createUnmanagedEngine(new EMFScope(scopeSet, options));
 			
 			InterfaceTransformer it = new InterfaceTransformer(engine);
-			MagicdrawToGammaTransformer st = new MagicdrawToGammaTransformer(engine);
-			
-			try {
-				
-				it.execute(commonEngine, traceRoot, interfacePackage);	
-				st.execute(commonEngine, traceRoot);
-				
-				RegionWithEmptyName.instance().getMatcher(commonEngine).getAllMatches().stream().map(m -> m.getParent()).forEach(state -> {
-					List<Region> regions = state.getRegions().stream().filter(region -> "".equals(region.getName())).collect(Collectors.toList());
-					int i = 1;
-					for (Region r: regions) {
-						r.setName(state.getName() + "_" + i++);
-					}
-				});
-				
-				int i = 0;
-				List<TimeoutDeclaration> tDeclarations = TimeoutDeclarationsWithEmptyName.instance().getMatcher(commonEngine).getAllMatches().stream()
-					.map(m -> m.getDeclaration()).collect(Collectors.toList());
-				for (TimeoutDeclaration decl: tDeclarations) {
-					decl.setName("GeneratedTimeout"+i++);
-				}
-				
-				
-				try {
-					for (Resource res: createdResources) {
-						res.save(null);
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				createdResources.forEach(Resource::unload);
-				createdResources.clear();
-				it.dispose();
-				st.dispose();
-				commonEngine.dispose();
-			}
+//			MagicdrawToGammaTransformer st = new MagicdrawToGammaTransformer(engine);
+//			
+//			try {
+//				
+//				it.execute(commonEngine, traceRoot, interfacePackage);	
+//				st.execute(commonEngine, traceRoot);
+//				
+//				RegionWithEmptyName.instance().getMatcher(commonEngine).getAllMatches().stream().map(m -> m.getParent()).forEach(state -> {
+//					List<Region> regions = state.getRegions().stream().filter(region -> "".equals(region.getName())).collect(Collectors.toList());
+//					int i = 1;
+//					for (Region r: regions) {
+//						r.setName(state.getName() + "_" + i++);
+//					}
+//				});
+//				
+//				int i = 0;
+//				List<TimeoutDeclaration> tDeclarations = TimeoutDeclarationsWithEmptyName.instance().getMatcher(commonEngine).getAllMatches().stream()
+//					.map(m -> m.getDeclaration()).collect(Collectors.toList());
+//				for (TimeoutDeclaration decl: tDeclarations) {
+//					decl.setName("GeneratedTimeout"+i++);
+//				}
+//				
+//				
+//				try {
+//					for (Resource res: createdResources) {
+//						res.save(null);
+//					}
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				
+//				
+//				
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			} finally {
+//				createdResources.forEach(Resource::unload);
+//				createdResources.clear();
+//				it.dispose();
+//				st.dispose();
+//				commonEngine.dispose();
+//			}
 			//Execute interface transformation first to get events for later use
 			
 			//TransformationServiceProvider.getInstance().getInterfaceTransformer().execute(commonEngine, traceRoot, interfacePackage);

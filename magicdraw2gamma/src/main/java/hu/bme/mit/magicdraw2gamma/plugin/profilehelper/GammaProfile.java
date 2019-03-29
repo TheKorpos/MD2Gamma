@@ -71,5 +71,9 @@ public class GammaProfile {
 				.stream()
 				.map(m -> m.getSuperClass()).collect(Collectors.toList());
 	}
+
+	public Classifier gammaStatechartDefinitionStereotype() throws Exception {
+		return locateByStereotypeName("StatechartDefinition");
+	}
 	
 }

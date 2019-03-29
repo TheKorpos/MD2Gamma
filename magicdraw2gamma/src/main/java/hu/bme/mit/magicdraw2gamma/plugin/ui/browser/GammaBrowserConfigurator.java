@@ -12,6 +12,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
 
 import hu.bme.mit.magicdraw2gamma.plugin.profilehelper.GammaProfile;
 import hu.bme.mit.magicdraw2gamma.plugin.ui.browser.action.PerformCheckAction;
+import hu.bme.mit.magicdraw2gamma.plugin.ui.browser.action.TransformSingleStatemachineAction;
 
 
 
@@ -33,17 +34,23 @@ public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 			
 			if (userObject instanceof Class) {
 				Class selectedClass = (Class) userObject;
-				
-				try {	
-					Classifier gammaCheckStereotype = GammaProfile.getInstance().getGammaCheckStereotype();
-					InstanceSpecification instancespec = selectedClass.getAppliedStereotypeInstance();
-					
-					if (instancespec.getClassifier().contains(gammaCheckStereotype)) {
-						category.addAction(new PerformCheckAction("GAMMA_BROWSER_CHECK", "Perform check"));
-					}
-					
-				} catch (Exception e) {
-					e.printStackTrace();
+				if (selectedClass.getAppliedStereotypeInstance() != null) {
+					try {	
+						Classifier gammaCheckStereotype = GammaProfile.getInstance().getGammaCheckStereotype();
+						Classifier gammaStatechartDefinitionStereotype = GammaProfile.getInstance().gammaStatechartDefinitionStereotype();
+						InstanceSpecification instancespec = selectedClass.getAppliedStereotypeInstance();
+						
+						if (instancespec.getClassifier().contains(gammaCheckStereotype)) {
+							category.addAction(new PerformCheckAction("GAMMA_BROWSER_CHECK", "Perform check"));
+						}
+						
+						if (instancespec.getClassifier().contains(gammaStatechartDefinitionStereotype)) {
+							category.addAction(new TransformSingleStatemachineAction("GAMMA_TRA_SINGLE", "Transform to Gamma", selectedClass));
+						}
+						
+					} catch (Exception e) {
+						e.printStackTrace();
+					}	
 				}
 			}
 		}
