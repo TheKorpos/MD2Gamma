@@ -14,7 +14,6 @@ import com.nomagic.magicdraw.core.project.ProjectDescriptor;
 import com.nomagic.magicdraw.core.project.ProjectDescriptorsFactory;
 
 import hu.bme.mit.magicdraw2gamma.plugin.profilehelper.GammaProfile;
-import hu.bme.mit.magicdraw2gamma.plugin.transformation.eventdriven.Test;
 
 
 public class OpenGammaProfileAction extends MDAction {
@@ -41,10 +40,6 @@ public class OpenGammaProfileAction extends MDAction {
 		Application.getInstance().getProjectsManager().useModule(project, descriptor);
 		
 		GammaProfile.setLoaded(true);
-		
-		ViatraQueryEngine engine = ViatraQueryAdapter.getOrCreateAdapter(project).getEngine();
-		
-		//Test test = new Test(engine, new ResourceSetImpl());
 		
 	}
 

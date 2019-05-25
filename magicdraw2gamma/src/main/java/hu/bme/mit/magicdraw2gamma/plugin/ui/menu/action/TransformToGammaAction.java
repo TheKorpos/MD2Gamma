@@ -1,11 +1,8 @@
 package hu.bme.mit.magicdraw2gamma.plugin.ui.menu.action;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -22,21 +19,15 @@ import com.nomagic.magicdraw.actions.MDAction;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.core.options.ProjectOptions;
-import com.nomagic.magicdraw.plugins.Plugin;
 
 import hu.bme.mit.gamma.statechart.model.Package;
 import hu.bme.mit.gamma.statechart.model.Port;
-import hu.bme.mit.gamma.statechart.model.Region;
 import hu.bme.mit.gamma.statechart.model.StatechartDefinition;
 import hu.bme.mit.gamma.statechart.model.StatechartModelFactory;
 import hu.bme.mit.gamma.statechart.model.StatechartModelPackage;
-import hu.bme.mit.gamma.statechart.model.TimeoutDeclaration;
 import hu.bme.mit.magicdraw2gamma.plugin.options.GammaProjectOptionsConfigurator;
-import hu.bme.mit.magicdraw2gamma.plugin.queries.RegionWithEmptyName;
 import hu.bme.mit.magicdraw2gamma.plugin.queries.StateMachines;
-import hu.bme.mit.magicdraw2gamma.plugin.queries.TimeoutDeclarationsWithEmptyName;
 import hu.bme.mit.magicdraw2gamma.plugin.trafos.InterfaceTransformer;
-import hu.bme.mit.magicdraw2gamma.plugin.transformation.batch.MagicdrawToGammaTransformer;
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.MD2GTrace;
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.Trace;
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.TraceFactory;

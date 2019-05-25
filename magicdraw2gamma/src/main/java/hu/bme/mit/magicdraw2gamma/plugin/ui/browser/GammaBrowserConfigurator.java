@@ -36,17 +36,16 @@ public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 				Class selectedClass = (Class) userObject;
 				if (selectedClass.getAppliedStereotypeInstance() != null) {
 					try {	
-						Classifier gammaCheckStereotype = GammaProfile.getInstance().getGammaCheckStereotype();
-						Classifier gammaStatechartDefinitionStereotype = GammaProfile.getInstance().gammaStatechartDefinitionStereotype();
+//						Classifier gammaCheckStereotype = GammaProfile.getInstance().getGammaCheckStereotype();
+//						Classifier gammaStatechartDefinitionStereotype = GammaProfile.getInstance().gammaStatechartDefinitionStereotype();
 						InstanceSpecification instancespec = selectedClass.getAppliedStereotypeInstance();
 						
-						if (instancespec.getClassifier().contains(gammaCheckStereotype)) {
-							category.addAction(new PerformCheckAction("GAMMA_BROWSER_CHECK", "Perform check"));
+						
+						
+						if (instancespec.getClassifier().stream().filter(it -> "Block".equals(it.getName())).findAny().isPresent()) {
+							category.addAction(new TransformSingleStatemachineAction("GAMMA_TRA_SINGLE", "Export as gsl", selectedClass));
 						}
 						
-						if (instancespec.getClassifier().contains(gammaStatechartDefinitionStereotype)) {
-							category.addAction(new TransformSingleStatemachineAction("GAMMA_TRA_SINGLE", "Transform to Gamma", selectedClass));
-						}
 						
 					} catch (Exception e) {
 						e.printStackTrace();

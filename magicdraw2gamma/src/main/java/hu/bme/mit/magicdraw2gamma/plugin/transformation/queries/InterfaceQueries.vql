@@ -1,0 +1,8 @@
+package hu.bme.mit.magicdraw2gamma.plugin.transformation.queries
+
+import "http://www.nomagic.com/magicdraw/UML/2.5.1"
+
+pattern ownedOperations(class: Class, operation: Operation){
+	Class.ownedOperation(class, operation);
+}
+

@@ -1,6 +1,11 @@
 package hu.bme.mit.magicdraw2gamma.plugin.queries
 
+
+import "http://www.mit.bme.hu/gamma/statechart/Model" as GammaStatechart
+import "http://www.mit.bme.hu/gamma/statechart/Model/Interface" as Gamma
+import "http://www.mit.bme.hu/magicdraw2gamma/trace"
 import "http://www.nomagic.com/magicdraw/UML/2.5.1"
+
 
 pattern StateMachines(stateMachine: StateMachine, name: java String){
 	StateMachine.name(stateMachine, name);
@@ -28,13 +33,14 @@ pattern TranisitonsInStateMachine(stateMachine: StateMachine, transition: Transi
 	Region.transition(region, transition);
 }
 
-pattern SignalsInStateMachine(stateMachine: StateMachine, transition: Transition, signal: Signal){
-	/*find TranisitonsInStateMachine(stateMachine, transition);
-	Transition.trigger.event(transition, event);
-	SignalEvent.signal(event, signal);*/
-	StateMachine.event(stateMachine, event);
-	Transition.trigger.event(transition, event);
+pattern SignalsInStateMachine(block: Class, trigger: Trigger, signal: Signal, gInterface: Gamma::Interface){
+	Class.classifierBehavior(block, stateMachine);
+	find TranisitonsInStateMachine(stateMachine, transition);
+	Transition.trigger(transition, trigger);
+	Trigger.event(trigger, event);
 	SignalEvent.signal(event, signal);
+	InterfaceTrace.source(trace, block);
+	InterfaceTrace.target(trace, gInterface);
 }
 
 pattern MainRegions(stateMachine: StateMachine, region: Region){
@@ -138,9 +144,26 @@ pattern DoActions(stateMachine: StateMachine, state: State, expression: Function
 	find StatesInStatemachine(stateMachine, state);
 }
 
+pattern OwnedOperations(class: Class, operation: Operation, gInterface : Gamma::Interface){
+	Class.ownedOperation(class, operation);
+	InterfaceTrace.source(trace, class);
+	InterfaceTrace.target(trace, gInterface);
+}
 
+pattern EventTriggers(transition: Transition, gEvent: Gamma::Event, gPort: GammaStatechart::Port){
+	Transition.trigger.event(transition, callevent);
+	CallEvent.operation(callevent, operation);
+	InterfaceTrace.source(trace, operation);
+	InterfaceTrace.target(trace, gEvent);
+	GammaStatechart::Port.interfaceRealization.interface.events(gPort, gEventDecl);
+	Gamma::EventDeclaration.event(gEventDecl, gEvent);
+} or {
+	Transition.trigger.event(transition, signalEvent);
+	SignalEvent.signal(signalEvent, signal);
+	InterfaceTrace.source(trace, signal);
+	InterfaceTrace.target(trace, gEvent);
+	GammaStatechart::Port.interfaceRealization.interface.events(gPort, gEventDecl);
+	Gamma::EventDeclaration.event(gEventDecl, gEvent);
+}
 
-/*pattern PortsOnBlock(block: Class, port: Port){
-	Class.ownedAttribute(block, port);
-}*/
 

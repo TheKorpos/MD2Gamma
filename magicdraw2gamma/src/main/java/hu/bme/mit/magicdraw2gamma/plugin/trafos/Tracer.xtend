@@ -17,6 +17,8 @@ import hu.bme.mit.magicdraw2gamma.plugin.queries.StateTrace
 import java.util.Collection
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.State
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.TracePackage
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Operation
+import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.Event
 
 class Tracer {
 	
@@ -103,5 +105,12 @@ class Tracer {
 	
 	def pairs(Transition transition){
 		TransitionTrace.Matcher.on(engine).getAllValuesOftarget(transition)
+	}
+	
+	def createInterfaceTrace(EObject source, EObject target){
+		val ret = TraceFactory.eINSTANCE.createInterfaceTrace
+		ret.source += source
+		ret.target += target
+		root.traces += ret
 	}
 }

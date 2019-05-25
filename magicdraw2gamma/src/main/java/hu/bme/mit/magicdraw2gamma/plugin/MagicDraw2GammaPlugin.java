@@ -36,7 +36,7 @@ public class MagicDraw2GammaPlugin extends Plugin {
 					progress.setMax(1);
 					ViatraQueryEngine engine = ViatraQueryAdapter.getOrCreateAdapter(project).getEngine();
 					//adding these so the firt transformation takes less time
-					SearchQueries.instance().prepare(engine);
+					//SearchQueries.instance().prepare(engine);
 				
 					GammaProfile.initialize(engine);
 					

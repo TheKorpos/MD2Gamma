@@ -54,8 +54,8 @@ class InterfaceTransformer {
     	bakcTracer = new Tracer(traceroot, targetModelEngine);
 		this.interfacePackage = interfacePackage;
 		
-		interfaceRule.fireAllCurrent
-		eventsRule.fireAllCurrent
+//		interfaceRule.fireAllCurrent
+//		eventsRule.fireAllCurrent
     }
     
  
@@ -69,38 +69,38 @@ class InterfaceTransformer {
         statements = transformation.transformationStatements
     }
     
-	val interfaceRule = createRule.precondition(StateMachines.instance).action[match | 
-		val mdStatemachine = match.stateMachine
-		val statechartDef = mdStatemachine.trace
-		
-		if (statechartDef.present) {
-			val generatedInterface = fi.createInterface
-			 generatedInterface.name = "IGenerated" + statechartDef.get.name.toFirstUpper
-			 statechartDef.get.ports.filter["GeneratedPort".equals(it.name)].head.interfaceRealization.interface = generatedInterface
-			 interfacePackage.interfaces += generatedInterface
-		}
-	].build
-	
-	val eventsRule = createRule.precondition(SignalsInStateMachine.instance).action[match | 
-		val mdStatemachine = match.stateMachine
-		val statechartDef = mdStatemachine.trace
-		
-		//We only have 1 port at this point
-		val genPort = statechartDef.get.ports.head
-		val events = genPort.interfaceRealization.interface.events
-		var event = events.map[it.event].findFirst[it.name == match.signal.name]
-	
-		if (event === null){
-			event = fi.createEvent
-			event.name = match.signal.name
-			val eventDecl = fi.createEventDeclaration
-			eventDecl.direction = EventDirection.INOUT
-			eventDecl.event = event
-			genPort.interfaceRealization.interface.events += eventDecl
-			//.head.interfaceRealization.interface.events += eventDecl
-			createManyToManyTrace(#[mdStatemachine, match.signal], #[event, eventDecl])
-		}
-	].build
+//	val interfaceRule = createRule.precondition(StateMachines.instance).action[match | 
+//		val mdStatemachine = match.stateMachine
+//		val statechartDef = mdStatemachine.trace
+//		
+//		if (statechartDef.present) {
+//			val generatedInterface = fi.createInterface
+//			 generatedInterface.name = "IGenerated" + statechartDef.get.name.toFirstUpper
+//			 statechartDef.get.ports.filter["GeneratedPort".equals(it.name)].head.interfaceRealization.interface = generatedInterface
+//			 interfacePackage.interfaces += generatedInterface
+//		}
+//	].build
+//	
+//	val eventsRule = createRule.precondition(SignalsInStateMachine.instance).action[match | 
+//		val mdStatemachine = match.stateMachine
+//		val statechartDef = mdStatemachine.trace
+//		
+//		//We only have 1 port at this point
+//		val genPort = statechartDef.get.ports.head
+//		val events = genPort.interfaceRealization.interface.events
+//		var event = events.map[it.event].findFirst[it.name == match.signal.name]
+//	
+//		if (event === null){
+//			event = fi.createEvent
+//			event.name = match.signal.name
+//			val eventDecl = fi.createEventDeclaration
+//			eventDecl.direction = EventDirection.INOUT
+//			eventDecl.event = event
+//			genPort.interfaceRealization.interface.events += eventDecl
+//			//.head.interfaceRealization.interface.events += eventDecl
+//			createManyToManyTrace(#[mdStatemachine, match.signal], #[event, eventDecl])
+//		}
+//	].build
 
     def dispose() {
         transformation = null

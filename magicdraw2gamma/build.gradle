@@ -4,10 +4,12 @@ import java.util.stream.Collectors
 import java.util.zip.ZipFile
 
 plugins {
-  id "org.xtext.xtend" version "1.0.21"
+  //https://github.com/lukoerfer/gradle-magicdraw
+  id "org.xtext.xtend" version "2.0.4"
+  id 'de.lukaskoerfer.gradle.magicdraw' version '0.2.1'
 }
 
-xtext.version = "2.13.0"
+xtext.version = "2.15.0"
 
 String buildNumber = project.hasProperty('buildNumber') ? project.getProperty('buildNumber') : System.currentTimeSeconds()
 String timestamp = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm").format(LocalDateTime.now())
@@ -43,6 +45,24 @@ sourceSets {
     }
 }
 
+magicDraw {
+    installDir = file('C:/Program Files/MagicDraw')
+    plugins {
+        main {
+            id = 'hu.bme.mit.magicdraw2gamma'
+            version = '1.0.0'
+            label = 'MagicDraw2Gamma'
+            className = 'hu.bme.mit.magicdraw2gamma.plugin.MagicDraw2GammaPlugin'
+            provider = 'BME-FTSRG'
+        }
+    }
+}
+
+assemblePlugin {
+    from jar
+    from configurations.runtime
+}
+
 // In this section you declare where to find the dependencies of your project
 repositories {
     ivy {
@@ -62,9 +82,11 @@ configurations {
 }
 
 dependencies {      
-    preCompile group: 'com.nomagic', name: 'magicdraw', version: '190', classifier: 'MagicDraw_190_no_install', ext: 'zip'
-    preCompile group: 'com.nomagic', name: 'sysml', version: '190', classifier: 'SysML_Plugin_190_bundle', ext: 'zip'
-    preCompile group: 'com.incquerylabs.v4md', name: 'com.incquerylabs.v4md', version: viatraVersion, classifier: 'plugin', ext: 'zip'
+    //preCompile group: 'com.nomagic', name: 'magicdraw', version: '190', classifier: 'MagicDraw_190_no_install', ext: 'zip'
+    //preCompile group: 'com.nomagic', name: 'sysml', version: '190', classifier: 'SysML_Plugin_190_bundle', ext: 'zip'
+    compileOnly group: 'com.incquerylabs.v4md', name: 'com.incquerylabs.v4md', version: viatraVersion, classifier: 'plugin', ext: 'zip'
+    compileOnly configurations.magicDraw
+    
     
     def exc = {
     	exclude module: 'org.eclipse.emf.ecore'
@@ -77,9 +99,10 @@ dependencies {
         exclude module: 'org.eclipse.osgi'
     }
     
-    compile group: 'org.eclipse.xtext', name: 'org.eclipse.xtext', version: '2.15.0', exc
-   	
     
+    compile group: 'org.eclipse.xtext', name: 'org.eclipse.xtext', version: '2.15.0', exc
+     
+   
     // This ensures classpath load order to match the MagicDraw provided order and then includes extras needed for non-OpenAPI stuff.
     compile files(classpathLibraries.collect { 'build/dependency-cache/extracted/' + it })
    
@@ -90,9 +113,7 @@ dependencies {
     	exclude module:  'org.eclipse.emf.ecore'
     	exclude module:  'org.eclipse.emf.common'
     }
-    
-    
-   	
+
  }
 
 task extractDependencies {
@@ -256,12 +277,12 @@ distZip {
 distZip.dependsOn preDist
 
 installDist {
-    destinationDir = file('build/plugin')
+    destinationDir = file('build/magicdraw')
     doLast {
         copy {
             fileMode 0755
             from 'build/dependency-cache/extracted'
-            from 'build/plugin'
+            from 'build/magicdraw'
             into 'build/install'
         }
     }
@@ -276,21 +297,6 @@ def platformConfigSetting =
 			? ['-DWINCONFIG=false', '-Xdock:name=MagicDraw', '-Xdock:icon=bin/md.icns', '-Dapple.laf.useScreenMenuBar=true']
 : ['-DWINCONFIG=false'])
 
-tasks.withType(JavaExec) {
-	doFirst {
-        classpath fileTree(dir: 'build/install', include: ['lib/**/*.jar'], exclude: ['lib/**/com.typesafe.akka.*.jar', 'lib/**/org.scala.*.jar', 'lib/**/com.nomagic.esi.*.jar'])
-    }
-
-	workingDir 'build/install'
-    ignoreExitValue true
-
-    standardOutput = System.out
-    errorOutput = System.err
-	
-    main = 'com.nomagic.osgi.launcher.ProductionFrameworkLauncher'
-    jvmArgs = platformConfigSetting + ['-Xmx8192M', '-Xss512M', '-noverify', '-splash:data/splash.png','-Dmd.class.path=$java.class.path']
-	args 'DEVELOPER'
-}
 
 task runJava(type: JavaExec) {
 }
