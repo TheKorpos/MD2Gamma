@@ -5,10 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -44,7 +47,7 @@ public class TransformSingleStatemachineAction extends NMAction {
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		
-		StateMachineTransformer transformer = new StateMachineTransformer();
+		
 		ArrayList<Class> targetList = new ArrayList<>();
 		targetList.add(target);
 		
@@ -60,7 +63,18 @@ public class TransformSingleStatemachineAction extends NMAction {
 				
 				File selectedFile = filechooser.getSelectedFile();
 				
-				Set<Package> gSet = transformer.transform(targetList, new ResourceSetImpl());
+				StateMachineTransformer transformer = new StateMachineTransformer(targetList, new ResourceSetImpl());
+				
+				Map<String, ?> map = transformer.transform();
+				
+				Set<Package> gSet = (Set<Package>) map.get("output");
+				List<String> messages = (List<String>) map.get("messages");
+				
+				if (messages.size() > 0) {
+					String message = messages.stream().reduce("", (acc, s) -> acc += "\n" + s);
+					JOptionPane.showMessageDialog(Application.getInstance().getMainFrame(), message);
+				}
+				
 				
 				gSet.stream().filter(Package.class::isInstance).map(Package.class::cast).forEach(it -> {
 					
@@ -97,19 +111,31 @@ public class TransformSingleStatemachineAction extends NMAction {
 			try {
 				// Trying to serialize the model
 				serialize(rootElem, parentFolder, fileName);
+				JOptionPane.showMessageDialog(Application.getInstance().getMainFrame(), "Models successfully exported to: " + parentFolder);
 			} catch (Exception e) {
 				e.printStackTrace();
 				
-				new File(parentFolder + File.separator + fileName).delete();
-				// Saving like an EMF model
-				String newFileName = fileName.substring(0, fileName.lastIndexOf(".")) + ".gsm";
-				normalSave(rootElem, parentFolder, newFileName);
+				int dialogButton = JOptionPane.YES_NO_OPTION;
+				int dialogResult = JOptionPane.showConfirmDialog (Application.getInstance().getMainFrame(), "Could not export into gcl. Reason: \n"
+						+ e.getMessage() + "\nDo you want to export as gsl?", "Export error",  dialogButton
+				);
+				if(dialogResult == JOptionPane.YES_OPTION){
+					new File(parentFolder + File.separator + fileName).delete();
+					// Saving like an EMF model
+					String newFileName = fileName.substring(0, fileName.lastIndexOf(".")) + ".gsm";
+					normalSave(rootElem, parentFolder, newFileName);
+					
+					JOptionPane.showMessageDialog(Application.getInstance().getMainFrame(), "Models successfully exported to: " + parentFolder);
+				}
 			}
+
 		}
 		else {
 			// It is not a statechart model, regular saving
 			normalSave(rootElem, parentFolder, fileName);
+			
 		}
+		
 	}
 
 	private void normalSave(EObject rootElem, String parentFolder, String fileName) throws IOException {

@@ -9,7 +9,7 @@
         class="hu.bme.mit.magicdraw2gamma.plugin.MagicDraw2GammaPlugin">
     
 	<requires>
-		<required-plugin id="com.incquerylabs.v4md" name="V4MD" version="2.0.0 M3" internalVersion="200003"/>
+		<required-plugin id="com.incquerylabs.v4md" name="V4MD" version="2.1.1" internalVersion="211010"/>
 		<required-plugin id="com.nomagic.magicdraw.plugins.impl.sysml" name="SysML"/>
 	</requires>
     

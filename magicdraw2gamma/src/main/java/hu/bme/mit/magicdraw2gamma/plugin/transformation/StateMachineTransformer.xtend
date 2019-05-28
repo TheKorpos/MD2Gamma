@@ -4,12 +4,13 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.StateMachine
 import hu.bme.mit.gamma.statechart.model.Package
 import hu.bme.mit.gamma.statechart.model.RealizationMode
+import hu.bme.mit.gamma.statechart.model.StatechartDefinition
 import hu.bme.mit.gamma.statechart.model.StatechartModelFactory
 import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory
+import hu.bme.mit.gamma.statechart.model.interface_.InterfacePackage
 import hu.bme.mit.magicdraw2gamma.plugin.trafos.Tracer
 import hu.bme.mit.magicdraw2gamma.plugin.transformation.batch.MagicdrawToGammaTransformer
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.TraceFactory
-import java.io.File
 import java.util.Collection
 import java.util.HashSet
 import java.util.Set
@@ -18,48 +19,64 @@ import org.eclipse.emf.ecore.resource.ResourceSet
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.base.api.BaseIndexOptions
 import org.eclipse.viatra.query.runtime.emf.EMFScope
-import hu.bme.mit.gamma.statechart.model.interface_.InterfacePackage
-import javax.swing.JOptionPane
-import com.nomagic.magicdraw.core.Application
 
 class StateMachineTransformer {
 	
-		
-	private def packageName(StateMachine c){
-		c.qualifiedName.substring(0, c.qualifiedName.lastIndexOf("::")).replace("::", ".").toLowerCase
-	}
+	extension NameFormatter formatter = new NameFormatter
 	
-	private def toFilePath(String s){
-		s.replace(".", File.separator)
-	}
-	
-	def Set<Package> transform(Collection<Class> statechartDefinitions, ResourceSet resourceSet) {
+	//input
+	val Set<Class> mdSet 
 		
-		/*val p = new OCLParser;
-		
-		val name = JOptionPane.showInputDialog(Application.instance.mainFrame, "What's your name?");
-		
-		p.parse(statechartDefinitions.get(0), name);*/
-		
-		val mdSet = statechartDefinitions.toSet
- 		val traceRoot = TraceFactory.eINSTANCE.createMD2GTrace
- 		val gSet = new HashSet<Package>()
+	//initializing traceroot
+ 	val traceRoot = TraceFactory.eINSTANCE.createMD2GTrace
  		
- 		//creating root elements
-		statechartDefinitions.filter[it.classifierBehavior instanceof StateMachine].forEach[
+ 	//output
+ 	val gSet = new HashSet<Package>()
+ 	
+ 	val ResourceSet resourceSet
+ 	
+	new(Collection<Class> statechartDefinitions, ResourceSet resourceSet) {
+		this.resourceSet = resourceSet
+		this.mdSet = statechartDefinitions.toSet
+	}
+			
+	def transform() {
+		
+		//prepare simple statemacines
+		mdSet.filter[it instanceof StateMachine].forEach[
+			
+			val mdStatemachine = it as StateMachine
+			
+			val gStatechart = StatechartModelFactory.eINSTANCE.createStatechartDefinition => [
+				it.name = mdStatemachine.name.fomratName
+			]
+			
+			//createPackage for statechart
+			val gPackage = StatechartModelFactory.eINSTANCE.createPackage => [
+				it.name = mdStatemachine.name.toLowerCase.fomratName
+				it.components += gStatechart
+			]
+			
+			gSet.add(gPackage)
+			
+			prepareStateMachine(mdStatemachine, gPackage, gStatechart)
+		]
+			
+		//prepared block with classifier behavior	
+		mdSet.filter[it.classifierBehavior instanceof StateMachine].forEach[
 			val mdBlock = it
 			val stmt = it.classifierBehavior as StateMachine
 			
 			//create interface for operations and receptions
 			val gInterface = InterfaceFactory.eINSTANCE.createInterface => [
-				it.name = stmt.name + "_ClassInterface"
+				it.name = "Block_Interface_For" + mdBlock.name.fomratName
 			]
 			
 			//createStatechart
 			val gStatechart = StatechartModelFactory.eINSTANCE.createStatechartDefinition => [
 				it.name = stmt.name
 				it.ports += StatechartModelFactory.eINSTANCE.createPort => [
-					it.name = stmt.name + "_ClassPort"
+					it.name = "Block_Port"
 					it.interfaceRealization = StatechartModelFactory.eINSTANCE.createInterfaceRealization => [
 						it.realizationMode = RealizationMode.PROVIDED
 						it.interface = gInterface
@@ -74,17 +91,18 @@ class StateMachineTransformer {
 			
 			//createTrace					
 			val trace = TraceFactory.eINSTANCE.createTrace =>[
-				it.source += stmt
+				it.source += mdBlock
 				it.target += gStatechart
-				
 			]
 			
 			//createPackage for statechart
 			val gPackage = StatechartModelFactory.eINSTANCE.createPackage => [
-				it.name = stmt.packageName
+				it.name = mdBlock.name.toLowerCase.fomratName
 				it.components += gStatechart
 				it.interfaces += gInterface
 			]
+			
+			prepareStateMachine(stmt, gPackage, gStatechart)
 			
 	
 			traceRoot.traces += #[trace, operationsInterfaceTrace]
@@ -115,10 +133,47 @@ class StateMachineTransformer {
 		//execute statechart transformer
 		tra.execute
 		
+	
 		
-		return gSet
+		return  #{"output" -> gSet, "messages" -> tra.message}
+	}
+	
+	private def prepareStateMachine(StateMachine mdStateMachine, Package gPackage, StatechartDefinition gStatechart){
+		
+		val gInterface = InterfaceFactory.eINSTANCE.createInterface => [
+			it.name = "StateMachine_Interface_For_" + mdStateMachine.name.fomratName 			
+		]
+		
+		gStatechart => [
+		
+			it.ports += StatechartModelFactory.eINSTANCE.createPort => [
+				it.name = "StateMachine_Port"
+				it.interfaceRealization = StatechartModelFactory.eINSTANCE.createInterfaceRealization => [
+					it.realizationMode = RealizationMode.PROVIDED
+					it.interface = gInterface
+				]
+			]
+		]
+	
+		//create trace for interface	
+		val operationsInterfaceTrace = TraceFactory.eINSTANCE.createInterfaceTrace => [
+			it.source += mdStateMachine
+			it.target += gInterface
+		]
 		
 		
+		//create trace for the statemachine					
+		val trace = TraceFactory.eINSTANCE.createTrace =>[
+			it.source += mdStateMachine
+			it.target += gStatechart
+			
+		]
+		
+		
+		
+		gPackage.interfaces += gInterface
+	
+		traceRoot.traces += #[trace, operationsInterfaceTrace]	
 	}
 }
  

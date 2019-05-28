@@ -5,7 +5,7 @@ import "http://www.mit.bme.hu/gamma/statechart/Model/Composite" as CompositGamma
 import "http://www.mit.bme.hu/magicdraw2gamma/trace"
 import "http://www.mit.bme.hu/gamma/statechart/Model" as Gamma
 import "http://www.mit.bme.hu/gamma/statechart/Model/Interface" as GammaInterface
-import "http://www.mit.bme.hu/gamma/constraint/Model"
+import "http://www.mit.bme.hu/gamma/constraint/Model" as GammaConstraint
 import "http://www.nomagic.com/magicdraw/UML/2.5.1";
 
 
@@ -13,7 +13,12 @@ pattern TraceRoot(root: MD2GTrace, trace: AbstractTrace){
 	MD2GTrace.traces(root, trace);
 }
 
-pattern StatechartTrace(source: StateMachine, target: StatechartDefinition){
+pattern StatechartTrace(source: Class, target: StatechartDefinition){
+	Trace.source(trace, source);
+	Trace.target(trace, target);
+}
+
+pattern Trace(source: NamedElement, target: GammaConstraint::NamedElement){
 	Trace.source(trace, source);
 	Trace.target(trace, target);
 }

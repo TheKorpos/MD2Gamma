@@ -11,6 +11,10 @@ pattern StateMachines(stateMachine: StateMachine, name: java String){
 	StateMachine.name(stateMachine, name);
 }
 
+pattern ParametersInStateMachine(stateMachine: StateMachine, parameter: Parameter){
+	StateMachine.ownedParameter(stateMachine, parameter);
+}
+
 pattern RegionsInRegion(container: Region, region: Region){
 	Region.subvertex(container, vertex);
 	State.region(vertex, region);
@@ -33,13 +37,9 @@ pattern TranisitonsInStateMachine(stateMachine: StateMachine, transition: Transi
 	Region.transition(region, transition);
 }
 
-pattern SignalsInStateMachine(block: Class, trigger: Trigger, signal: Signal, gInterface: Gamma::Interface){
-	Class.classifierBehavior(block, stateMachine);
-	find TranisitonsInStateMachine(stateMachine, transition);
-	Transition.trigger(transition, trigger);
-	Trigger.event(trigger, event);
-	SignalEvent.signal(event, signal);
-	InterfaceTrace.source(trace, block);
+pattern SignalsInStateMachine(stateMachine: StateMachine, event: SignalEvent, gInterface: Gamma::Interface){
+	StateMachine.event(stateMachine, event);
+	InterfaceTrace.source(trace, stateMachine);
 	InterfaceTrace.target(trace, gInterface);
 }
 
@@ -116,8 +116,8 @@ pattern TimeEventsInStateMachine(stateMachine: StateMachine, transition: Transit
 	Trigger.event(trigger, event);
 }
 
-pattern PropertiesInStateMachine(stateMachine: StateMachine, prop: Property){
-	StateMachine.ownedAttribute(stateMachine, prop);
+pattern PropertiesInStateMachine(stateMachine: Class, prop: Property){
+	Class.ownedAttribute(stateMachine, prop);
 }
 
 pattern ActionsOnTransitions(expression: FunctionBehavior, transition: Transition, statemachine: StateMachine, body: java String){
@@ -159,8 +159,7 @@ pattern EventTriggers(transition: Transition, gEvent: Gamma::Event, gPort: Gamma
 	Gamma::EventDeclaration.event(gEventDecl, gEvent);
 } or {
 	Transition.trigger.event(transition, signalEvent);
-	SignalEvent.signal(signalEvent, signal);
-	InterfaceTrace.source(trace, signal);
+	InterfaceTrace.source(trace, signalEvent);
 	InterfaceTrace.target(trace, gEvent);
 	GammaStatechart::Port.interfaceRealization.interface.events(gPort, gEventDecl);
 	Gamma::EventDeclaration.event(gEventDecl, gEvent);
