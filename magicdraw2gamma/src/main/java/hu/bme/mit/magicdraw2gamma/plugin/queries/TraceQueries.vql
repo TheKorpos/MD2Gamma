@@ -16,7 +16,7 @@ pattern TraceRoot(root: MD2GTrace, trace: AbstractTrace){
 pattern StatechartTrace(source: Class, target: StatechartDefinition){
 	Trace.source(trace, source);
 	Trace.target(trace, target);
-}
+} 
 
 pattern Trace(source: NamedElement, target: GammaConstraint::NamedElement){
 	Trace.source(trace, source);
@@ -28,7 +28,7 @@ pattern RegionTrace(source: Region, target: Gamma::Region){
 	Trace.source(trace, source);
 	Trace.target(trace, target);
 }
-
+ 
 pattern StateTrace(state: State, target: Gamma::State){
 	Trace.source(trace, state);
 	Trace.target(trace, target);

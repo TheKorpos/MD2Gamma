@@ -29,6 +29,7 @@ public String fomratName(String name){
 				case ' ': out[i]='_';break;
 				case '(': out[i]='b';break;
 				case ')': out[i]='b';break;
+				case '-': out[i]='_';break;
 				default: out[i]= c ;
 			}
 			i++;

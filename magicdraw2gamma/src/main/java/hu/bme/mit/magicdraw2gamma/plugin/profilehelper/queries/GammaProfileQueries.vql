@@ -20,4 +20,4 @@ pattern StatechartDefinitions(class: Class){
 pattern SuperClasses(class: Classifier, superClass: Classifier){
 	Classifier.generalization.general+(class, superClass);
 	class != superClass;
-}
+}  

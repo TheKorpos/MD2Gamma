@@ -19,3 +19,6 @@ rootProject.name = 'magicdraw2gamma'
 
 include ":hu.bme.mit.magicdraw2gamma.trace.model"
 project(":hu.bme.mit.magicdraw2gamma.trace.model").projectDir = new File(settingsDir, '../hu.bme.mit.magicdraw2gamma.trace.model')
+
+include ":gammaDeps"
+project(":gammaDeps").projectDir = new File(settingsDir, '../gammaDeps')

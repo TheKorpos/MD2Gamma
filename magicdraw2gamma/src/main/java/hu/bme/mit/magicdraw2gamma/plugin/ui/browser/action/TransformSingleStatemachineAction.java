@@ -26,7 +26,6 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 
 import hu.bme.mit.gamma.statechart.language.StatechartLanguageRuntimeModule;
 import hu.bme.mit.gamma.statechart.language.StatechartLanguageStandaloneSetup;
-import hu.bme.mit.gamma.statechart.language.ui.internal.LanguageActivator;
 import hu.bme.mit.gamma.statechart.model.Package;
 import hu.bme.mit.gamma.statechart.model.StatechartDefinition;
 import hu.bme.mit.magicdraw2gamma.plugin.transformation.StateMachineTransformer;

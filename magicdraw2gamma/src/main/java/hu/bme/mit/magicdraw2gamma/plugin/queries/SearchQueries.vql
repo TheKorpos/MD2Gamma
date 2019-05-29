@@ -37,8 +37,9 @@ pattern TranisitonsInStateMachine(stateMachine: StateMachine, transition: Transi
 	Region.transition(region, transition);
 }
 
-pattern SignalsInStateMachine(stateMachine: StateMachine, event: SignalEvent, gInterface: Gamma::Interface){
+pattern SignalsInStateMachine(stateMachine: StateMachine, signal: Signal, gInterface: Gamma::Interface){
 	StateMachine.event(stateMachine, event);
+	SignalEvent.signal(event, signal);
 	InterfaceTrace.source(trace, stateMachine);
 	InterfaceTrace.target(trace, gInterface);
 }
@@ -120,29 +121,36 @@ pattern PropertiesInStateMachine(stateMachine: Class, prop: Property){
 	Class.ownedAttribute(stateMachine, prop);
 }
 
-pattern ActionsOnTransitions(expression: FunctionBehavior, transition: Transition, statemachine: StateMachine, body: java String){
-	Transition.effect(transition, expression);
-	find TranisitonsInStateMachine(statemachine, transition);
-	FunctionBehavior.body(expression, body);
-	check(!"".equals(body));
+pattern Actions(action: Behavior, body: java String){
+	FunctionBehavior.body(action, body);
+} or {
+	OpaqueBehavior.body(action, body);
+} or {
+	//any other
+	neg FunctionBehavior(action);
+	neg OpaqueBehavior(action);
+	Behavior.name(action, body);
 }
 
-pattern EntryActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior, body: java String){
-	State.entry(state, expression);
-	find StatesInStatemachine(stateMachine, state);
-	FunctionBehavior.body(expression, body);
-	check(!"".equals(body));
+pattern ActionsOnTransitions(transition: Transition, body: java String, effect: Behavior){
+	Transition.effect(transition, effect);
+	find Actions(effect, body);
 }
 
-pattern ExitActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior){
-	State.exit(state, expression);
-	find StatesInStatemachine(stateMachine, state);
+pattern EntryActions(state: State, body: java String, effect: Behavior){
+	State.entry(state, effect);
+	find Actions(effect, body);
 }
 
-pattern DoActions(stateMachine: StateMachine, state: State, expression: FunctionBehavior){
-	State.doActivity(state, expression);
-	find StatesInStatemachine(stateMachine, state);
+pattern ExitActions(state: State, body: java String, effect: Behavior){
+	State.exit(state, effect);
+	find Actions(effect, body);
 }
+
+//pattern DoActions(state: State, body: java String, effect: Behavior){
+//	State.do(state, effect);
+//	find Actions(effect, body);
+//}
 
 pattern OwnedOperations(class: Class, operation: Operation, gInterface : Gamma::Interface){
 	Class.ownedOperation(class, operation);
@@ -156,13 +164,27 @@ pattern EventTriggers(transition: Transition, gEvent: Gamma::Event, gPort: Gamma
 	InterfaceTrace.source(trace, operation);
 	InterfaceTrace.target(trace, gEvent);
 	GammaStatechart::Port.interfaceRealization.interface.events(gPort, gEventDecl);
-	Gamma::EventDeclaration.event(gEventDecl, gEvent);
+	Gamma::EventDeclaration.event(gEventDecl, gEvent); 
 } or {
 	Transition.trigger.event(transition, signalEvent);
-	InterfaceTrace.source(trace, signalEvent);
+	SignalEvent.signal(signalEvent, signal);
+	InterfaceTrace.source(trace, signal);
 	InterfaceTrace.target(trace, gEvent);
 	GammaStatechart::Port.interfaceRealization.interface.events(gPort, gEventDecl);
 	Gamma::EventDeclaration.event(gEventDecl, gEvent);
+}
+
+pattern AnyEventTriggers(transition: Transition, anyEvent: AnyReceiveEvent, gTransition: GammaStatechart::Transition){
+	Transition.trigger.event(transition, anyEvent);
+	Trace.source(trace, transition);
+	Trace.target(trace, gTransition);
+}
+
+pattern OpaqueTriggers(transition: Transition, trigger : Trigger, gTransition: GammaStatechart::Transition){
+	Transition.trigger(transition, trigger);
+	neg Trace.source(_, trigger);
+	Trace.source(trace, transition);
+	Trace.target(trace, gTransition);
 }
 
 

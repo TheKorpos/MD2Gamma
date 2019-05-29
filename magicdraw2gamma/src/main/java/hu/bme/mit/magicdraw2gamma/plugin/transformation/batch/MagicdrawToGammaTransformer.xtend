@@ -1,7 +1,6 @@
 package hu.bme.mit.magicdraw2gamma.plugin.transformation.batch
 
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralString
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.PseudostateKindEnum
 import hu.bme.mit.gamma.constraint.model.ConstraintModelPackage
 import hu.bme.mit.gamma.constraint.model.OpaqueExpression
@@ -20,11 +19,14 @@ import hu.bme.mit.gamma.statechart.model.Transition
 import hu.bme.mit.gamma.statechart.model.interface_.Event
 import hu.bme.mit.gamma.statechart.model.interface_.EventDeclaration
 import hu.bme.mit.gamma.statechart.model.interface_.EventDirection
+import hu.bme.mit.gamma.statechart.model.interface_.Interface
 import hu.bme.mit.gamma.statechart.model.interface_.InterfacePackage
-import hu.bme.mit.magicdraw2gamma.plugin.parsing.ActionParser
+import hu.bme.mit.magicdraw2gamma.plugin.parsing.GammaExpressionParser
 import hu.bme.mit.magicdraw2gamma.plugin.queries.SearchQueries
 import hu.bme.mit.magicdraw2gamma.plugin.trafos.Tracer
+import hu.bme.mit.magicdraw2gamma.plugin.transformation.NameFormatter
 import hu.bme.mit.magicdraw2gamma.trace.model.trace.MD2GTrace
+import java.util.ArrayList
 import org.eclipse.emf.ecore.EClass
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.IModelManipulations
@@ -32,9 +34,10 @@ import org.eclipse.viatra.transformation.runtime.emf.modelmanipulation.SimpleMod
 import org.eclipse.viatra.transformation.runtime.emf.rules.batch.BatchTransformationRuleFactory
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformation
 import org.eclipse.viatra.transformation.runtime.emf.transformation.batch.BatchTransformationStatements
-import hu.bme.mit.magicdraw2gamma.plugin.transformation.NameFormatter
-import java.util.ArrayList
-import hu.bme.mit.gamma.statechart.model.interface_.Interface
+import hu.bme.mit.gamma.statechart.model.OpaqueTrigger
+import hu.bme.mit.gamma.action.model.ActionModelPackage
+import hu.bme.mit.gamma.action.model.Action
+import hu.bme.mit.gamma.action.model.Statement
 
 class MagicdrawToGammaTransformer {
 
@@ -52,6 +55,7 @@ class MagicdrawToGammaTransformer {
 	extension StatechartModelPackage statechartPackage = StatechartModelPackage.eINSTANCE
 	extension InterfacePackage interfacePackage = InterfacePackage.eINSTANCE
 	extension ConstraintModelPackage constraintModelPackage = ConstraintModelPackage.eINSTANCE
+	extension ActionModelPackage actionModelPackage = ActionModelPackage.eINSTANCE
 	extension NameFormatter nameFormatter = new NameFormatter
 	
 	val masseges = new ArrayList<String>
@@ -59,7 +63,7 @@ class MagicdrawToGammaTransformer {
 	MD2GTrace traceRoot;
 	ViatraQueryEngine engine
 	
-	val timeP = new ActionParser
+	val timeP = new GammaExpressionParser
 	
 	new(ViatraQueryEngine engine, Tracer tracer){
 		this.engine = engine
@@ -82,12 +86,13 @@ class MagicdrawToGammaTransformer {
 		pseudoStateRule.fireAllCurrent
 		transitionRule.fireAllCurrent
 		callOperationTrigger.fireAllCurrent
-		guardRule.fireAllCurrent
-//		eventTriggerRule.fireAllCurrent
+		anyTriggerRule.fireAllCurrent
 		timeEventRule.fireAllCurrent
-//		propertyRule.fireAllCurrent
-//		transitionActionRule.fireAllCurrent
-		
+		opaqueTriggerRule.fireAllCurrent
+		guardRule.fireAllCurrent
+		actionRule.fireAllCurrent
+		entryActionRule.fireAllCurrent
+		exitActionRule.fireAllCurrent
 	}
 	
 	
@@ -102,10 +107,6 @@ class MagicdrawToGammaTransformer {
 				return integerTypeDefinition
 			case "Boolean": 
 				return booleanTypeDefinition
-			case "Natural":
-				return naturalTypeDefinition
-			case "Real":
-				return realTypeDefinition
 				
 			default: return integerTypeDefinition
 		}
@@ -170,8 +171,7 @@ class MagicdrawToGammaTransformer {
     //all the events used on triggers without source port
     val collectEventsRule = createRule(signalsInStateMachine).action[match |  	
 		//no source port
-		val mdEvent = match.event
-		val mdSignal = mdEvent.signal
+		val mdSignal = match.signal
 		val gInterface = match.GInterface as Interface
 		
 		
@@ -180,13 +180,10 @@ class MagicdrawToGammaTransformer {
     	]
     	
     	val gEvent = gEventDeclaration.createChild(eventDeclaration_Event, event) as Event => [
-    		if (mdSignal !== null)
-    			it.name = "signal_event_" + if (mdEvent.name === null || mdEvent.name == "") mdSignal.name.fomratName else mdEvent.name.fomratName
-    		else 
-    			it.name = "signal_event_" + if (mdEvent.name === null || mdEvent.name == "") "signal_event_" + gInterface.events.size else mdEvent.name.fomratName
+    		it.name = mdSignal.name.fomratName
     	]
     	
-    	createInterfaceTrace(mdEvent, gEvent)
+    	createInterfaceTrace(mdSignal, gEvent)
 	].build
     
     //transform main regions
@@ -206,14 +203,18 @@ class MagicdrawToGammaTransformer {
 		val mdState = match.state
 		val gStatechart = mdStateMachine.pairs.head
 		
+		
 		//we just put every state in the first region for now
 		val mainRegion = gStatechart.regions.head as Region;
+		
+		val stateCount = mainRegion.stateNodes.size
+		
 		val gState = mainRegion.createChild(region_StateNodes, state) as State => [
-			if (mdState.name === null || mdState.name==""){
-				val stateCount = mainRegion.stateNodes.size
+			if (mdState.name === null || mdState.name==""){		
 				it.name = "state_" + stateCount	
 			} else {
-				it.name = mdState.name.fomratName	
+				//we apply a suffix so state names never collide
+				it.name = mdState.name.fomratName + "_" + stateCount	
 			}
 		]
 		
@@ -260,24 +261,31 @@ class MagicdrawToGammaTransformer {
 		val gRegion = mdRegion.pairs.head as Region
 	
 		var StateNode pseudoState = null;
+		var cName = "" 
 		
 		switch mdStateKind{
 			case PseudostateKindEnum.INITIAL: {
+				cName = "init"
 				pseudoState = gRegion.createChild(region_StateNodes, initialState) as StateNode
 			}
 			case PseudostateKindEnum.SHALLOWHISTORY: {
+				cName = "s_history"
 				pseudoState = gRegion.createChild(region_StateNodes, shallowHistoryState) as StateNode
 			}
 			case PseudostateKindEnum.CHOICE: {
+				cName = "choice"
 				pseudoState = gRegion.createChild(region_StateNodes, choiceState) as StateNode
 			}
 			case PseudostateKindEnum.FORK: {
+				cName = "fork"
 				pseudoState = gRegion.createChild(region_StateNodes, forkState) as StateNode
 			}
 			case PseudostateKindEnum.JOIN: {
+				cName = "join"
 				pseudoState = gRegion.createChild(region_StateNodes, joinState) as StateNode
 			}
 			case PseudostateKindEnum.DEEPHISTORY:{
+				cName = "d_history"
 				pseudoState = gRegion.createChild(region_StateNodes, deepHistoryState) as StateNode
 			}
 			case PseudostateKindEnum.JUNCTION: {
@@ -293,7 +301,7 @@ class MagicdrawToGammaTransformer {
 		
 		if (mdVertex.name === null || mdVertex.name == ""){
 			val statecount = gRegion.stateNodes.size
-			pseudoState.name = "statenode_"+ statecount +"_in_" + gRegion.name
+			pseudoState.name = cName + "_"+ statecount +"_in_" + gRegion.name
 		} else {
 			pseudoState.name = mdVertex.name.fomratName	
 		}
@@ -335,18 +343,24 @@ class MagicdrawToGammaTransformer {
 				val mdEvent = match.event
 				val mdStateMachine = match.stateMachine
 				val gStatechart = mdStateMachine.pairs.head
-				
-				val gTimeoutDeclaration = gStatechart.createChild(statechartDefinition_TimeoutDeclarations, timeoutDeclaration)	 as TimeoutDeclaration
-			
-				gTimeoutDeclaration.name = "timeout_" + gStatechart.timeoutDeclarations.size
-			
-				val gSetTimeoutAction = gStateNode.createChild(state_EntryActions, setTimeoutAction) as SetTimeoutAction
-				gSetTimeoutAction.timeoutDeclaration = gTimeoutDeclaration
-				
 				val expr = mdEvent.when.expr as LiteralString
 				
-				try {
+				try {	
 					val gTimeSpecification = timeP.parseTimeSpecification(gStatechart, expr.value.fomratName) as TimeSpecification
+					
+					if (gTimeSpecification === null || gTimeSpecification.value === null ){
+						throw new Exception("Could not parse: " + expr.value)
+					}
+					
+					val gTimeoutDeclaration = gStatechart.createChild(statechartDefinition_TimeoutDeclarations, timeoutDeclaration)	 as TimeoutDeclaration
+				
+					gTimeoutDeclaration.name = "timeout_" + gStatechart.timeoutDeclarations.size
+				
+					val gSetTimeoutAction = gStateNode.createChild(state_EntryActions, setTimeoutAction) as SetTimeoutAction
+					gSetTimeoutAction.timeoutDeclaration = gTimeoutDeclaration
+					
+								
+						
 					gSetTimeoutAction.time = gTimeSpecification
 					
 					val gTrigger = gTransition.createChild(transition_Trigger, eventTrigger)
@@ -356,7 +370,13 @@ class MagicdrawToGammaTransformer {
 			
 					createOnetToManyTrace(match.transition.trigger.head, #[gTimeoutDeclaration, gSetTimeoutAction, gTrigger])
 				} catch (Exception e){
-					this.masseges += "skipping " + match.event.humanName + " reason: " + e.message 
+					this.masseges += "invalid element: " + match.event.humanName + ", falling back to opaque trigger\n" + " reason: " + e.message
+					
+					val gTrigger = gTransition.createChild(transition_Trigger, opaqueTrigger) as OpaqueTrigger => [
+						it.trigger =  "after(" + expr.value.fomratName + ")";
+					]
+				
+					createTrace(mdTransition.trigger.head, gTrigger)
 				}
 			}
 		}
@@ -371,31 +391,103 @@ class MagicdrawToGammaTransformer {
 			it.port = match.GPort
 			it.event = match.GEvent
 		]
+		
+		createTrace(mdTransition.trigger.head, gEventTrigger)
 	].build
 	
+	val anyTriggerRule = createRule(anyEventTriggers).action[match |
+		val mdTransition = match.transition
+		val gTransition = match.GTransition
+		
+		val gAnyTrigger = gTransition.createChild(transition_Trigger, anyTrigger)
+		
+		createTrace(mdTransition.trigger.head, gAnyTrigger)
+	].build
+	
+	val opaqueTriggerRule = createRule(opaqueTriggers).action[match |
+		val mdTransition = match.transition
+		val gTransition = match.GTransition
+		
+		if (match.trigger.name !== null && match.trigger.name != ""){
+			val gOpaqueTrigger = gTransition.createChild(transition_Trigger, opaqueTrigger) as OpaqueTrigger => [
+				it.trigger = if (match.trigger.event !== null) match.trigger.event.name.fomratName else match.trigger.name.fomratName 
+			]
+			
+			createTrace(mdTransition.trigger.head, gOpaqueTrigger);
+		}
+
+	].build
 	
 	val guardRule = createRule(guardsInStateMachine).action[match |
 		val gTranistion = match.transition.pairs.head
 		val guardString = match.body
 
 		val guardExpr = gTranistion.createChild(transition_Guard, opaqueExpression) as OpaqueExpression => [
-			it.body = "\"" + guardString.fomratName + "\""
+			it.expression = guardString.fomratName
 		]
 		
 		createManyToManyTrace(#[match.transition, match.opaqueExpression], #[gTranistion, guardExpr])
 	].build
-
 	
-//	val transitionActionRule = createRule.precondition(actionsOnTransitions).action[match | 
+	val actionRule = createRule(actionsOnTransitions).action[match | 
+		val mdTransition = match.transition
+		val body = match.body
+		
+		val gTransition = mdTransition.pairs.head
+		
+		val gAction = gTransition.createChild(transition_Effects, expressionStatement)
+		gAction.createChild(expressionStatement_Expression, opaqueExpression) as OpaqueExpression => [
+			it.expression = body
+		]
+		
+		createManyToManyTrace(#[mdTransition, match.effect],  #[gAction])
+	].build
+	
+	val entryActionRule = createRule(entryActions).action[match |
+		val mdState = match.state
+		val body = match.body
+		
+		val gState = mdState.pairs.head
+		
+		val gAction = gState.createChild(state_EntryActions, expressionStatement)
+		
+		gAction.createChild(expressionStatement_Expression, opaqueExpression) as OpaqueExpression => [
+			it.expression = body
+		]
+		
+		createManyToManyTrace(#[mdState, match.effect],  #[gAction])
+	].build
+	
+	val exitActionRule = createRule(exitActions).action[match |
+		val mdState = match.state
+		val body = match.body
+		
+		val gState = mdState.pairs.head
+		
+		val gAction = gState.createChild(state_ExitActions, expressionStatement)
+		
+		gAction.createChild(expressionStatement_Expression, opaqueExpression) as OpaqueExpression => [
+			it.expression = body
+		]
+		
+		createManyToManyTrace(#[mdState, match.effect],  #[gAction])
+	].build
+	
+//	val doActionRule = createRule(doActions).action[match |
+//		val mdState = match.state
 //		val body = match.body
-//		val statechartDef = match.statemachine.trace.get
-//		val action = timeP.paresAction(this.targetModelEngine, statechartDef, body)
 //		
-//		match.transition.trace.get.effects += action
+//		val gState = mdState.pairs.head
+//		
+//		val gAction = gState.createChild(state_EntryActions, expressionStatement)
+//		
+//		gAction.createChild(expressionStatement_Expression, opaqueExpression) as OpaqueExpression => [
+//			it.expression = body
+//		]
+//		
+//		createManyToManyTrace(#[mdState, match.effect],  #[gAction])
 //	].build
 
-
-	 
 
     private def createTransformation() {
         //Create VIATRA model manipulations

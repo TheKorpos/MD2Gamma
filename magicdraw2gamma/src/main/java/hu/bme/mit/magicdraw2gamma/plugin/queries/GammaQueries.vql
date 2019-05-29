@@ -28,4 +28,4 @@ pattern DeclarationsByName(statechartDefinition: StatechartDefinition, name: jav
 
 pattern TimeoutDeclarationsWithEmptyName(declaration: TimeoutDeclaration){
 	TimeoutDeclaration(declaration);
-}
+}  
