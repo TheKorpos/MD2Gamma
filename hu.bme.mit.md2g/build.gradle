@@ -1,0 +1,423 @@
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.stream.Collectors
+import java.util.zip.ZipFile
+
+plugins {
+  id "org.xtext.xtend" version "1.0.21"
+}
+
+xtext.version = xtextVersion
+
+String buildNumber = project.hasProperty('buildNumber') ? project.getProperty('buildNumber') : System.currentTimeSeconds()
+String timestamp = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm").format(LocalDateTime.now())
+
+//This is the part that is painful to maintain, as MD releases tend to move around these library jars
+String[] classpathLibraries = [
+        'lib/patch.jar',
+        'lib/md.jar',
+        'lib/md_api.jar',
+        'lib/md_common.jar',
+        'lib/md_common_api.jar',
+        'lib/md_common_test.jar',
+        'lib/tw_common.jar',
+        'lib/tw_common_api.jar',
+        'lib/launcher.jar',
+        'lib/activation.jar'
+]
+
+
+// Apply the java-library plugin to add support for Java Library
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'distribution'
+apply plugin: 'org.xtext.xtend'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'src/generated/vql'
+        }    
+ 		xtendOutputDir = 'build/xtend/main'            
+    }
+    test {
+    	java {
+    		srcDir 'src/test/java'
+    	}
+    }
+}
+
+// In this section you declare where to find the dependencies of your project
+repositories {
+    ivy {
+        url 'http://download1.nomagic.com/'
+        layout 'pattern', {
+            artifact '/[module][revision]/[classifier].[ext]'
+        }
+    }
+    //https://inf.mit.bme.hu/sites/default/files/gamma/2_1_3/gamma-tool-2.1.3.zip
+    ivy {
+    	url 'https://inf.mit.bme.hu/sites/default/files/'
+    	layout 'pattern', {
+    		//module = group
+    		//name = gamma
+    		//revision = version
+    		artifact '/[module]/2_1_3/[classifier]-[revision].[ext]'
+    	}
+    }
+    jcenter()
+    mavenCentral()
+	maven { url 'https://build.incquerylabs.com/nexus/repository/v4md/' }
+ 	maven { url "https://repo.eclipse.org/content/groups/viatra/" }
+ }
+
+configurations {
+	plugin
+    implementation.extendsFrom plugin
+    preCompile
+}
+
+String[] gammaDeps = [
+	'hu.bme.mit.gamma.constraint.model_*',
+	'hu.bme.mit.gamma.statechart.model_*'
+]
+dependencies {    
+
+	def exclusions = {
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude module: 'viatra-query-runtime'
+        exclude module: 'org.eclipse.emf.ecore'
+        exclude module: 'org.eclipse.emf.ecore.common'
+        exclude module: 'org.eclipse.emf.ecore.xmi'
+        exclude module: 'org.eclipse.emf.common'
+        exclude module: 'org.eclipse.equinox.common'
+        exclude module: 'asm'
+        exclude module: 'log4j'
+        exclude module: 'org.eclipse.osgi'
+        exclude module: 'org.eclipse.xtext.xbase.lib' //provided by V4MD
+        exclude module: 'org.eclipse.xtend.lib.macro' //provided by V4MD
+        exclude module: 'org.eclipse.xtext' //version number replacement
+        exclude module: 'org.eclipse.xtext.xbase' //version number replacement
+        exclude module: 'org.eclipse.xtext.xtext.generator' //version number replacement
+        
+    }
+    
+    // Use Cameo System Modeller 
+    //preCompile group: 'com.nomagic', name: 'csm', version: '190sp2', classifier: 'Cameo_Systems_Modeler_190_sp2_no_install', ext: 'zip'
+    //preCompile group: 'com.nomagic', name: 'ccfortwc', version: '190sp2', classifier: 'Cameo_Collaborator_Publisher_Plugin_190_sp2', ext: 'zip'
+    
+    // Use MagicDraw 
+    preCompile group: 'com.nomagic', name: 'magicdraw', version: '190', classifier: 'MagicDraw_190_no_install', ext: 'zip'
+    preCompile group: 'com.nomagic', name: 'sysml', version: '190', classifier: 'SysML_Plugin_190_bundle', ext: 'zip'
+    
+    preCompile group: 'com.incquerylabs.v4md', name: 'com.incquerylabs.v4md', version: v4mdVersion, classifier: 'plugin', ext: 'zip'
+    preCompile group: 'gamma', name: 'gamma', version: '2.1.3', classifier: 'gamma-tool', ext: 'zip'
+    
+    plugin group: 'org.eclipse.viatra', name: 'viatra-query-language', version: viatraVersion, exclusions
+    plugin group: 'org.eclipse.xtext',  name: 'org.eclipse.xtext', version: xtextVersion, exclusions
+    plugin group: 'org.eclipse.xtext',  name: 'org.eclipse.xtext.xbase', version: xtextVersion, exclusions
+    plugin group: 'org.eclipse.xtext',  name: 'org.eclipse.xtext.xtext.generator', version: xtextVersion, exclusions
+    plugin group: 'org.eclipse.xtext',  name: 'org.eclipse.xtext.common.types', version: xtextVersion, exclusions
+    plugin group: 'org.eclipse.emf', name: 'org.eclipse.emf.codegen', version: '2.10.0-v20140901-1055', exclusions
+    plugin group: 'org.eclipse.emf', name: 'org.eclipse.emf.codegen.ecore', version: '2.10.1-v20140901-1055', exclusions
+    plugin group: 'org.ow2.asm', name: 'asm', version: '7.0'
+    
+    
+ 	implementation group: 'org.eclipse.viatra', name: 'viatra-query-runtime', version: viatraVersion, exclusions
+    implementation group: 'org.eclipse.viatra', name: 'viatra-transformation-runtime', version: viatraVersion, exclusions    
+    
+    // This ensures classpath load order to match the MagicDraw provided order and then includes extras needed for non-OpenAPI stuff.
+    compile files(classpathLibraries.collect { 'build/dependency-cache/extracted/' + it })
+    compile fileTree(dir: 'build/dependency-cache/extracted', include: ['lib/**/*.jar', 'plugins/**/*.jar'], exclude: ([ classpathLibraries, ['plugins/com.nomagic.collaborator.publisher/**/*.jar', 'plugins/com.nomagic.magicdraw.emfuml2xmi*/**/*.jar'] ]).flatten())
+    compile fileTree(dir: 'lib', include: ['**/*.jar'])
+    compile fileTree(dir: 'build/gamma-tool/dropins/plugins', include: gammaDeps)
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.apache.maven.surefire:maven-surefire-common:2.19.1'
+    testCompile 'org.apache.maven.surefire:surefire-api:2.19.1'
+    testCompile 'org.apache.maven.surefire:surefire-junit4:2.19.1'
+}
+
+task extractDependencies {
+    configurations.preCompile.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+        inputs.file artifact.file
+        def zipFile = new ZipFile(artifact.file)
+        zipFile.entries().each { entry ->
+            if (!entry.isDirectory()) {
+                outputs.file 'build/dependency-cache/extracted/' + entry.getName()
+            }
+        }
+    }
+    doLast {
+        inputs.files.each { archive ->
+        	if (!archive.name.contains('gamma')){
+	        	copy {
+	                from zipTree(archive)
+	                into 'build/dependency-cache/extracted'
+	            }
+        	} else {
+        		copy {
+	                from zipTree(archive)
+	                into 'build/gamma-tool'
+	            }
+        	}
+            
+        }
+        fileTree(dir: 'build/dependency-cache/extracted', include: '*.zip').each { archive ->
+            copy {
+                from zipTree(archive)
+                into 'build/dependency-cache/extracted'
+            }
+        }
+    }
+}
+compileJava.dependsOn extractDependencies
+
+processResources {
+	doFirst {
+		delete "build/resources"
+	}
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task testJar(type: Jar) {
+    classifier = 'tests'
+    from sourceSets.test.output.classesDirs
+}
+
+String testDistFolder = "test-dist"
+
+task testDist(type: PreDist) {
+    humanVersion = version
+    internalVersion = buildNumber
+    groupName = "com.incquerylabs.magicdraw.plugin.example.test"
+    pluginUserVisibleName = pluginName + " Tests"
+    pluginTemplate = "src/test/plugin.xml"
+	resolvedArtifacts = project.configurations.testCompile.resolvedConfiguration.resolvedArtifacts.file
+	outputArtifact = project.testJar
+	distributionFolderName = testDistFolder
+}
+testDist.dependsOn testJar
+
+task installTest {
+	doLast {
+        project.copy {
+            fileMode 0755
+            from "build/${testDistFolder}"
+            into 'build/install'
+        }
+	    project.delete "build/install/plugins/${magicDrawGroupName}/settings" // to enable test settings to take effect
+	}
+}
+installTest.dependsOn installDist
+installTest.dependsOn testDist
+
+def testArgs = [
+	'-Dcom.nomagic.magicdraw.launcher=com.nomagic.magicdraw.commandline.CommandLineActionLauncher',
+ 	'-Dcom.nomagic.magicdraw.commandline.action=com.incquerylabs.magicdraw.plugin.example.test.runner.TestRunner',
+	'-Dtests.resources=../../src/test/data'
+]
+task runTest(type: JavaExec) {
+	jvmArgs += testArgs
+}
+runTest.dependsOn installTest
+
+def debugArgs = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099', '-Dcom.sun.management.jmxremote.port=1099', '-Dcom.sun.management.jmxremote.authenticate=false', '-Dcom.sun.management.jmxremote.ssl=false']
+
+task debugTest(type: JavaExec) {
+	jvmArgs += testArgs
+	jvmArgs += debugArgs
+}
+debugTest.dependsOn installTest
+
+String defaultCodeGenInput = '../../resources/Python_Codegen_Example.mdzip'
+String codeGenInput = project.hasProperty('codeGenInput') ? project.getProperty('codeGenInput') : defaultCodeGenInput
+def codeGenFilePath = codeGenInput.split("\\" + File.separator)
+def codeGenFileName = codeGenFilePath.last().split("\\.").first()
+
+def codeGenArgs = [
+	'-Dcom.nomagic.magicdraw.launcher=com.nomagic.magicdraw.commandline.CommandLineActionLauncher',
+ 	'-Dcom.nomagic.magicdraw.commandline.action=com.incquerylabs.magicdraw.plugin.example.commands.CodeGenRunner',
+]
+
+task runCodeGen(type: JavaExec) {
+	args "${codeGenInput}"
+	jvmArgs += codeGenArgs
+	
+	doLast {
+        ant.zip(destfile: "build/install/target/${codeGenFileName}_generated.zip") {
+            fileset(dir: 'build/install/target/codegen') {}
+        }
+    }
+}
+runCodeGen.dependsOn installDist
+
+class PreDist extends DefaultTask {
+    String descriptor
+    String humanVersion
+    String internalVersion
+    String groupName
+    String pluginTemplate
+    Set<File> resolvedArtifacts
+    String pluginUserVisibleName
+    org.gradle.api.tasks.bundling.Jar outputArtifact
+    String distributionFolderName
+
+    @TaskAction
+    void executeTask() {
+        project.copy {
+            from resolvedArtifacts
+            from 'lib'
+            from outputArtifact
+            into "build/${distributionFolderName}/plugins/${groupName}"
+        }
+		String sep = "\\" + File.separator
+	    String pluginLibraries = ''
+        project.fileTree(dir: "build/${distributionFolderName}/plugins/${groupName}", include: '**/*.jar').each { file ->
+            pluginLibraries += '\t\t<library name=\"' + file.absolutePath.replaceAll(~/.*build${sep}${distributionFolderName}${sep}plugins${sep}${groupName}${sep}/, '') + '\"/>' + System.lineSeparator()
+        }
+        project.copy {
+            from pluginTemplate
+            filter { String line -> line.replace('<!-- START AUTO-GENERATED -->', '<!-- START AUTO-GENERATED -->' + System.lineSeparator() + System.lineSeparator() + pluginLibraries) }
+            filter { String line -> line.replace('${human.version}', humanVersion) }
+            filter { String line -> line.replace('${internal.version}', internalVersion) }
+            filter { String line -> line.replace('${plugin.name}', pluginUserVisibleName) }
+            into "build/${distributionFolderName}/plugins/${groupName}"
+        }
+        
+        String descriptorFiles = ''
+        project.fileTree(dir: 'build/generated-dist').each { file ->
+            String relativePath = file.absolutePath.replaceAll(/.*build${sep}generated-dist${sep}/, '')
+            descriptorFiles += '\t\t<file from=\"' + relativePath + '\" to=\"' + relativePath + '\"/>' + System.lineSeparator()
+        }
+        project.copy {
+            from "src/main/dist/template/data/resourcemanager/${descriptor}"
+            filter { String line -> line.replace('<!-- START AUTO-GENERATED -->', '<!-- START AUTO-GENERATED -->' + System.lineSeparator() + System.lineSeparator() + descriptorFiles) }
+            filter { String line -> line.replace('${human.version}', humanVersion) }
+            filter { String line -> line.replace('${internal.version}', internalVersion) }
+            into 'build/generated-dist/data/resourcemanager'
+        }
+    }
+}
+
+task preDist(type: PreDist) {
+	descriptor = descriptorFile
+    humanVersion = version
+    internalVersion = buildNumber
+    groupName = magicDrawGroupName
+    pluginUserVisibleName = project.getProperty("pluginName")
+    pluginTemplate = 'src/main/dist/template/plugins/${group}/plugin.xml'
+    resolvedArtifacts = project.configurations.plugin.resolvedConfiguration.resolvedArtifacts.file
+    outputArtifact = project.jar
+    distributionFolderName = "generated-dist"
+
+    doFirst {
+    	project.copy {
+            from 'src/main/dist'
+            exclude 'template'
+            from 'src/main/dist/template'
+            exclude 'plugins'
+            from 'src/main/dist/template/plugins'
+            exclude '${group}'
+            into 'build/generated-dist'
+        }
+        project.copy {
+            from 'src/main/dist/settings'
+            into "build/generated-dist/plugins/${groupName}/settings"
+        }
+        project.fileTree(dir: 'build/generated-dist', include: '**/*${group}*/**').each { file ->
+            file.renameTo(project.file(file.getAbsolutePath().replace('${group}', "${groupName}")))
+        }
+    }
+}
+preDist.dependsOn jar
+
+distributions {
+    main {
+        contents {
+            exclude 'template'
+            from 'build/generated-dist'
+        }
+    }
+}
+
+distZip {
+    includeEmptyDirs false
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
+    eachFile { file ->
+        file.setPath(path.substring(path.indexOf("/") + 1, path.length()))
+    }
+}
+distZip.dependsOn preDist
+
+installDist {
+    destinationDir = file('build/plugin')
+    doLast {
+        copy {
+            fileMode 0755
+            from 'build/dependency-cache/extracted'
+            from 'build/plugin'
+            into 'build/install'
+        }
+    }
+}
+installDist.dependsOn distZip
+
+def os = org.gradle.internal.os.OperatingSystem.current()
+def platformConfigSetting = 
+        (os.isWindows())
+		? ['-DWINCONFIG=true']
+		: ((os.isMacOsX())
+			? ['-DWINCONFIG=false', '-Xdock:name=MagicDraw', '-Xdock:icon=bin/md.icns', '-Dapple.laf.useScreenMenuBar=true']
+: ['-DWINCONFIG=false'])
+
+tasks.withType(JavaExec) {
+	doFirst {
+        classpath fileTree(dir: 'build/install', include: ['lib/**/*.jar'], exclude: ['lib/**/*akka*.jar'])
+    }
+
+	workingDir 'build/install'
+    ignoreExitValue true
+
+    standardOutput = System.out
+    errorOutput = System.err
+	
+    main = 'com.nomagic.osgi.launcher.ProductionFrameworkLauncher'
+    jvmArgs = platformConfigSetting + ['-Xmx8192M', '-Xss512M', '-noverify', '-splash:data/splash.png','-Dmd.class.path=$java.class.path']
+	args 'DEVELOPER'
+}
+
+task runJava(type: JavaExec) {
+}
+runJava.dependsOn installDist
+
+task debugJava(type: JavaExec) {
+    jvmArgs += debugArgs
+}
+debugJava.dependsOn installDist
+
+
+task preparePluginDistributions {
+	configurations.preCompile.resolvedConfiguration.resolvedArtifacts.each { artifact ->
+		if(artifact.getName().contains('v4md')){
+			copy{
+				from artifact.getFile().getParentFile()
+				include '*v4md*.zip'
+				rename { String fileName ->
+					fileName.replace("-SNAPSHOT-no-install", "")
+				}
+				into 'build/distributions/'
+			}
+		}
+    }
+}
+preparePluginDistributions.dependsOn installDist
+
+
