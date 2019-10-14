@@ -1,8 +1,0 @@
-= Example Chapter
-
-ifndef::rootdir[:rootdir: .]
-:icons: font
-
-This is the example documentation.
-
-image::example.png[Example Image]
