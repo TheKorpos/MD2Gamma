@@ -1,0 +1,175 @@
+package hu.bme.mit.md2g.transformation.queries
+
+import "http://www.nomagic.com/magicdraw/UML/2.5.1"
+
+
+pattern StateMachines(stateMachine: StateMachine, name: java String){
+	StateMachine.name(stateMachine, name);
+}
+
+pattern ParametersInStateMachine(stateMachine: StateMachine, parameter: Parameter){
+	StateMachine.ownedParameter(stateMachine, parameter);
+}
+
+pattern RegionsInRegion(container: Region, region: Region){
+	Region.subvertex(container, vertex);
+	State.region(vertex, region);
+}
+
+pattern RegionsInStatemachine(stateMachine: StateMachine, subregion: Region){
+	find MainRegions(stateMachine, subregion);
+} or {
+	find RegionsInRegion+(region, subregion);
+	StateMachine.region(stateMachine, region);
+}
+
+pattern InitialStatesInStatemachine(stateMachine: StateMachine, initialState: Pseudostate){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.subvertex(region, initialState);
+	Pseudostate.kind(initialState, ::initial);
+}
+
+pattern ShallowHistoryInStatemachine(stateMachine: StateMachine, history: Pseudostate){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.subvertex(region, history);
+	Pseudostate.kind(history, ::shallowHistory);
+}
+
+
+pattern DeepHistoryInStateMachine(stateMachine: StateMachine, history: Pseudostate){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.subvertex(region, history);
+	Pseudostate.kind(history, ::deepHistory);
+}
+
+pattern ForksInStateMachine(stateMachine: StateMachine, forkState: Pseudostate){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.subvertex(region, forkState);
+	Pseudostate.kind(forkState, ::fork);
+}
+
+pattern JoinsInStateMachine(stateMachine: StateMachine, joinState: Pseudostate){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.subvertex(region, joinState);
+	Pseudostate.kind(joinState, ::join);
+}
+
+
+pattern StatesInStatemachine(stateMachine: StateMachine, state: State){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.subvertex(region, state);
+}
+
+pattern TranisitonsInStateMachine(stateMachine: StateMachine, transition: Transition){
+	find RegionsInStatemachine(stateMachine, region);
+	Region.transition(region, transition);
+}
+
+pattern SignalsInStateMachine(stateMachine: StateMachine, signal: Signal, event: SignalEvent){
+	StateMachine.event(stateMachine, event);
+	SignalEvent.signal(event, signal);
+}
+
+pattern MainRegions(stateMachine: StateMachine, region: Region){
+	StateMachine.region(stateMachine, region);
+}
+
+pattern StatesInMainRegion(region: Region, state: State){
+	find MainRegions(_, region);
+	Region.subvertex(region, state);
+} 
+
+pattern StatesInRegions(containingRegion: Region, state: State){
+	Region.subvertex(containingRegion, state);
+}
+
+pattern PseudoStates(containingRegion: Region, pseudoState: Pseudostate, kind: PseudostateKind){
+	Region.subvertex(containingRegion, pseudoState);
+	Pseudostate.kind(pseudoState, kind);
+
+}
+
+pattern FinalStates(containingRegion: Region, finalState: FinalState){
+	Region.subvertex(containingRegion, finalState);
+}
+
+pattern RegionsInStates(containingState: State, region: Region){
+	State.region(containingState, region);
+}
+
+pattern Transitions(source: Vertex, transition: Transition, target: Vertex){
+	Transition.source(transition, source);
+	Transition.target(transition, target);
+}
+
+
+private pattern InnerRegion(region: Region, innerRegion: Region){
+	find StatesInRegions(region, state);
+	find RegionsInStates(state, innerRegion);
+}
+
+pattern RegionsInStatechart(stmt: StateMachine, region: Region){
+	find MainRegions(stmt, region);
+} or {
+	find MainRegions(stmt, outerRegion);
+	find InnerRegion+(outerRegion, region);
+}
+
+pattern OwnedTransitions(stmt: StateMachine, transition: Transition){
+	find RegionsInStatechart(stmt, region);
+	Region.transition(region, transition);
+}
+
+pattern Triggers(transition: Transition, trigger: Trigger){
+	Transition.trigger(transition, trigger);
+}
+
+pattern Signals(trigger: Trigger, signal: Signal){
+	Trigger.event(trigger, signalEvent);
+	SignalEvent.signal(signalEvent, signal);
+}
+
+pattern GuardsInStateMachine(stateMachine: StateMachine, transition: Transition, opaqueExpression: OpaqueExpression, body: java String){
+	find TranisitonsInStateMachine(stateMachine, transition);
+	Transition.guard(transition, guard);
+	Constraint.specification(guard, opaqueExpression);
+	OpaqueExpression.body(opaqueExpression, body);
+	check(!"".equals(body));
+}
+
+pattern RelativeTimeEventsInStateMachine(stateMachine: StateMachine, transition: Transition, event: TimeEvent){
+	StateMachine.event(stateMachine, event);
+	Transition.trigger(transition, trigger);
+	Trigger.event(trigger, event);
+	TimeEvent.isRelative(event, true);
+}
+
+pattern PropertiesInStateMachine(stateMachine: Class, prop: Property){
+	Class.ownedAttribute(stateMachine, prop);
+}
+
+pattern Actions(action: Behavior, body: java String){
+	FunctionBehavior.body(action, body);
+} or {
+	OpaqueBehavior.body(action, body);
+} or {
+	//any other
+	neg FunctionBehavior(action);
+	neg OpaqueBehavior(action);
+	Behavior.name(action, body);
+}
+
+pattern ActionsOnTransitions(transition: Transition, body: java String, effect: Behavior){
+	Transition.effect(transition, effect);
+	find Actions(effect, body);
+}
+
+pattern EntryActions(state: State, body: java String, effect: Behavior){
+	State.entry(state, effect);
+	find Actions(effect, body);
+}
+
+pattern ExitActions(state: State, body: java String, effect: Behavior){
+	State.exit(state, effect);
+	find Actions(effect, body);
+}

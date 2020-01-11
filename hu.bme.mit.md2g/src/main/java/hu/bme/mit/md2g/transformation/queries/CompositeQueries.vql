@@ -1,0 +1,14 @@
+package hu.bme.mit.md2g.transformation.queries
+
+import "http://www.nomagic.com/magicdraw/UML/2.5.1"
+
+pattern portsOnComponents(component: Class, port: Port, portType: Class){
+	Class.ownedAttribute(component, port);
+	Port.type(port, portType);
+}
+
+pattern portConnections(end1: Property, end2: Property, connection: Connector){
+	Connector.end.partWithPort(connection, end1);
+	Connector.end.partWithPort(connection, end2);
+	end1 != end2;
+}

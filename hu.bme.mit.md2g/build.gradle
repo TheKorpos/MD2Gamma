@@ -65,12 +65,13 @@ repositories {
     		//module = group
     		//name = gamma
     		//revision = version
-    		artifact '/[module]/2_1_3/[classifier]-[revision].[ext]'
+    		artifact '/[module]/2_2_0/[classifier]-[revision].[ext]'
     	}
     }
     jcenter()
     mavenCentral()
-	maven { url 'https://build.incquerylabs.com/nexus/repository/v4md/' }
+    mavenLocal()
+	//maven { url 'https://build.incquerylabs.com/nexus/repository/v4md/' }
  	maven { url "https://repo.eclipse.org/content/groups/viatra/" }
  }
 
@@ -81,13 +82,21 @@ configurations {
 }
 
 String[] gammaDeps = [
-	'hu.bme.mit.gamma.constraint.model_*',
-	'hu.bme.mit.gamma.statechart.model_*'
+	'hu.bme.mit.gamma.expression.model_*',
+	'hu.bme.mit.gamma.expression.language_*',
+	'hu.bme.mit.gamma.statechart.model_*',
+	'hu.bme.mit.gamma.statechart.language_*',
+	'hu.bme.mit.gamma.action.model_*',
+	'hu.bme.mit.gamma.action.language_*',
+	'de.uni_paderborn.uppaal_*',
+	'hu.bme.mit.gamma.uppaal.transformation_*',
+	'hu.bme.mit.gamma.uppaal.transformation.traceability_*',
+	'hu.bme.mit.gamma.uppaal.composition.transformation_*'
 ]
+
 dependencies {    
 
 	def exclusions = {
-        exclude group: 'com.google.guava', module: 'guava'
         exclude module: 'viatra-query-runtime'
         exclude module: 'org.eclipse.emf.ecore'
         exclude module: 'org.eclipse.emf.ecore.common'
@@ -97,8 +106,6 @@ dependencies {
         exclude module: 'asm'
         exclude module: 'log4j'
         exclude module: 'org.eclipse.osgi'
-        exclude module: 'org.eclipse.xtext.xbase.lib' //provided by V4MD
-        exclude module: 'org.eclipse.xtend.lib.macro' //provided by V4MD
         exclude module: 'org.eclipse.xtext' //version number replacement
         exclude module: 'org.eclipse.xtext.xbase' //version number replacement
         exclude module: 'org.eclipse.xtext.xtext.generator' //version number replacement
@@ -114,7 +121,7 @@ dependencies {
     preCompile group: 'com.nomagic', name: 'sysml', version: '190', classifier: 'SysML_Plugin_190_bundle', ext: 'zip'
     
     preCompile group: 'com.incquerylabs.v4md', name: 'com.incquerylabs.v4md', version: v4mdVersion, classifier: 'plugin', ext: 'zip'
-    preCompile group: 'gamma', name: 'gamma', version: '2.1.3', classifier: 'gamma-tool', ext: 'zip'
+    preCompile group: 'gamma', name: 'gamma', version: '2.2.0', classifier: 'gamma-tool', ext: 'zip'
     
     plugin group: 'org.eclipse.viatra', name: 'viatra-query-language', version: viatraVersion, exclusions
     plugin group: 'org.eclipse.xtext',  name: 'org.eclipse.xtext', version: xtextVersion, exclusions
@@ -125,6 +132,8 @@ dependencies {
     plugin group: 'org.eclipse.emf', name: 'org.eclipse.emf.codegen.ecore', version: '2.10.1-v20140901-1055', exclusions
     plugin group: 'org.ow2.asm', name: 'asm', version: '7.0'
     
+     // https://mvnrepository.com/artifact/com.google.guava/guava
+	plugin group: 'com.google.guava', name: 'guava', version: '21.0'
     
  	implementation group: 'org.eclipse.viatra', name: 'viatra-query-runtime', version: viatraVersion, exclusions
     implementation group: 'org.eclipse.viatra', name: 'viatra-transformation-runtime', version: viatraVersion, exclusions    
@@ -134,11 +143,15 @@ dependencies {
     compile fileTree(dir: 'build/dependency-cache/extracted', include: ['lib/**/*.jar', 'plugins/**/*.jar'], exclude: ([ classpathLibraries, ['plugins/com.nomagic.collaborator.publisher/**/*.jar', 'plugins/com.nomagic.magicdraw.emfuml2xmi*/**/*.jar'] ]).flatten())
     compile fileTree(dir: 'lib', include: ['**/*.jar'])
     compile fileTree(dir: 'build/gamma-tool/dropins/plugins', include: gammaDeps)
+    
+   
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.apache.maven.surefire:maven-surefire-common:2.19.1'
     testCompile 'org.apache.maven.surefire:surefire-api:2.19.1'
     testCompile 'org.apache.maven.surefire:surefire-junit4:2.19.1'
+ 
+    
 }
 
 task extractDependencies {
@@ -327,6 +340,11 @@ task preDist(type: PreDist) {
             from 'src/main/dist/template/plugins'
             exclude '${group}'
             into 'build/generated-dist'
+        }
+        project.copy {
+        	from 'build/gamma-tool/dropins/plugins'
+        	include gammaDeps
+        	into "build/${distributionFolderName}/plugins/${groupName}"
         }
         project.copy {
             from 'src/main/dist/settings'
