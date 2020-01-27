@@ -106,7 +106,7 @@ public class CompositeTransformation {
 					
 				} else {
 					SynchronousCompositeComponent compositeDef = compositeFactory.createSynchronousCompositeComponent();
-					compositeDef.setName(classType.getName());
+					compositeDef.setName(classType.getName() + "Block");
 					p.getComponents().add(compositeDef);
 					
 					

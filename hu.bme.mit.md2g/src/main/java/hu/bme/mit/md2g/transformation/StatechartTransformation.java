@@ -1,19 +1,19 @@
 package hu.bme.mit.md2g.transformation;
 
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 
 import com.incquerylabs.v4md.ViatraQueryAdapter;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
 import com.nomagic.magicdraw.uml.BaseElement;
+import com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Constraint;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralString;
@@ -24,11 +24,9 @@ import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.SignalEve
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.TimeEvent;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.Trigger;
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.StateMachine;
-import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.StateMachineClass;
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Vertex;
 
 import hu.bme.mit.gamma.action.model.Action;
-import hu.bme.mit.gamma.action.model.ActionModelFactory;
 import hu.bme.mit.gamma.expression.model.Expression;
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory;
 import hu.bme.mit.gamma.expression.model.IntegerLiteralExpression;
@@ -41,7 +39,6 @@ import hu.bme.mit.gamma.statechart.model.JoinState;
 import hu.bme.mit.gamma.statechart.model.Package;
 import hu.bme.mit.gamma.statechart.model.Port;
 import hu.bme.mit.gamma.statechart.model.PortEventReference;
-import hu.bme.mit.gamma.statechart.model.RaiseEventAction;
 import hu.bme.mit.gamma.statechart.model.RealizationMode;
 import hu.bme.mit.gamma.statechart.model.Region;
 import hu.bme.mit.gamma.statechart.model.SetTimeoutAction;
@@ -57,17 +54,13 @@ import hu.bme.mit.gamma.statechart.model.TimeoutEventReference;
 import hu.bme.mit.gamma.statechart.model.Transition;
 import hu.bme.mit.gamma.statechart.model.composite.Component;
 import hu.bme.mit.gamma.statechart.model.interface_.Event;
-import hu.bme.mit.gamma.statechart.model.interface_.EventParameterReferenceExpression;
 import hu.bme.mit.gamma.statechart.model.interface_.Interface;
-import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory;
 import hu.bme.mit.md2g.transformation.parse.GuardLanguageParser;
 import hu.bme.mit.md2g.transformation.queries.DeepHistoryInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.ForksInStateMachine;
-import hu.bme.mit.md2g.transformation.queries.GuardsInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.InitialStatesInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.JoinsInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.RegionsInStatemachine;
-import hu.bme.mit.md2g.transformation.queries.RelativeTimeEventsInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.ShallowHistoryInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.StatesInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.TranisitonsInStateMachine;
@@ -103,7 +96,7 @@ public class StatechartTransformation {
 		StateMachine stateMachine = (StateMachine) stateMachineClass.getClassifierBehavior();
 	
 		gStatechart = statechartFactory.createStatechartDefinition();
-		gStatechart.setName(stateMachine.getName());
+		gStatechart.setName(stateMachine.getName() + "Statechart");
 		
 		transformPort(stateMachineClass, gStatechart, interfaceTraces, portTraces);
 		
@@ -112,7 +105,7 @@ public class StatechartTransformation {
 		InitialStatesInStatemachine.Matcher.on(engine).getAllMatches(stateMachine, null)
 				.forEach(this::transformInitialState);
 		StatesInStatemachine.Matcher.on(engine).getAllMatches(stateMachine, null)
-				.forEach(this::transformState);
+				.forEach(it -> transformState(it, signalTraces));
 		ShallowHistoryInStatemachine.Matcher.on(engine).getAllMatches(stateMachine, null)
 				.forEach(this::transformShallowHistory);
 		DeepHistoryInStateMachine.Matcher.on(engine).getAllMatches(stateMachine, null)
@@ -188,12 +181,22 @@ public class StatechartTransformation {
 		vertexTraces.put(match.getInitialState(), gInitState);
 	}
 	
-	private void transformState(StatesInStatemachine.Match match) {
+	private void transformState(StatesInStatemachine.Match match, Map<Signal, Event> signalTraces) {
 		State gState = statechartFactory.createState();
 		gState.setName(saniztizeName(match.getState().getName(), "state_" + nextElementSuffixId++));
+		
+		transformAction(match.getState().getEntry(), gState.getEntryActions(), signalTraces);
+		transformAction(match.getState().getExit(), gState.getExitActions(), signalTraces);
+		
 		vertexTraces.put(match.getState(), gState);
 	}
 	
+	private void transformAction(Behavior entry, List<Action> actions, Map<Signal, Event> signalTraces) {
+		if (entry == null || !(entry instanceof Activity)) return;
+		List<Action> tryTransform = ActivityTransformer.tryTransform((Activity) entry,  signalTraces, portTraces);
+		tryTransform.forEach(actions::add);
+	}
+
 	private void transformShallowHistory(ShallowHistoryInStatemachine.Match match) {
 		ShallowHistoryState gShallow = statechartFactory.createShallowHistoryState();
 		gShallow.setName(saniztizeName(match.getHistory().getName(), "shallow_" + nextElementSuffixId++));
@@ -239,10 +242,8 @@ public class StatechartTransformation {
 		if (behavior != null) {
 			if (behavior instanceof Activity) {
 				Activity activity = (Activity) behavior;
-				Optional<Action> tryTransform = ActivityTransformer.tryTransform(activity, signalTraces, portTraces);
-				if (tryTransform.isPresent()) {
-					gTransition.getEffects().add(tryTransform.get());
-				}
+				List<Action> tryTransform = ActivityTransformer.tryTransform(activity, signalTraces, portTraces);
+				tryTransform.forEach(gTransition.getEffects()::add);
 			}
 		}
 		

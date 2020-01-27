@@ -62,7 +62,7 @@ public class BatchInterfaceTransformation {
 
 		if (SysMLProfile.FlowDirectionEnum.IN == flowDirectionEnum) {
 			return EventDirection.IN;
-		} else if (SysMLProfile.FlowDirectionEnum.IN == flowDirectionEnum) {
+		} else if (SysMLProfile.FlowDirectionEnum.OUT == flowDirectionEnum) {
 			return EventDirection.OUT;
 		}
 		return EventDirection.INOUT;
