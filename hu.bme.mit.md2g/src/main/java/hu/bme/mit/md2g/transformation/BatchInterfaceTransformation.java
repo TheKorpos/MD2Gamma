@@ -16,6 +16,7 @@ import hu.bme.mit.gamma.statechart.model.interface_.EventDeclaration;
 import hu.bme.mit.gamma.statechart.model.interface_.EventDirection;
 import hu.bme.mit.gamma.statechart.model.interface_.Interface;
 import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory;
+import hu.bme.mit.md2g.util.NameSanitizer;
 import hu.bme.mit.md2g.util.SysMLProfile;
 import hu.bme.mit.md2g.util.SysMLProfile.FlowDirectionEnum;
 
@@ -25,6 +26,7 @@ public class BatchInterfaceTransformation {
 	private Map<Signal, Event> signalTraces = new HashMap<>();
 	private Map<Classifier, hu.bme.mit.gamma.statechart.model.interface_.Interface> interfaceTraces = new HashMap<>();
 	private static final InterfaceFactory INTERFACE_FACTORY = InterfaceFactory.eINSTANCE;
+	private final NameSanitizer nameSanitizer = new NameSanitizer();
 	
 	public BatchInterfaceTransformation(Set<Classifier> classifiers) {
 		this.classifiers = classifiers;
@@ -35,7 +37,7 @@ public class BatchInterfaceTransformation {
 		for (Classifier classifier : classifiers) {
 			
 			hu.bme.mit.gamma.statechart.model.interface_.Interface gInterface= INTERFACE_FACTORY.createInterface();
-			gInterface.setName(classifier.getName());
+			gInterface.setName(nameSanitizer.getSenitizedName(classifier));
 			interfaceTraces.put(classifier, gInterface);
 			gPackage.getInterfaces().add(gInterface);
 			
@@ -46,7 +48,7 @@ public class BatchInterfaceTransformation {
 					.forEach(pairs -> {
 						Signal signal = (Signal) pairs.getKey().getType();
 						Event event = INTERFACE_FACTORY.createEvent();
-						event.setName(signal.getName());
+						event.setName(nameSanitizer.getSenitizedName(signal));
 						EventDeclaration eventDecl = INTERFACE_FACTORY.createEventDeclaration();
 						eventDecl.setDirection(getEventDirection(pairs.getValue()));
 						eventDecl.setEvent(event);

@@ -32,6 +32,7 @@ import hu.bme.mit.gamma.statechart.model.composite.SynchronousComponentInstance;
 import hu.bme.mit.gamma.statechart.model.composite.SynchronousCompositeComponent;
 import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory;
 import hu.bme.mit.md2g.transformation.BatchInterfaceTransformation.TransformedElements;
+import hu.bme.mit.md2g.util.NameSanitizer;
 import hu.bme.mit.md2g.util.SysMLProfile;
 
 public class CompositeTransformation {
@@ -39,11 +40,12 @@ public class CompositeTransformation {
 	private static final InterfaceFactory interfaceFactory = InterfaceFactory.eINSTANCE;
 	public static final StatechartModelFactory statechartFacory = StatechartModelFactory.eINSTANCE;
 	public static final CompositeFactory compositeFactory = CompositeFactory.eINSTANCE;
-
+	private final NameSanitizer nameSanitizer = new NameSanitizer();
+	
 	public List<Package> transform(Class upperMostComponent) {
 		
 		final Package gPackage = statechartFacory.createPackage();
-		gPackage.setName(upperMostComponent.getOwningPackage().getName());
+		gPackage.setName(nameSanitizer.getSenitizedName(upperMostComponent.getOwningPackage()));
 		
 		final Package interfacePackage = statechartFacory.createPackage();
 		interfacePackage.setName("Interfaces");
@@ -90,7 +92,7 @@ public class CompositeTransformation {
 				Class classType = (Class) typeType;
 				
 				Package p = statechartFacory.createPackage();
-				p.setName(classType.getName());
+				p.setName(nameSanitizer.getSenitizedName(typeType));
 				p.getImports().add(interfacePackage);
 				packages.add(p);
 				
@@ -106,7 +108,7 @@ public class CompositeTransformation {
 					
 				} else {
 					SynchronousCompositeComponent compositeDef = compositeFactory.createSynchronousCompositeComponent();
-					compositeDef.setName(classType.getName() + "Block");
+					compositeDef.setName(nameSanitizer.getSenitizedName(classType));
 					p.getComponents().add(compositeDef);
 					
 					
@@ -119,7 +121,7 @@ public class CompositeTransformation {
 						
 						SynchronousComponentInstance instance = compositeFactory.createSynchronousComponentInstance();
 						instance.setType((SynchronousComponent) gType);
-						instance.setName(prop.getName());
+						instance.setName(nameSanitizer.getSenitizedName(prop));
 						instanceTraces.put(prop, instance);
 						compositeDef.getComponents().add(instance);
 						

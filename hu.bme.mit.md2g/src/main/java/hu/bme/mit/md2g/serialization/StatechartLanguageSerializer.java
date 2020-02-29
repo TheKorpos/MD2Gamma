@@ -73,7 +73,7 @@ public class StatechartLanguageSerializer {
 		for (Resource res: this.resourceSet.getResources()) {
 			try {
 				res.save(Collections.EMPTY_MAP);
-				JOptionPane.showMessageDialog(Application.getInstance().getMainFrame(), res.getURI().toFileString() +  " exproted.");
+				JOptionPane.showMessageDialog(Application.getInstance().getMainFrame(), res.getURI().toFileString() +  " exported.");
 			} catch (Exception e) {
 				e.printStackTrace();
 				int dialogButton = JOptionPane.YES_NO_OPTION;

@@ -24,6 +24,7 @@ import hu.bme.mit.md2g.serialization.StatechartLanguageSerializer;
 import hu.bme.mit.md2g.transformation.BatchInterfaceTransformation;
 import hu.bme.mit.md2g.transformation.BatchInterfaceTransformation.TransformedElements;
 import hu.bme.mit.md2g.transformation.StatechartTransformation;
+import hu.bme.mit.md2g.util.NameSanitizer;
 
 public class TransfromSingleStatemachineAction extends NMAction{
 	
@@ -43,9 +44,12 @@ public class TransfromSingleStatemachineAction extends NMAction{
 		int state = filechooser.showSaveDialog(Application.getInstance().getMainFrame());
 		
 		if (state == JFileChooser.APPROVE_OPTION) {
+			
+			NameSanitizer nameSanitizer = new NameSanitizer();
+			
 			File selectedFile = filechooser.getSelectedFile();
 			
-			String packageName = target.getName();
+			String packageName = nameSanitizer.getSenitizedName(target);
 			
 			Package gPackage = StatechartModelFactory.eINSTANCE.createPackage();
 			gPackage.setName(packageName);
@@ -68,10 +72,10 @@ public class TransfromSingleStatemachineAction extends NMAction{
 			
 			rootObjects.put(URI.createURI("Interfaces.gcd")
 					.resolve(URI.createFileURI(selectedFile.getAbsolutePath() 
-							+ File.separator + target.getName() + File.separator + target.getName())), gInterfacePackage);
-			rootObjects.put(URI.createURI(target.getName() + ".gcd")
+							+ File.separator + packageName + File.separator + packageName)), gInterfacePackage);
+			rootObjects.put(URI.createURI(packageName + ".gcd")
 					.resolve(URI.createFileURI(selectedFile.getAbsolutePath()
-						+ File.separator + target.getName() + File.separator + target.getName())), gPackage);
+						+ File.separator + packageName + File.separator + packageName)), gPackage);
 			
 			try {
 				StatechartLanguageSerializer.serialize(rootObjects);

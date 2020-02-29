@@ -64,6 +64,7 @@ import hu.bme.mit.md2g.transformation.queries.RegionsInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.ShallowHistoryInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.StatesInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.TranisitonsInStateMachine;
+import hu.bme.mit.md2g.util.NameSanitizer;
 
 public class StatechartTransformation {
 
@@ -74,6 +75,7 @@ public class StatechartTransformation {
 	private final Map<com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Transition, Transition> transitionTraces = new HashMap<>();
 	private final Map<com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port, Port> portTraces = new HashMap<>();
 	private static int nextElementSuffixId = 0;
+	private final NameSanitizer nameSanitizer = new NameSanitizer();
 	
 	private final Map<com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Transition, Constraint>
 		discoveredGuards = new HashMap<>();
@@ -96,7 +98,7 @@ public class StatechartTransformation {
 		StateMachine stateMachine = (StateMachine) stateMachineClass.getClassifierBehavior();
 	
 		gStatechart = statechartFactory.createStatechartDefinition();
-		gStatechart.setName(stateMachine.getName() + "Statechart");
+		gStatechart.setName(nameSanitizer.getSenitizedName(stateMachine) + "_Statechart");
 		
 		transformPort(stateMachineClass, gStatechart, interfaceTraces, portTraces);
 		
@@ -142,10 +144,11 @@ public class StatechartTransformation {
 	public static void transformPort(Class mdClass, Component component, Map<Classifier, Interface> interfaceTraces, Map<com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port, Port> portTraces) {
 		
 		StatechartModelFactory statechartFactory = StatechartModelFactory.eINSTANCE;
+		NameSanitizer nameSanitizer = new NameSanitizer();
 		
 		mdClass.getOwnedPort().forEach(port -> {
 			Port gPort = statechartFactory.createPort();
-			gPort.setName(port.getName());
+			gPort.setName(nameSanitizer.getSenitizedName(port));
 			component.getPorts().add(gPort);
 			
 			
@@ -171,19 +174,19 @@ public class StatechartTransformation {
 
 	private void transformRegions(RegionsInStatemachine.Match match) {
 		Region gRegion = statechartFactory.createRegion();
-		gRegion.setName(saniztizeName(match.getSubregion().getName(), "region_" + nextElementSuffixId++));
+		gRegion.setName(nameSanitizer.getSenitizedName(match.getSubregion()));
 		regionTraces.put(match.getSubregion(), gRegion);
 	}
 
 	private void transformInitialState(InitialStatesInStatemachine.Match match) {
 		InitialState gInitState = statechartFactory.createInitialState();
-		gInitState.setName(saniztizeName(match.getInitialState().getName(), "init_" + nextElementSuffixId++));
+		gInitState.setName(nameSanitizer.getSenitizedName(match.getInitialState()));
 		vertexTraces.put(match.getInitialState(), gInitState);
 	}
 	
 	private void transformState(StatesInStatemachine.Match match, Map<Signal, Event> signalTraces) {
 		State gState = statechartFactory.createState();
-		gState.setName(saniztizeName(match.getState().getName(), "state_" + nextElementSuffixId++));
+		gState.setName(nameSanitizer.getSenitizedName(match.getState()));
 		
 		transformAction(match.getState().getEntry(), gState.getEntryActions(), signalTraces);
 		transformAction(match.getState().getExit(), gState.getExitActions(), signalTraces);
@@ -199,13 +202,13 @@ public class StatechartTransformation {
 
 	private void transformShallowHistory(ShallowHistoryInStatemachine.Match match) {
 		ShallowHistoryState gShallow = statechartFactory.createShallowHistoryState();
-		gShallow.setName(saniztizeName(match.getHistory().getName(), "shallow_" + nextElementSuffixId++));
+		gShallow.setName(nameSanitizer.getSenitizedName(match.getHistory()));
 		vertexTraces.put(match.getHistory(), gShallow);
 	}
 	
 	private void transformDeepHistory(DeepHistoryInStateMachine.Match match) {
 		DeepHistoryState gDeep = statechartFactory.createDeepHistoryState();
-		gDeep.setName(saniztizeName(match.getHistory().getName(), "deep_" + nextElementSuffixId++));
+		gDeep.setName(nameSanitizer.getSenitizedName(match.getHistory()));
 		vertexTraces.put(match.getHistory(), gDeep);
 	}
 	
@@ -281,13 +284,13 @@ public class StatechartTransformation {
 	
 	private void transformForkState(ForksInStateMachine.Match match) {
 		ForkState forkState = statechartFactory.createForkState();
-		forkState.setName(saniztizeName(match.getForkState().getName(), "fork_" + nextElementSuffixId++));
+		forkState.setName(nameSanitizer.getSenitizedName(match.getForkState()));
 		vertexTraces.put(match.getForkState(), forkState);
 	}
 	
 	public void transformJoinSate(JoinsInStateMachine.Match match) {
 		JoinState createJoinState = statechartFactory.createJoinState();
-		createJoinState.setName(saniztizeName(match.getJoinState().getName(), "join_" + nextElementSuffixId++));
+		createJoinState.setName(nameSanitizer.getSenitizedName(match.getJoinState()));
 		vertexTraces.put(match.getJoinState(), createJoinState);
 	}
 	

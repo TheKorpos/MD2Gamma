@@ -71,7 +71,7 @@ repositories {
     jcenter()
     mavenCentral()
     mavenLocal()
-	//maven { url 'https://build.incquerylabs.com/nexus/repository/v4md/' }
+	maven { url 'https://build.incquerylabs.com/nexus/repository/v4md/' }
  	maven { url "https://repo.eclipse.org/content/groups/viatra/" }
  }
 

@@ -30,14 +30,14 @@ import hu.bme.mit.gamma.statechart.language.StatechartLanguageStandaloneSetup;
 import hu.bme.mit.gamma.statechart.model.Package;
 import hu.bme.mit.md2g.serialization.StatechartLanguageSerializer;
 import hu.bme.mit.md2g.transformation.CompositeTransformation;
+import hu.bme.mit.md2g.util.NameSanitizer;
 
 public class TransformCompositeStatemachineAction extends NMAction {
-	
-	
+
 	private static final long serialVersionUID = -391974153578591338L;
-	
+
 	private Class target;
-	
+
 	public TransformCompositeStatemachineAction(String id, String name, Class target) {
 		super(id, name, 0, null);
 		this.target = target;
@@ -45,40 +45,41 @@ public class TransformCompositeStatemachineAction extends NMAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		
+
 		MagicDrawProgressStatusRunner.runWithProgressStatus(progress -> {
-			
-		ArrayList<Class> targetList = new ArrayList<>();
-		targetList.add(target);
-			
+
+			ArrayList<Class> targetList = new ArrayList<>();
+			targetList.add(target);
+
 			JFileChooser filechooser = new JFileChooser();
 			filechooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		
-			
+
 			int state = filechooser.showSaveDialog(Application.getInstance().getMainFrame());
-			
+
 			if (state == JFileChooser.APPROVE_OPTION) {
-				
+
 				File selectedFile = filechooser.getSelectedFile();
-				
+
 				CompositeTransformation transformation = new CompositeTransformation();
 				List<Package> packages = transformation.transform(target);
-				
-				Map<URI, EObject> uriMap = packages.stream().collect(Collectors.toMap(p -> StatechartLanguageSerializer.createURI(selectedFile.getAbsolutePath(), p.getName() + ".gcd"), p -> p));
-				
-				try {					
+				NameSanitizer nameSanitizer = new NameSanitizer();
+				Map<URI, EObject> uriMap = packages.stream().collect(
+						Collectors.toMap(p -> StatechartLanguageSerializer.createURI(selectedFile.getAbsolutePath(),
+								nameSanitizer.getSenitizedName(target) + ".gcd"), p -> p));
+
+				try {
 					StatechartLanguageSerializer.serialize(uriMap);
 				} catch (IOException e) {
 					e.printStackTrace();
-				} 
-				
-			}	
+				}
+
+			}
+			
 		}, "Exporting models", false, 0);
 	}
-	
+
 	private String toFilePath(String s) {
 		return s.replace(".", File.separator);
 	}
-	
-	
+
 }
