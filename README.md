@@ -1,6 +1,6 @@
 # About the plugin
 
-This plugin is made to enable formal verification of SysML statechart based behavioral models in MagicDraw. To achive its goal the plugin utilitizes the [Gamma Statechart Composition Framework](https://inf.mit.bme.hu/node/6028) and [UPPAAL](http://www.uppaal.org/) by introducint a tranformation to Gamma's Statechart language which can be translated to UPPAAL models.
+This plugin is made to enable formal verification of SysML statechart based behavioral models in MagicDraw. To achive its goal the plugin utilizes the [Gamma Statechart Composition Framework](https://inf.mit.bme.hu/node/6028) and [UPPAAL](http://www.uppaal.org/) by introducint a tranformation to Gamma's Statechart language which can be translated to UPPAAL models.
 
 # Main Goals
 * Transform statecharts to Gamma's statechart language
