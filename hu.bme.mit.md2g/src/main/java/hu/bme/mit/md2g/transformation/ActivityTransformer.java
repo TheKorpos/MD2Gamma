@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.codegen.ecore.genmodel.GenModelPackage;
+
 import com.beust.jcommander.internal.Lists;
 import com.nomagic.uml2.ext.magicdraw.actions.mdbasicactions.SendSignalAction;
 import com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.InitialNode;
@@ -35,6 +37,8 @@ public class ActivityTransformer {
 			Event event = signalTraces.get(signal);
 			Port onPort = act.getOnPort();
 			hu.bme.mit.gamma.statechart.model.Port gPort = portTraces.get(onPort);
+			
+	
 			
 			 RaiseEventAction raise = StatechartModelFactory.eINSTANCE.createRaiseEventAction();
 			 raise.setEvent(event);

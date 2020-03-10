@@ -91,7 +91,8 @@ String[] gammaDeps = [
 	'de.uni_paderborn.uppaal_*',
 	'hu.bme.mit.gamma.uppaal.transformation_*',
 	'hu.bme.mit.gamma.uppaal.transformation.traceability_*',
-	'hu.bme.mit.gamma.uppaal.composition.transformation_*'
+	'hu.bme.mit.gamma.uppaal.composition.transformation_*',
+	"hu.bme.mit.gamma.genmodel.model*"
 ]
 
 dependencies {    
@@ -134,6 +135,10 @@ dependencies {
     
      // https://mvnrepository.com/artifact/com.google.guava/guava
 	plugin group: 'com.google.guava', name: 'guava', version: '21.0'
+	
+	// https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.resources
+	plugin group: 'org.eclipse.platform', name: 'org.eclipse.core.resources', version: '3.13.100'
+	
     
  	implementation group: 'org.eclipse.viatra', name: 'viatra-query-runtime', version: viatraVersion, exclusions
     implementation group: 'org.eclipse.viatra', name: 'viatra-transformation-runtime', version: viatraVersion, exclusions    
@@ -210,7 +215,7 @@ String testDistFolder = "test-dist"
 task testDist(type: PreDist) {
     humanVersion = version
     internalVersion = buildNumber
-    groupName = "com.incquerylabs.magicdraw.plugin.example.test"
+    groupName = "hu.bme.mit.md2g.test"
     pluginUserVisibleName = pluginName + " Tests"
     pluginTemplate = "src/test/plugin.xml"
 	resolvedArtifacts = project.configurations.testCompile.resolvedConfiguration.resolvedArtifacts.file
@@ -234,7 +239,7 @@ installTest.dependsOn testDist
 
 def testArgs = [
 	'-Dcom.nomagic.magicdraw.launcher=com.nomagic.magicdraw.commandline.CommandLineActionLauncher',
- 	'-Dcom.nomagic.magicdraw.commandline.action=com.incquerylabs.magicdraw.plugin.example.test.runner.TestRunner',
+ 	'-Dcom.nomagic.magicdraw.commandline.action=hu.bme.mit.md2g.test.runner.TestRunner',
 	'-Dtests.resources=../../src/test/data'
 ]
 task runTest(type: JavaExec) {
@@ -257,7 +262,7 @@ def codeGenFileName = codeGenFilePath.last().split("\\.").first()
 
 def codeGenArgs = [
 	'-Dcom.nomagic.magicdraw.launcher=com.nomagic.magicdraw.commandline.CommandLineActionLauncher',
- 	'-Dcom.nomagic.magicdraw.commandline.action=com.incquerylabs.magicdraw.plugin.example.commands.CodeGenRunner',
+ 	'-Dcom.nomagic.magicdraw.commandline.action=hu.bme.mit.md2g.example.commands.CodeGenRunner',
 ]
 
 task runCodeGen(type: JavaExec) {

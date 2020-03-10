@@ -1,4 +1,4 @@
-package com.incquerylabs.magicdraw.plugin.example.test.runner;
+package hu.bme.mit.md2g.test.runner;
 
 import org.apache.maven.plugin.surefire.StartupReportConfiguration;
 import org.apache.maven.plugin.surefire.report.DefaultReporterFactory;
@@ -9,8 +9,9 @@ import org.apache.maven.surefire.report.SimpleReportEntry;
 import org.junit.runner.Computer;
 import org.junit.runner.JUnitCore;
 
-import com.incquerylabs.magicdraw.plugin.example.test.suite.AllTests;
 import com.nomagic.magicdraw.commandline.CommandLineAction;
+
+import hu.bme.mit.md2g.test.suite.AllTests;
 
 public class TestRunner implements CommandLineAction {
 

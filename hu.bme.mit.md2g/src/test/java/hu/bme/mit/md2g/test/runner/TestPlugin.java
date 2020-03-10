@@ -1,4 +1,4 @@
-package com.incquerylabs.magicdraw.plugin.example.test.runner;
+package hu.bme.mit.md2g.test.runner;
 
 import com.nomagic.magicdraw.commandline.CommandLineActionManager;
 import com.nomagic.magicdraw.plugins.Plugin;

@@ -1,4 +1,4 @@
-package com.incquerylabs.magicdraw.plugin.example.test;
+package hu.bme.mit.md2g.test;
 
 import static org.junit.Assert.assertTrue;
 

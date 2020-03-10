@@ -19,7 +19,6 @@ public class ProjectSpecificFeatureInitializer extends ProjectEventListenerAdapt
 		
 		CompositeQueries.instance().prepare(engine);
 		StatechartQueries.instance().prepare(engine);
-	
 	}
 	
 }
