@@ -11,6 +11,7 @@ import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 import com.incquerylabs.v4md.ViatraQueryAdapter;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
+import com.nomagic.magicdraw.sysml.util.SysMLProfile;
 import com.nomagic.magicdraw.uml.BaseElement;
 import com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
@@ -18,6 +19,8 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Constraint;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralString;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.OpaqueExpression;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.Behavior;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.Signal;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.SignalEvent;
@@ -27,9 +30,12 @@ import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Stat
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Vertex;
 
 import hu.bme.mit.gamma.action.model.Action;
+import hu.bme.mit.gamma.expression.model.Declaration;
 import hu.bme.mit.gamma.expression.model.Expression;
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory;
 import hu.bme.mit.gamma.expression.model.IntegerLiteralExpression;
+import hu.bme.mit.gamma.expression.model.TypeDefinition;
+import hu.bme.mit.gamma.expression.model.VariableDeclaration;
 import hu.bme.mit.gamma.statechart.model.DeepHistoryState;
 import hu.bme.mit.gamma.statechart.model.EventTrigger;
 import hu.bme.mit.gamma.statechart.model.ForkState;
@@ -77,6 +83,8 @@ public class StatechartTransformation {
 	private static int nextElementSuffixId = 0;
 	private final NameSanitizer nameSanitizer = new NameSanitizer();
 	
+	private Map<String, Declaration> variables = new HashMap<>();
+	
 	private final Map<com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Transition, Constraint>
 		discoveredGuards = new HashMap<>();
 	
@@ -100,6 +108,18 @@ public class StatechartTransformation {
 		gStatechart = statechartFactory.createStatechartDefinition();
 		gStatechart.setName(nameSanitizer.getSenitizedName(stateMachine) + "_Statechart");
 		
+		stateMachineClass.getMember().stream()
+			.filter(Property.class::isInstance)
+			.map(Property.class::cast)
+			.forEach(prop -> {
+				Type type = prop.getType();
+				if (type == SysMLProfile.getInstance(project).getInteger()) {
+					createVariable(prop, ExpressionModelFactory.eINSTANCE.createIntegerTypeDefinition());
+				} else if (type == SysMLProfile.getInstance(project).getBoolean()) {
+					createVariable(prop, ExpressionModelFactory.eINSTANCE.createBooleanTypeDefinition());
+				}
+			});
+		
 		transformPort(stateMachineClass, gStatechart, interfaceTraces, portTraces);
 		
 		RegionsInStatemachine.Matcher.on(engine).getAllMatches(stateMachine, null)
@@ -116,6 +136,7 @@ public class StatechartTransformation {
 				.forEach(this::transformForkState);
 		TranisitonsInStateMachine.Matcher.on(engine).getAllMatches(stateMachine, null)
 				.forEach(match -> transformTransition(match, signalTraces));
+		
 	
 		
 		vertexTraces.forEach((vertex, stateNode) -> {
@@ -139,6 +160,14 @@ public class StatechartTransformation {
 		statechartPackage.getComponents().add(gStatechart);
 	
 		return gStatechart;
+	}
+
+	private void createVariable(Property prop, TypeDefinition gType) {
+		VariableDeclaration variable = ExpressionModelFactory.eINSTANCE.createVariableDeclaration();
+		 variable.setName(nameSanitizer.getSenitizedName(prop));
+		variable.setType(gType);
+		gStatechart.getVariableDeclarations().add(variable);
+		variables.put(prop.getName(), variable);
 	}
 	
 	public static void transformPort(Class mdClass, Component component, Map<Classifier, Interface> interfaceTraces, Map<com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port, Port> portTraces) {
@@ -166,10 +195,6 @@ public class StatechartTransformation {
 			
 			portTraces.put(port, gPort);
 		});
-	}
-
-	private String saniztizeName(String name, String defVal) {
-		return name == null || name.equals("") ? defVal : name;
 	}
 
 	private void transformRegions(RegionsInStatemachine.Match match) {
@@ -276,7 +301,7 @@ public class StatechartTransformation {
 	private void transformGuards(Transition transition, OpaqueExpression expression) {
 		if (!expression.getBody().isEmpty()) {
 			String body = expression.getBody().get(0);
-			Expression gExpression = new GuardLanguageParser().parse(body, new HashMap<>());
+			Expression gExpression = new GuardLanguageParser().parse(body, variables);
 			Transition gTransition = transition;
 			gTransition.setGuard(gExpression);
 		}
@@ -317,7 +342,7 @@ public class StatechartTransformation {
 		TimeSpecification spec = statechartFactory.createTimeSpecification();
 		
 		LiteralString ls = (LiteralString) event.getWhen().getExpr();
-		String value = ls.getValue();
+		String value = ls.getValue().trim();
 		
 		if (value.endsWith("s")) {
 			spec.setUnit(TimeUnit.SECOND);
