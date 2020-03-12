@@ -5,25 +5,34 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.eclipse.xtext.CrossReference;
+import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.parser.IParseResult;
 
 import com.google.inject.Injector;
 
+import hu.bme.mit.gamma.action.language.ActionLanguageStandaloneSetup;
+import hu.bme.mit.gamma.action.language.parser.antlr.ActionLanguageParser;
+import hu.bme.mit.gamma.action.language.services.ActionLanguageGrammarAccess;
 import hu.bme.mit.gamma.expression.model.Declaration;
 import hu.bme.mit.gamma.expression.model.Expression;
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory;
 import hu.bme.mit.gamma.expression.model.OpaqueExpression;
 import hu.bme.mit.gamma.expression.model.ReferenceExpression;
 
-public class GuardLanguageParser {
+public class GammaExpression {
 	
-	Injector injector = new CustomConstraintLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+	static {
+		ActionLanguageStandaloneSetup.doSetup();
+	}
 	
-	public Expression parse(String expression, Map<String, Declaration> scope) {
+	private static final Injector INJECTOR = new ActionLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+	
+	public static Expression of(String expression, Map<String, Declaration> scope) {
 		
+		ParserRule expressionRule = INJECTOR.getInstance(ActionLanguageGrammarAccess.class).getExpressionRule();
 		
-		IParseResult result = injector.getInstance(CustomConstraintLanguageParser.class).parse(new StringReader(expression));
+		IParseResult result = INJECTOR.getInstance(ActionLanguageParser.class).parse(expressionRule, new StringReader(expression));
 		
 		if (result.hasSyntaxErrors()){
 			return createOpaqueExpression(expression);
@@ -52,7 +61,7 @@ public class GuardLanguageParser {
 		return createOpaqueExpression(expression);
 	}
 
-	private Expression createOpaqueExpression(String expression) {
+	private static Expression createOpaqueExpression(String expression) {
 		OpaqueExpression opaqueExpression = ExpressionModelFactory.eINSTANCE.createOpaqueExpression();
 		opaqueExpression.setExpression(expression);
 		return opaqueExpression;

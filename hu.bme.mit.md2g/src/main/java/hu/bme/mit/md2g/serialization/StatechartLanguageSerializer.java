@@ -28,6 +28,10 @@ import hu.bme.mit.gamma.statechart.model.Package;
 
 public class StatechartLanguageSerializer {
 
+	static {
+		StatechartLanguageStandaloneSetup.doSetup();
+	}
+	
 	private XtextResourceSet resourceSet;
 
 	@Inject

@@ -61,7 +61,7 @@ import hu.bme.mit.gamma.statechart.model.Transition;
 import hu.bme.mit.gamma.statechart.model.composite.Component;
 import hu.bme.mit.gamma.statechart.model.interface_.Event;
 import hu.bme.mit.gamma.statechart.model.interface_.Interface;
-import hu.bme.mit.md2g.transformation.parse.GuardLanguageParser;
+import hu.bme.mit.md2g.transformation.parse.GammaExpression;
 import hu.bme.mit.md2g.transformation.queries.DeepHistoryInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.ForksInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.InitialStatesInStatemachine;
@@ -301,7 +301,7 @@ public class StatechartTransformation {
 	private void transformGuards(Transition transition, OpaqueExpression expression) {
 		if (!expression.getBody().isEmpty()) {
 			String body = expression.getBody().get(0);
-			Expression gExpression = new GuardLanguageParser().parse(body, variables);
+			Expression gExpression = GammaExpression.of(body, variables);
 			Transition gTransition = transition;
 			gTransition.setGuard(gExpression);
 		}
