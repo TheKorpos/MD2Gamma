@@ -17,7 +17,7 @@ public class NameSanitizer {
 		if (name == null || name.isEmpty()) {
 			Integer nextIndex = nexUnnamedIndexes.getOrDefault(namedElement.eClass(), 0);
 			name = namedElement.eClass().getName() + "_" + nextIndex;
-			nexUnnamedIndexes.replace(namedElement.eClass(), new Integer(nextIndex + 1));
+			nexUnnamedIndexes.put(namedElement.eClass(), nextIndex + 1);
 		}
 		
 		name = name.replace(" ", "_");
