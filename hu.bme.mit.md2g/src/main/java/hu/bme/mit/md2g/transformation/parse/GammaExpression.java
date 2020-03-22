@@ -35,7 +35,14 @@ public class GammaExpression {
 		IParseResult result = INJECTOR.getInstance(ActionLanguageParser.class).parse(expressionRule, new StringReader(expression));
 		
 		if (result.hasSyntaxErrors()){
-			return createOpaqueExpression(expression);
+			
+			String harmoizedExpression = SyntaxHarmonizer.createHarmonizedGammaExpression(expression);
+			
+			result = INJECTOR.getInstance(ActionLanguageParser.class).parse(expressionRule, new StringReader(harmoizedExpression));
+			
+			if (result.hasSyntaxErrors()) {
+				return createOpaqueExpression(expression);
+			}
 		}
 		
 		try {
