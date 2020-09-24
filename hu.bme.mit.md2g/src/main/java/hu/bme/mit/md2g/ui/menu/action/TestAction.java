@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 
 import com.nomagic.actions.NMAction;
 
+import hu.bme.mit.gamma.uppaal.composition.transformation.CompositeToUppaalTransformer;
+
 public class TestAction extends NMAction {
 	
 	public TestAction() {
@@ -12,6 +14,8 @@ public class TestAction extends NMAction {
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		//CompositeToUppaalTransformer c = new CompositeToUppaalTransformer
+		
 		
 	}
 

@@ -1,4 +1,4 @@
-package hu.bme.mit.md2g.util;
+package hu.bme.mit.md2g.util.profile;
 import com.nomagic.uml2.ext.jmi.helpers.StereotypeByProfileCache;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.EnumerationLiteral;
 import com.nomagic.uml2.ext.jmi.helpers.StereotypesHelper;
@@ -18,28 +18,28 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 @SuppressWarnings("WeakerAccess")
-public class SysMLProfile extends StereotypeByProfileCache
+public class SysML extends StereotypeByProfileCache
 {
     public static final String PROFILE_URI = "http://www.omg.org/spec/SysML/20150709/SysML";
 
     public static final String PROFILE_NAME = "SysML";
 
-    public static SysMLProfile getInstance(@Nonnull BaseElement element)
+    public static SysML getInstance(@Nonnull BaseElement element)
     {
         return getInstance(Project.getProject(element));
     }
 
-    public SysMLProfile(@Nonnull Project project)
+    public SysML(@Nonnull Project project)
     {
         super(project, PROFILE_NAME, PROFILE_URI);
     }
 
-    public static SysMLProfile getInstance(@Nonnull Project project)
+    public static SysML getInstance(@Nonnull Project project)
     {
-        SysMLProfile instance = getInternalInstance(SysMLProfile.class, project);
+        SysML instance = getInternalInstance(SysML.class, project);
         if (instance == null)
         {
-            instance = new SysMLProfile(project);
+            instance = new SysML(project);
         }
         return instance;
     }
@@ -758,7 +758,7 @@ return getStereotype(AbstractRequirement.STEREOTYPE_NAME);
 public static boolean isAbstractRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getAbstractRequirement());
 }
 return false;
@@ -782,7 +782,7 @@ return getStereotype(AcceptChangeStructuralFeatureEventAction.STEREOTYPE_NAME);
 public static boolean isAcceptChangeStructuralFeatureEventAction(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.actions.mdcompleteactions.AcceptEventAction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getAcceptChangeStructuralFeatureEventAction());
 }
 return false;
@@ -812,7 +812,7 @@ return getStereotype(Actuator.STEREOTYPE_NAME);
 public static boolean isActuator(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.mdusecases.Actor){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getActuator());
 }
 return false;
@@ -863,7 +863,7 @@ return getStereotype(AdjunctProperty.STEREOTYPE_NAME);
 public static boolean isAdjunctProperty(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getAdjunctProperty());
 }
 return false;
@@ -892,7 +892,7 @@ return getStereotype(Allocate.STEREOTYPE_NAME);
 public static boolean isAllocate(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Abstraction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getAllocate());
 }
 return false;
@@ -921,7 +921,7 @@ return getStereotype(AllocateActivityPartition.STEREOTYPE_NAME);
 public static boolean isAllocateActivityPartition(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdintermediateactivities.ActivityPartition){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getAllocateActivityPartition());
 }
 return false;
@@ -1018,7 +1018,7 @@ return getStereotype(Allocated.STEREOTYPE_NAME);
 public static boolean isAllocated(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getAllocated());
 }
 return false;
@@ -1083,7 +1083,7 @@ return getStereotype(BasicInterval.STEREOTYPE_NAME);
 public static boolean isBasicInterval(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getBasicInterval());
 }
 return false;
@@ -1112,7 +1112,7 @@ return getStereotype(BindingConnector.STEREOTYPE_NAME);
 public static boolean isBindingConnector(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.compositestructures.mdinternalstructures.Connector){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getBindingConnector());
 }
 return false;
@@ -1163,7 +1163,7 @@ return getStereotype(Block.STEREOTYPE_NAME);
 public static boolean isBlock(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getBlock());
 }
 return false;
@@ -1192,7 +1192,7 @@ return getStereotype(BlockHierarchy.STEREOTYPE_NAME);
 public static boolean isBlockHierarchy(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Diagram){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getBlockHierarchy());
 }
 return false;
@@ -1272,7 +1272,7 @@ return getStereotype(BoundReference.STEREOTYPE_NAME);
 public static boolean isBoundReference(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getBoundReference());
 }
 return false;
@@ -1302,7 +1302,7 @@ return getStereotype(Boundarysystem.STEREOTYPE_NAME);
 public static boolean isBoundarysystem(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.mdusecases.Actor){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getBoundarysystem());
 }
 return false;
@@ -1344,7 +1344,7 @@ return getStereotype(ChangeStructuralFeatureEvent.STEREOTYPE_NAME);
 public static boolean isChangeStructuralFeatureEvent(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.ChangeEvent){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getChangeStructuralFeatureEvent());
 }
 return false;
@@ -1373,7 +1373,7 @@ return getStereotype(ClassifierBehaviorProperty.STEREOTYPE_NAME);
 public static boolean isClassifierBehaviorProperty(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getClassifierBehaviorProperty());
 }
 return false;
@@ -1403,7 +1403,7 @@ public static boolean isConform(@CheckForNull Element element)
 {
 if((element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Dependency
 || element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Generalization)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getConform());
 }
 return false;
@@ -1454,7 +1454,7 @@ return getStereotype(ConnectorProperty.STEREOTYPE_NAME);
 public static boolean isConnectorProperty(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getConnectorProperty());
 }
 return false;
@@ -1483,7 +1483,7 @@ return getStereotype(ConstraintBlock.STEREOTYPE_NAME);
 public static boolean isConstraintBlock(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getConstraintBlock());
 }
 return false;
@@ -1512,7 +1512,7 @@ return getStereotype(ContextDiagram.STEREOTYPE_NAME);
 public static boolean isContextDiagram(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Diagram){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getContextDiagram());
 }
 return false;
@@ -1543,7 +1543,7 @@ public static boolean isContinuous(@CheckForNull Element element)
 if((element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ActivityEdge
 || element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ObjectNode
 || element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Parameter)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getContinuous());
 }
 return false;
@@ -1573,7 +1573,7 @@ public static boolean isControlOperator(@CheckForNull Element element)
 {
 if((element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Operation
 || element instanceof com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.Behavior)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getControlOperator());
 }
 return false;
@@ -1602,7 +1602,7 @@ return getStereotype(Copy.STEREOTYPE_NAME);
 public static boolean isCopy(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Abstraction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getCopy());
 }
 return false;
@@ -1631,7 +1631,7 @@ return getStereotype(DeriveReqt.STEREOTYPE_NAME);
 public static boolean isDeriveReqt(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Abstraction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDeriveReqt());
 }
 return false;
@@ -1727,7 +1727,7 @@ return getStereotype(DiagramDescription.STEREOTYPE_NAME);
 public static boolean isDiagramDescription(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Diagram){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDiagramDescription());
 }
 return false;
@@ -1769,7 +1769,7 @@ return getStereotype(DirectedFeature.STEREOTYPE_NAME);
 public static boolean isDirectedFeature(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Feature){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDirectedFeature());
 }
 return false;
@@ -1905,7 +1905,7 @@ return getStereotype(DirectedRelationshipPropertyPath.STEREOTYPE_NAME);
 public static boolean isDirectedRelationshipPropertyPath(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.DirectedRelationship){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDirectedRelationshipPropertyPath());
 }
 return false;
@@ -1936,7 +1936,7 @@ public static boolean isDiscrete(@CheckForNull Element element)
 if((element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ActivityEdge
 || element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ObjectNode
 || element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Parameter)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDiscrete());
 }
 return false;
@@ -1965,7 +1965,7 @@ return getStereotype(DistributedProperty.STEREOTYPE_NAME);
 public static boolean isDistributedProperty(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDistributedProperty());
 }
 return false;
@@ -1994,7 +1994,7 @@ return getStereotype(Domain.STEREOTYPE_NAME);
 public static boolean isDomain(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDomain());
 }
 return false;
@@ -2156,7 +2156,7 @@ return getStereotype(ElementGroup.STEREOTYPE_NAME);
 public static boolean isElementGroup(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Comment){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getElementGroup());
 }
 return false;
@@ -2214,7 +2214,7 @@ return getStereotype(ElementPropertyPath.STEREOTYPE_NAME);
 public static boolean isElementPropertyPath(@CheckForNull Element element)
 {
 if(element !=null){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getElementPropertyPath());
 }
 return false;
@@ -2282,7 +2282,7 @@ return getStereotype(EndPathMultiplicity.STEREOTYPE_NAME);
 public static boolean isEndPathMultiplicity(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getEndPathMultiplicity());
 }
 return false;
@@ -2312,7 +2312,7 @@ return getStereotype(Environmentaleffect.STEREOTYPE_NAME);
 public static boolean isEnvironmentaleffect(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.mdusecases.Actor){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getEnvironmentaleffect());
 }
 return false;
@@ -2336,7 +2336,7 @@ return getStereotype(Essential.STEREOTYPE_NAME);
 public static boolean isEssential(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getEssential());
 }
 return false;
@@ -2360,7 +2360,7 @@ return getStereotype(Expose.STEREOTYPE_NAME);
 public static boolean isExpose(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Dependency){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getExpose());
 }
 return false;
@@ -2389,7 +2389,7 @@ return getStereotype(External.STEREOTYPE_NAME);
 public static boolean isExternal(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getExternal());
 }
 return false;
@@ -2419,7 +2419,7 @@ return getStereotype(Externalsystem.STEREOTYPE_NAME);
 public static boolean isExternalsystem(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.mdusecases.Actor){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getExternalsystem());
 }
 return false;
@@ -2492,7 +2492,7 @@ return getStereotype(FlowPort.STEREOTYPE_NAME);
 public static boolean isFlowPort(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getFlowPort());
 }
 return false;
@@ -2543,7 +2543,7 @@ return getStereotype(FlowProperty.STEREOTYPE_NAME);
 public static boolean isFlowProperty(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getFlowProperty());
 }
 return false;
@@ -2572,7 +2572,7 @@ return getStereotype(FlowSpecification.STEREOTYPE_NAME);
 public static boolean isFlowSpecification(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdinterfaces.Interface){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getFlowSpecification());
 }
 return false;
@@ -2596,7 +2596,7 @@ return getStereotype(FullPort.STEREOTYPE_NAME);
 public static boolean isFullPort(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getFullPort());
 }
 return false;
@@ -2620,7 +2620,7 @@ return getStereotype(InterfaceBlock.STEREOTYPE_NAME);
 public static boolean isInterfaceBlock(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getInterfaceBlock());
 }
 return false;
@@ -2649,7 +2649,7 @@ return getStereotype(Interval.STEREOTYPE_NAME);
 public static boolean isInterval(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getInterval());
 }
 return false;
@@ -2703,7 +2703,7 @@ return getStereotype(InvocationOnNestedPortAction.STEREOTYPE_NAME);
 public static boolean isInvocationOnNestedPortAction(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.actions.mdbasicactions.InvocationAction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getInvocationOnNestedPortAction());
 }
 return false;
@@ -2754,7 +2754,7 @@ return getStereotype(ItemFlow.STEREOTYPE_NAME);
 public static boolean isItemFlow(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.auxiliaryconstructs.mdinformationflows.InformationFlow){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getItemFlow());
 }
 return false;
@@ -2783,7 +2783,7 @@ return getStereotype(NestedConnectorEnd.STEREOTYPE_NAME);
 public static boolean isNestedConnectorEnd(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.compositestructures.mdinternalstructures.ConnectorEnd){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getNestedConnectorEnd());
 }
 return false;
@@ -2812,7 +2812,7 @@ return getStereotype(NoBuffer.STEREOTYPE_NAME);
 public static boolean isNoBuffer(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ObjectNode){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getNoBuffer());
 }
 return false;
@@ -2877,7 +2877,7 @@ return getStereotype(Normal.STEREOTYPE_NAME);
 public static boolean isNormal(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getNormal());
 }
 return false;
@@ -2906,7 +2906,7 @@ return getStereotype(Optional.STEREOTYPE_NAME);
 public static boolean isOptional(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Parameter){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getOptional());
 }
 return false;
@@ -2935,7 +2935,7 @@ return getStereotype(Overwrite.STEREOTYPE_NAME);
 public static boolean isOverwrite(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ObjectNode){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getOverwrite());
 }
 return false;
@@ -2986,7 +2986,7 @@ return getStereotype(ParticipantProperty.STEREOTYPE_NAME);
 public static boolean isParticipantProperty(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getParticipantProperty());
 }
 return false;
@@ -3041,7 +3041,7 @@ public static boolean isProbability(@CheckForNull Element element)
 {
 if((element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ActivityEdge
 || element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdcompleteactivities.ParameterSet)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getProbability());
 }
 return false;
@@ -3070,7 +3070,7 @@ return getStereotype(Problem.STEREOTYPE_NAME);
 public static boolean isProblem(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Comment){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getProblem());
 }
 return false;
@@ -3099,7 +3099,7 @@ return getStereotype(PropertySpecificType.STEREOTYPE_NAME);
 public static boolean isPropertySpecificType(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getPropertySpecificType());
 }
 return false;
@@ -3123,7 +3123,7 @@ return getStereotype(ProxyPort.STEREOTYPE_NAME);
 public static boolean isProxyPort(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getProxyPort());
 }
 return false;
@@ -3179,7 +3179,7 @@ public static boolean isRate(@CheckForNull Element element)
 if((element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ActivityEdge
 || element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdbasicactivities.ObjectNode
 || element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Parameter)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getRate());
 }
 return false;
@@ -3208,7 +3208,7 @@ return getStereotype(Rationale.STEREOTYPE_NAME);
 public static boolean isRationale(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Comment){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getRationale());
 }
 return false;
@@ -3232,7 +3232,7 @@ return getStereotype(Refine.STEREOTYPE_NAME);
 public static boolean isRefine(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Abstraction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getRefine());
 }
 return false;
@@ -3261,7 +3261,7 @@ return getStereotype(Requirement.STEREOTYPE_NAME);
 public static boolean isRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getRequirement());
 }
 return false;
@@ -3426,7 +3426,7 @@ return getStereotype(RequirementRelated.STEREOTYPE_NAME);
 public static boolean isRequirementRelated(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getRequirementRelated());
 }
 return false;
@@ -3455,7 +3455,7 @@ return getStereotype(Satisfy.STEREOTYPE_NAME);
 public static boolean isSatisfy(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Abstraction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getSatisfy());
 }
 return false;
@@ -3484,7 +3484,7 @@ return getStereotype(Sensor.STEREOTYPE_NAME);
 public static boolean isSensor(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.mdusecases.Actor){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getSensor());
 }
 return false;
@@ -3556,7 +3556,7 @@ return getStereotype(Stakeholder.STEREOTYPE_NAME);
 public static boolean isStakeholder(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getStakeholder());
 }
 return false;
@@ -3585,7 +3585,7 @@ return getStereotype(Subsystem.STEREOTYPE_NAME);
 public static boolean isSubsystem(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getSubsystem());
 }
 return false;
@@ -3614,7 +3614,7 @@ return getStereotype(SwimLaneDiagram.STEREOTYPE_NAME);
 public static boolean isSwimLaneDiagram(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Diagram){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getSwimLaneDiagram());
 }
 return false;
@@ -3643,7 +3643,7 @@ return getStereotype(System.STEREOTYPE_NAME);
 public static boolean isSystem(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getSystem());
 }
 return false;
@@ -3672,7 +3672,7 @@ return getStereotype(Systemcontext.STEREOTYPE_NAME);
 public static boolean isSystemcontext(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getSystemcontext());
 }
 return false;
@@ -3697,7 +3697,7 @@ public static boolean isSystemprocess(@CheckForNull Element element)
 {
 if((element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity
 || element instanceof com.nomagic.uml2.ext.magicdraw.mdusecases.UseCase)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getSystemprocess());
 }
 return false;
@@ -3727,7 +3727,7 @@ public static boolean isTestCase(@CheckForNull Element element)
 {
 if((element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Operation
 || element instanceof com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.Behavior)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getTestCase());
 }
 return false;
@@ -3751,7 +3751,7 @@ return getStereotype(Trace.STEREOTYPE_NAME);
 public static boolean isTrace(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Abstraction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getTrace());
 }
 return false;
@@ -3805,7 +3805,7 @@ return getStereotype(TriggerOnNestedPort.STEREOTYPE_NAME);
 public static boolean isTriggerOnNestedPort(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.Trigger){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getTriggerOnNestedPort());
 }
 return false;
@@ -3834,7 +3834,7 @@ return getStereotype(Uniform.STEREOTYPE_NAME);
 public static boolean isUniform(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getUniform());
 }
 return false;
@@ -3864,7 +3864,7 @@ return getStereotype(Usersystem.STEREOTYPE_NAME);
 public static boolean isUsersystem(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.mdusecases.Actor){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getUsersystem());
 }
 return false;
@@ -3937,7 +3937,7 @@ return getStereotype(ValueType.STEREOTYPE_NAME);
 public static boolean isValueType(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.DataType){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getValueType());
 }
 return false;
@@ -3966,7 +3966,7 @@ return getStereotype(Verify.STEREOTYPE_NAME);
 public static boolean isVerify(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Abstraction){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getVerify());
 }
 return false;
@@ -4048,7 +4048,7 @@ public static boolean isView(@CheckForNull Element element)
 {
 if((element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class
 || element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getView());
 }
 return false;
@@ -4295,7 +4295,7 @@ return getStereotype(Viewpoint.STEREOTYPE_NAME);
 public static boolean isViewpoint(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getViewpoint());
 }
 return false;
@@ -4324,7 +4324,7 @@ return getStereotype(BusinessRequirement.STEREOTYPE_NAME);
 public static boolean isBusinessRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getBusinessRequirement());
 }
 return false;
@@ -4353,7 +4353,7 @@ return getStereotype(DesignConstraint.STEREOTYPE_NAME);
 public static boolean isDesignConstraint(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDesignConstraint());
 }
 return false;
@@ -4382,7 +4382,7 @@ return getStereotype(DiagramUsage.STEREOTYPE_NAME);
 public static boolean isDiagramUsage(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Diagram){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getDiagramUsage());
 }
 return false;
@@ -4411,7 +4411,7 @@ return getStereotype(Effbd.STEREOTYPE_NAME);
 public static boolean isEffbd(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getEffbd());
 }
 return false;
@@ -4494,7 +4494,7 @@ return getStereotype(ExtendedRequirement.STEREOTYPE_NAME);
 public static boolean isExtendedRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getExtendedRequirement());
 }
 return false;
@@ -4523,7 +4523,7 @@ return getStereotype(FunctionalRequirement.STEREOTYPE_NAME);
 public static boolean isFunctionalRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getFunctionalRequirement());
 }
 return false;
@@ -4552,7 +4552,7 @@ return getStereotype(InterfaceRequirement.STEREOTYPE_NAME);
 public static boolean isInterfaceRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getInterfaceRequirement());
 }
 return false;
@@ -4581,7 +4581,7 @@ return getStereotype(Moe.STEREOTYPE_NAME);
 public static boolean isMoe(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getMoe());
 }
 return false;
@@ -4610,7 +4610,7 @@ return getStereotype(NonStreaming.STEREOTYPE_NAME);
 public static boolean isNonStreaming(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getNonStreaming());
 }
 return false;
@@ -4640,7 +4640,7 @@ public static boolean isObjectiveFunction(@CheckForNull Element element)
 {
 if((element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class
 || element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property)){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getObjectiveFunction());
 }
 return false;
@@ -4669,7 +4669,7 @@ return getStereotype(PerformanceRequirement.STEREOTYPE_NAME);
 public static boolean isPerformanceRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getPerformanceRequirement());
 }
 return false;
@@ -4698,7 +4698,7 @@ return getStereotype(PhysicalRequirement.STEREOTYPE_NAME);
 public static boolean isPhysicalRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getPhysicalRequirement());
 }
 return false;
@@ -4727,7 +4727,7 @@ return getStereotype(Streaming.STEREOTYPE_NAME);
 public static boolean isStreaming(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getStreaming());
 }
 return false;
@@ -4756,7 +4756,7 @@ return getStereotype(UsabilityRequirement.STEREOTYPE_NAME);
 public static boolean isUsabilityRequirement(@CheckForNull Element element)
 {
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
-SysMLProfile instance=getInstance(element);
+SysML instance=getInstance(element);
 return instance.isTypeOf(element, instance.getUsabilityRequirement());
 }
 return false;

@@ -94,7 +94,9 @@ String[] gammaDeps = [
 	'hu.bme.mit.gamma.uppaal.composition.transformation_*',
 	'hu.bme.mit.gamma.uppaal.backannotation_*',
 	'hu.bme.mit.gamma.uppaal.serializer_*',
-	"hu.bme.mit.gamma.genmodel.model*"
+	"hu.bme.mit.gamma.genmodel.model*",
+	"hu.bme.mit.gamma.trace.model*",
+	"hu.bme.mit.gamma.trace.language_*"
 ]
 
 dependencies {    

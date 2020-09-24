@@ -8,11 +8,16 @@ import com.nomagic.magicdraw.ui.browser.Node;
 import com.nomagic.magicdraw.ui.browser.Tree;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
+import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBehavior;
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.StateMachine;
 
-import hu.bme.mit.md2g.ui.browser.action.PerfomrCheckAction;
+import hu.bme.mit.md2g.ui.browser.action.TransformWorkspaceTargetToGammaAction;
+import hu.bme.mit.md2g.ui.browser.action.PerformFormalVerificationAction;
 import hu.bme.mit.md2g.ui.browser.action.TransformCompositeStatemachineAction;
+import hu.bme.mit.md2g.ui.browser.action.TransformWorkspaceModelsToUppaalAction;
 import hu.bme.mit.md2g.ui.browser.action.TransfromSingleStatemachineAction;
+import hu.bme.mit.md2g.util.profile.Gamma;
 
 public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 
@@ -37,7 +42,9 @@ public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 			Object userObject = node.getUserObject();
 			
 			//selected object is a class
-			if (userObject instanceof Class) {
+			if (userObject instanceof OpaqueBehavior) {
+				category.addAction(new PerformFormalVerificationAction((OpaqueBehavior)userObject));
+			} else if (userObject instanceof Class) {
 				Class selectedClass = (Class) userObject;
 				if (selectedClass.getAppliedStereotypeInstance() != null) {
 					try {	
@@ -46,12 +53,18 @@ public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 						if (instancespec.getClassifier().stream().filter(it -> "Block".equals(it.getName())).findAny().isPresent()) {
 							category.addAction(new TransfromSingleStatemachineAction(GAMMA_TRA_SINGLE, EXPORT_STATE_MACHINE_AS_GCL, selectedClass));
 							category.addAction(new TransformCompositeStatemachineAction(GAMMA_TRA_COMP, EXPORT_AS_GCL_NAME, selectedClass));
-							//category.addAction(new PerfomrCheckAction("GAMMA_CHECK_ACTION", "Perform Formal Verification on model", selectedClass));
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}	
 				}
+			} else if (userObject instanceof Package) {
+				Package mdPackage = (Package) userObject;
+				if (Gamma.isGammaWorkspace(mdPackage)) {
+					category.addAction(new TransformWorkspaceTargetToGammaAction("GAMMA_WORKSPACE_TRA", "Transform Targeted Model", mdPackage));
+					category.addAction(new TransformWorkspaceModelsToUppaalAction(mdPackage));
+				}
+				
 			}
 		}
 	}

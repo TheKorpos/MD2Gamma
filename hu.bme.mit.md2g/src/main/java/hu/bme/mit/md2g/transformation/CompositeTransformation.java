@@ -8,9 +8,16 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.nomagic.magicdraw.sysml.util.MDCustomizationForSysMLProfile;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Feature;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
 import com.nomagic.uml2.ext.magicdraw.compositestructures.mdinternalstructures.Connector;
@@ -33,7 +40,7 @@ import hu.bme.mit.gamma.statechart.model.composite.SynchronousCompositeComponent
 import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory;
 import hu.bme.mit.md2g.transformation.BatchInterfaceTransformation.TransformedElements;
 import hu.bme.mit.md2g.util.NameSanitizer;
-import hu.bme.mit.md2g.util.SysMLProfile;
+import hu.bme.mit.md2g.util.profile.SysML;
 
 public class CompositeTransformation {
 
@@ -41,16 +48,22 @@ public class CompositeTransformation {
 	public static final StatechartModelFactory statechartFacory = StatechartModelFactory.eINSTANCE;
 	public static final CompositeFactory compositeFactory = CompositeFactory.eINSTANCE;
 	private final NameSanitizer nameSanitizer = new NameSanitizer();
+	private final BiMap<Type, Component> typeTraces = HashBiMap.create();
+	private final BiMap<Feature, ComponentInstance> featureTraces = HashBiMap.create();
+	private Package gPackage;
+	private Package interfacePackage;
+	private BatchInterfaceTransformation.TransformedElements transformedInterfaces;
+	private List<Map<EObject, NamedElement>> statechartTraceMaps = new ArrayList<>();
 	
-	public List<Package> transform(Class upperMostComponent) {
+	public List<Package> transform(Class upperMostComponent, boolean splitPackages) {
 		
-		final Package gPackage = statechartFacory.createPackage();
+		gPackage = statechartFacory.createPackage();
 		gPackage.setName(nameSanitizer.getSenitizedName(upperMostComponent.getOwningPackage()));
 		
-		final Package interfacePackage = statechartFacory.createPackage();
+		interfacePackage = statechartFacory.createPackage();
 		interfacePackage.setName("Interfaces");
-
-		final Map<Type, Component> traces = new HashMap<>();
+		
+		gPackage.getImports().add(interfacePackage);
 		
 		final Stack<Type> unvisited = new Stack<>();
 		final Stack<Type> collectedTypes = new Stack<>();
@@ -72,39 +85,48 @@ public class CompositeTransformation {
 			}
 		}
 		
-		Set<Classifier> portClassifiers = collectedTypes.stream().filter(SysMLProfile::isBlock)
+		Set<Classifier> portClassifiers = collectedTypes.stream().filter(SysML::isBlock)
 								.map(Class.class::cast)
 								.flatMap(c -> c.getOwnedPort().stream())
 								.map(p -> (Classifier) p.getType())
 								.collect(Collectors.toSet());
+		
 		BatchInterfaceTransformation interfaceTransformation = new BatchInterfaceTransformation(portClassifiers);
 		
-		TransformedElements transformedElements = interfaceTransformation.transform(interfacePackage);
+		transformedInterfaces = interfaceTransformation.transform(interfacePackage);
 		
 		List<Package> packages = new ArrayList<Package>();
 		packages.add(interfacePackage);
 		Map<com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port, Port> portTraces = new HashMap<>();
-		Map<Property, ComponentInstance> instanceTraces = new HashMap<>();
+		
+		Map<Feature, ComponentInstance> instanceTraces = featureTraces;
 		
 		while (!collectedTypes.isEmpty()) {
 			Type typeType = collectedTypes.pop();
-			if (SysMLProfile.isBlock(typeType)) {
+			if (SysML.isBlock(typeType)) {
 				Class classType = (Class) typeType;
 				
-				Package p = statechartFacory.createPackage();
-				p.setName(nameSanitizer.getSenitizedName(typeType));
-				p.getImports().add(interfacePackage);
-				packages.add(p);
+				Package p;
+				
+				if (splitPackages) {
+					p = statechartFacory.createPackage();
+					p.setName(nameSanitizer.getSenitizedName(typeType));
+					p.getImports().add(interfacePackage);
+					packages.add(p);
+				} else {
+					p = gPackage;
+				}
 				
 				if (classType.getClassifierBehavior() != null) {
 					
 					StatechartTransformation transformer = new StatechartTransformation(classType);
-					StatechartDefinition statechartDef = transformer.transform(p, transformedElements.getSignalTraces(), transformedElements.getInterfaceTraces());
+					StatechartDefinition statechartDef = transformer.transform(p, transformedInterfaces.getSignalTraces(), transformedInterfaces.getInterfaceTraces());
 					p.getComponents().add(statechartDef);
 					
 					portTraces.putAll(transformer.getPortTraces());
 					
-					traces.put(classType, statechartDef);
+					typeTraces.put(classType, statechartDef);
+					statechartTraceMaps.add(transformer.extractTraces());
 					
 				} else {
 					SynchronousCompositeComponent compositeDef = compositeFactory.createSynchronousCompositeComponent();
@@ -114,7 +136,7 @@ public class CompositeTransformation {
 					
 					classType.getOwnedAttribute().stream().filter(MDCustomizationForSysMLProfile::isPartProperty).forEach(prop -> {
 						
-						Component gType = traces.get(prop.getType());
+						Component gType = typeTraces.get(prop.getType());
 						Package container = (Package) gType.eContainer();
 						
 						p.getImports().add(container);
@@ -129,7 +151,7 @@ public class CompositeTransformation {
 						p.getComponents().add(compositeDef);
 					});
 					
-					StatechartTransformation.transformPort(classType, compositeDef, transformedElements.getInterfaceTraces(), portTraces);
+					StatechartTransformation.transformPort(classType, compositeDef, transformedInterfaces.getInterfaceTraces(), portTraces);
 					
 					classType.getOwnedElement().stream()
 												.filter(Connector.class::isInstance)
@@ -176,7 +198,7 @@ public class CompositeTransformation {
 													}
 												});
 					
-					traces.put(classType, compositeDef);
+					typeTraces.put(classType, compositeDef);
 				}
 			}
 		}
@@ -190,8 +212,9 @@ public class CompositeTransformation {
 
 	private void transformBindingConnector(
 			Map<com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port, Port> portTraces,
-			Map<Property, ComponentInstance> instanceTraces, SynchronousCompositeComponent compositeDef,
+			Map<Feature, ComponentInstance> instanceTraces, SynchronousCompositeComponent compositeDef,
 			ConnectorEnd end1, ConnectorEnd end2) {
+		
 		PortBinding portBinding = compositeFactory.createPortBinding();
 		portBinding.setCompositeSystemPort(portTraces.get(end1.getRole()));
 		
@@ -205,5 +228,33 @@ public class CompositeTransformation {
 		compositeDef.getPortBindings().add(portBinding);
 	}
 	
+	public Package getTopMostComponentPackage() {
+		return gPackage;
+	}
 	
+	public Package getInterfacesPackage() {
+		return interfacePackage;
+	}
+	
+	public Map<EObject, NamedElement> extractTraces() {
+		HashMap<EObject, NamedElement> map = new HashMap<>();
+		
+		typeTraces.inverse().forEach((key, value) -> map.put(key, value));
+		featureTraces.inverse().forEach((key, value) -> map.put(key, value));
+		
+		if (transformedInterfaces != null) {
+			transformedInterfaces.getInterfaceTraces().forEach((md, g) -> map.put(g, md));
+			transformedInterfaces.getSignalTraces().forEach((md, g) -> map.put(g, md));
+		}
+		
+		statechartTraceMaps.forEach(statechartTrace -> {
+			map.putAll(statechartTrace);
+		});
+		
+		return map;
+	}
+	
+	public BiMap<Feature, ComponentInstance> getFeatureTraces() {
+		return featureTraces;
+	}
 }

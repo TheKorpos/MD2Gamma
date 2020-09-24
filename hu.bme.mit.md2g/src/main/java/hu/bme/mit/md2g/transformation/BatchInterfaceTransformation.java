@@ -17,8 +17,8 @@ import hu.bme.mit.gamma.statechart.model.interface_.EventDirection;
 import hu.bme.mit.gamma.statechart.model.interface_.Interface;
 import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory;
 import hu.bme.mit.md2g.util.NameSanitizer;
-import hu.bme.mit.md2g.util.SysMLProfile;
-import hu.bme.mit.md2g.util.SysMLProfile.FlowDirectionEnum;
+import hu.bme.mit.md2g.util.profile.SysML;
+import hu.bme.mit.md2g.util.profile.SysML.FlowDirectionEnum;
 
 public class BatchInterfaceTransformation {
 
@@ -41,10 +41,10 @@ public class BatchInterfaceTransformation {
 			interfaceTraces.put(classifier, gInterface);
 			gPackage.getInterfaces().add(gInterface);
 			
-			classifier.getAttribute().stream().filter(SysMLProfile::isFlowProperty)
+			classifier.getAttribute().stream().filter(SysML::isFlowProperty)
 				.filter(prop -> prop.getType() instanceof Signal)
 					.map(prop -> new SimpleEntry<Property, FlowDirectionEnum>(prop,
-							SysMLProfile.FlowProperty.getDirection(prop)))
+							SysML.FlowProperty.getDirection(prop)))
 					.forEach(pairs -> {
 						Signal signal = (Signal) pairs.getKey().getType();
 						Event event = INTERFACE_FACTORY.createEvent();
@@ -62,9 +62,9 @@ public class BatchInterfaceTransformation {
 
 	public EventDirection getEventDirection(FlowDirectionEnum flowDirectionEnum) {
 
-		if (SysMLProfile.FlowDirectionEnum.IN == flowDirectionEnum) {
+		if (SysML.FlowDirectionEnum.IN == flowDirectionEnum) {
 			return EventDirection.IN;
-		} else if (SysMLProfile.FlowDirectionEnum.OUT == flowDirectionEnum) {
+		} else if (SysML.FlowDirectionEnum.OUT == flowDirectionEnum) {
 			return EventDirection.OUT;
 		}
 		return EventDirection.INOUT;

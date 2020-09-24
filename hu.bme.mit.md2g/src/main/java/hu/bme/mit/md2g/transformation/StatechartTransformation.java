@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 
 import com.incquerylabs.v4md.ViatraQueryAdapter;
@@ -18,6 +19,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Constraint;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.LiteralString;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.OpaqueExpression;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
@@ -80,6 +82,9 @@ public class StatechartTransformation {
 	private final Map<com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Region, Region> regionTraces = new HashMap<>();
 	private final Map<com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Transition, Transition> transitionTraces = new HashMap<>();
 	private final Map<com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port, Port> portTraces = new HashMap<>();
+	private final Map<Property, VariableDeclaration> variableTraces = new HashMap<>();
+	private final Map<Behavior, Action> actionTraces = new HashMap<>();
+	
 	private static int nextElementSuffixId = 0;
 	private final NameSanitizer nameSanitizer = new NameSanitizer();
 	
@@ -164,9 +169,10 @@ public class StatechartTransformation {
 
 	private void createVariable(Property prop, TypeDefinition gType) {
 		VariableDeclaration variable = ExpressionModelFactory.eINSTANCE.createVariableDeclaration();
-		 variable.setName(nameSanitizer.getSenitizedName(prop));
+		variable.setName(nameSanitizer.getSenitizedName(prop));
 		variable.setType(gType);
 		gStatechart.getVariableDeclarations().add(variable);
+		variableTraces.put(prop, variable);
 		variables.put(prop.getName(), variable);
 	}
 	
@@ -362,6 +368,16 @@ public class StatechartTransformation {
 		sourceState.getEntryActions().add(action);
 		
 		transition.setTrigger(eventTrigger);
+	}
+	
+	public Map<EObject, NamedElement> extractTraces(){
+		Map<EObject, NamedElement> returnMap = new HashMap<>();
+		vertexTraces.forEach((key, value) -> returnMap.put(value, key));
+		portTraces.forEach((key, value) -> returnMap.put(value, key));
+		variableTraces.forEach((key, value) -> returnMap.put(value, key));
+		actionTraces.forEach((key, value) -> returnMap.put(value, key));
+		
+		return returnMap;
 	}
 	
 }

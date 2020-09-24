@@ -61,11 +61,11 @@ public class TransformCompositeStatemachineAction extends NMAction {
 				File selectedFile = filechooser.getSelectedFile();
 
 				CompositeTransformation transformation = new CompositeTransformation();
-				List<Package> packages = transformation.transform(target);
-				NameSanitizer nameSanitizer = new NameSanitizer();
+				
+				List<Package> packages = transformation.transform(target, true);
 				Map<URI, EObject> uriMap = packages.stream().collect(
 						Collectors.toMap(p -> StatechartLanguageSerializer.createURI(selectedFile.getAbsolutePath(),
-								nameSanitizer.getSenitizedName(target) + ".gcd"), p -> p));
+								p.getName() + ".gcd"), p -> p));
 
 				try {
 					StatechartLanguageSerializer.serialize(uriMap);
