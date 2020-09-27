@@ -24,7 +24,7 @@ import com.google.inject.Injector;
 import com.nomagic.magicdraw.core.Application;
 
 import hu.bme.mit.gamma.statechart.language.StatechartLanguageStandaloneSetup;
-import hu.bme.mit.gamma.statechart.model.Package;
+import hu.bme.mit.gamma.statechart.interface_.Package;
 
 public class StatechartLanguageSerializer {
 

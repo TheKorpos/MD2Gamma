@@ -89,10 +89,22 @@ public final class ActionsOnTransitions extends BaseGeneratedEMFQuerySpecificati
     
     @Override
     public Object get(final String parameterName) {
-      if ("transition".equals(parameterName)) return this.fTransition;
-      if ("body".equals(parameterName)) return this.fBody;
-      if ("effect".equals(parameterName)) return this.fEffect;
-      return null;
+      switch(parameterName) {
+          case "transition": return this.fTransition;
+          case "body": return this.fBody;
+          case "effect": return this.fEffect;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fTransition;
+          case 1: return this.fBody;
+          case 2: return this.fEffect;
+          default: return null;
+      }
     }
     
     public Transition getTransition() {
@@ -721,9 +733,9 @@ public final class ActionsOnTransitions extends BaseGeneratedEMFQuerySpecificati
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.ActionsOnTransitions (visibility: PUBLIC, simpleName: ActionsOnTransitions, identifier: hu.bme.mit.md2g.transformation.queries.ActionsOnTransitions, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link ActionsOnTransitions} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.ActionsOnTransitions (visibility: PUBLIC, simpleName: ActionsOnTransitions, identifier: hu.bme.mit.md2g.transformation.queries.ActionsOnTransitions, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link ActionsOnTransitions#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

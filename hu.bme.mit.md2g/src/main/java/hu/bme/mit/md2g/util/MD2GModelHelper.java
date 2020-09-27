@@ -11,7 +11,7 @@ import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
 import hu.bme.mit.md2g.util.profile.SysML;
 
-public class ModelHelper {
+public class MD2GModelHelper {
 	
 	public static Package findNearesParentPackage(Element element) {
 	
@@ -32,7 +32,7 @@ public class ModelHelper {
 		StereotypesHelper.addStereotype(trace, traceStereotype);
 		trace.getSupplier().add(target);
 		trace.getClient().add(source);
-		trace.setOwner(ModelHelper.findNearesParentPackage(source));
+		trace.setOwner(MD2GModelHelper.findNearesParentPackage(source));
 		
 		return trace;
 	}

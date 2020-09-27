@@ -59,9 +59,9 @@ public final class InnerRegion extends BaseGeneratedEMFQuerySpecificationWithGen
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.internal.InnerRegion (visibility: PUBLIC, simpleName: InnerRegion, identifier: hu.bme.mit.md2g.transformation.queries.internal.InnerRegion, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries.internal) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link InnerRegion} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.internal.InnerRegion (visibility: PUBLIC, simpleName: InnerRegion, identifier: hu.bme.mit.md2g.transformation.queries.internal.InnerRegion, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries.internal) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link InnerRegion#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

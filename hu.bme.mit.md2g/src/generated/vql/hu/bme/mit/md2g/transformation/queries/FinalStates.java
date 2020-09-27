@@ -81,9 +81,20 @@ public final class FinalStates extends BaseGeneratedEMFQuerySpecification<FinalS
     
     @Override
     public Object get(final String parameterName) {
-      if ("containingRegion".equals(parameterName)) return this.fContainingRegion;
-      if ("finalState".equals(parameterName)) return this.fFinalState;
-      return null;
+      switch(parameterName) {
+          case "containingRegion": return this.fContainingRegion;
+          case "finalState": return this.fFinalState;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fContainingRegion;
+          case 1: return this.fFinalState;
+          default: return null;
+      }
     }
     
     public Region getContainingRegion() {
@@ -613,9 +624,9 @@ public final class FinalStates extends BaseGeneratedEMFQuerySpecification<FinalS
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.FinalStates (visibility: PUBLIC, simpleName: FinalStates, identifier: hu.bme.mit.md2g.transformation.queries.FinalStates, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link FinalStates} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.FinalStates (visibility: PUBLIC, simpleName: FinalStates, identifier: hu.bme.mit.md2g.transformation.queries.FinalStates, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link FinalStates#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

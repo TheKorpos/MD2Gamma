@@ -197,6 +197,30 @@ return instance.isTypeOf(element, instance.getActGroup());
 return false;
 }
 
+public static class Assert extends AbstractStereotypeWrapper {
+
+
+//stereotype Assert and its tags
+@SuppressWarnings("UnusedDeclaration")
+public static final String STEREOTYPE_NAME = "Assert";
+}
+
+@SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
+public Stereotype getAssert()
+{
+return getStereotype(Assert.STEREOTYPE_NAME);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static boolean isAssert(@CheckForNull Element element)
+{
+if(element !=null){
+Gamma instance=getInstance(element);
+return instance.isTypeOf(element, instance.getAssert());
+}
+return false;
+}
+
 public static class AsynchronousComponent extends AbstractStereotypeWrapper {
 
 
@@ -341,6 +365,48 @@ return instance.isTypeOf(element, instance.getCycle());
 return false;
 }
 
+public static class ExecutionTrace extends AbstractStereotypeWrapper {
+
+
+//stereotype ExecutionTrace and its tags
+@SuppressWarnings("UnusedDeclaration")
+public static final String STEREOTYPE_NAME = "ExecutionTrace";
+@SuppressWarnings("UnusedDeclaration")
+public static final String COMPONENT = "component";
+@SuppressWarnings("UnusedDeclaration")
+public static void setComponent(Element element, Element value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getExecutionTrace(), COMPONENT, value);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearComponent(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getExecutionTrace(), COMPONENT, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static Element getComponent(Element element){
+return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getExecutionTrace(), COMPONENT));
+}
+
+}
+
+@SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
+public Stereotype getExecutionTrace()
+{
+return getStereotype(ExecutionTrace.STEREOTYPE_NAME);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static boolean isExecutionTrace(@CheckForNull Element element)
+{
+if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
+Gamma instance=getInstance(element);
+return instance.isTypeOf(element, instance.getExecutionTrace());
+}
+return false;
+}
+
 public static class GammaCheck extends AbstractStereotypeWrapper {
 
 
@@ -419,6 +485,30 @@ return instance.isTypeOf(element, instance.getGammaComponent());
 return false;
 }
 
+public static class GammaModel extends AbstractStereotypeWrapper {
+
+
+//stereotype GammaModel and its tags
+@SuppressWarnings("UnusedDeclaration")
+public static final String STEREOTYPE_NAME = "GammaModel";
+}
+
+@SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
+public Stereotype getGammaModel()
+{
+return getStereotype(GammaModel.STEREOTYPE_NAME);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static boolean isGammaModel(@CheckForNull Element element)
+{
+if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
+Gamma instance=getInstance(element);
+return instance.isTypeOf(element, instance.getGammaModel());
+}
+return false;
+}
+
 public static class GammaProperty extends AbstractStereotypeWrapper {
 
 
@@ -490,7 +580,17 @@ public static final String COUNTER_EXAMPLES = "counter examples";
 @SuppressWarnings("UnusedDeclaration")
 public static final String COUNTER_EXAMPLES_PACKAGE = "counter examples package";
 @SuppressWarnings("UnusedDeclaration")
+public static final String GAMMTOUPPAALTRACE = "gammToUppaalTrace";
+@SuppressWarnings("UnusedDeclaration")
+public static final String GAMMAINTERFACEMODEL = "gammaInterfaceModel";
+@SuppressWarnings("UnusedDeclaration")
+public static final String GAMMASTATECHARTMODEL = "gammaStatechartModel";
+@SuppressWarnings("UnusedDeclaration")
 public static final String TARGET = "target";
+@SuppressWarnings("UnusedDeclaration")
+public static final String UPPAALMODEL = "uppaalModel";
+@SuppressWarnings("UnusedDeclaration")
+public static final String UPPAALXML = "uppaalXML";
 @SuppressWarnings("UnusedDeclaration")
 public static final String WORKSPACEURI = "workspaceUri";
 @SuppressWarnings("UnusedDeclaration")
@@ -526,6 +626,54 @@ return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstan
 }
 
 @SuppressWarnings("UnusedDeclaration")
+public static void setGammToUppaalTrace(Element element, Element value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), GAMMTOUPPAALTRACE, value);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearGammToUppaalTrace(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaWorkspace(), GAMMTOUPPAALTRACE, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static Element getGammToUppaalTrace(Element element){
+return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), GAMMTOUPPAALTRACE));
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void setGammaInterfaceModel(Element element, Element value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), GAMMAINTERFACEMODEL, value);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearGammaInterfaceModel(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaWorkspace(), GAMMAINTERFACEMODEL, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static Element getGammaInterfaceModel(Element element){
+return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), GAMMAINTERFACEMODEL));
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void setGammaStatechartModel(Element element, Element value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), GAMMASTATECHARTMODEL, value);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearGammaStatechartModel(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaWorkspace(), GAMMASTATECHARTMODEL, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static Element getGammaStatechartModel(Element element){
+return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), GAMMASTATECHARTMODEL));
+}
+
+@SuppressWarnings("UnusedDeclaration")
 public static void setTarget(Element element, Element value){
 StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), TARGET, value);
 }
@@ -539,6 +687,38 @@ StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGamma
 @CheckForNull
 public static Element getTarget(Element element){
 return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), TARGET));
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void setUppaalModel(Element element, Element value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), UPPAALMODEL, value);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearUppaalModel(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaWorkspace(), UPPAALMODEL, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static Element getUppaalModel(Element element){
+return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), UPPAALMODEL));
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void setUppaalXML(Element element, Element value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), UPPAALXML, value);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearUppaalXML(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaWorkspace(), UPPAALXML, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static Element getUppaalXML(Element element){
+return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), UPPAALXML));
 }
 
 @SuppressWarnings("UnusedDeclaration")
@@ -581,24 +761,6 @@ public static class GammaWorkspaceFile extends AbstractStereotypeWrapper {
 //stereotype GammaWorkspaceFile and its tags
 @SuppressWarnings("UnusedDeclaration")
 public static final String STEREOTYPE_NAME = "GammaWorkspaceFile";
-@SuppressWarnings("UnusedDeclaration")
-public static final String WORKSPACERELATIVEURI = "workspaceRelativeUri";
-@SuppressWarnings("UnusedDeclaration")
-public static void setWorkspaceRelativeUri(Element element, String value){
-StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspaceFile(), WORKSPACERELATIVEURI, value);
-}
-
-@SuppressWarnings("UnusedDeclaration")
-public static void clearWorkspaceRelativeUri(Element element){
-StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaWorkspaceFile(), WORKSPACERELATIVEURI, true);
-}
-
-@SuppressWarnings("UnusedDeclaration, unchecked")
-@CheckForNull
-public static String getWorkspaceRelativeUri(Element element){
-return toString(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspaceFile(), WORKSPACERELATIVEURI));
-}
-
 }
 
 @SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
@@ -710,6 +872,8 @@ public static final String STEREOTYPE_NAME = "InstanceVariableState";
 @SuppressWarnings("UnusedDeclaration")
 public static final String REFERENCEDVARIABLE = "referencedVariable";
 @SuppressWarnings("UnusedDeclaration")
+public static final String VALUE = "value";
+@SuppressWarnings("UnusedDeclaration")
 public static void setReferencedVariable(Element element, Element value){
 StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getInstanceVariableState(), REFERENCEDVARIABLE, value);
 }
@@ -723,6 +887,22 @@ StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getInsta
 @CheckForNull
 public static Element getReferencedVariable(Element element){
 return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getInstanceVariableState(), REFERENCEDVARIABLE));
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void setValue(Element element, Element value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getInstanceVariableState(), VALUE, value);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearValue(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getInstanceVariableState(), VALUE, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static Element getValue(Element element){
+return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getInstanceVariableState(), VALUE));
 }
 
 }
@@ -1048,14 +1228,17 @@ final Collection<Stereotype> stereotypes = new HashSet<>();
 
 stereotypes.add(getAct());
 stereotypes.add(getActGroup());
+stereotypes.add(getAssert());
 stereotypes.add(getAsynchronousComponent());
 stereotypes.add(getAsynchronousCompositeComponent());
 stereotypes.add(getAsynchronousStatechartDefinition());
 stereotypes.add(getCascadeCompositeComponent());
 stereotypes.add(getComponentSchedule());
 stereotypes.add(getCycle());
+stereotypes.add(getExecutionTrace());
 stereotypes.add(getGammaCheck());
 stereotypes.add(getGammaComponent());
+stereotypes.add(getGammaModel());
 stereotypes.add(getGammaProperty());
 stereotypes.add(getGammaWorkspace());
 stereotypes.add(getGammaWorkspaceFile());
@@ -1080,4 +1263,3 @@ return super.generatedGetAllStereotypes();
 }
 
 }
-//MD5sum:BF464B6551EB9CB5EF2A0A6DF071D4D8

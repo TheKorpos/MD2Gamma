@@ -15,7 +15,6 @@ import com.google.common.collect.HashBiMap;
 import com.nomagic.magicdraw.sysml.util.MDCustomizationForSysMLProfile;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Feature;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
@@ -23,30 +22,29 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
 import com.nomagic.uml2.ext.magicdraw.compositestructures.mdinternalstructures.Connector;
 import com.nomagic.uml2.ext.magicdraw.compositestructures.mdinternalstructures.ConnectorEnd;
 
-import hu.bme.mit.gamma.statechart.model.Package;
-import hu.bme.mit.gamma.statechart.model.Port;
-import hu.bme.mit.gamma.statechart.model.RealizationMode;
-import hu.bme.mit.gamma.statechart.model.StatechartDefinition;
-import hu.bme.mit.gamma.statechart.model.StatechartModelFactory;
-import hu.bme.mit.gamma.statechart.model.composite.Component;
-import hu.bme.mit.gamma.statechart.model.composite.ComponentInstance;
-import hu.bme.mit.gamma.statechart.model.composite.CompositeFactory;
-import hu.bme.mit.gamma.statechart.model.composite.InstancePortReference;
-import hu.bme.mit.gamma.statechart.model.composite.PortBinding;
-import hu.bme.mit.gamma.statechart.model.composite.SimpleChannel;
-import hu.bme.mit.gamma.statechart.model.composite.SynchronousComponent;
-import hu.bme.mit.gamma.statechart.model.composite.SynchronousComponentInstance;
-import hu.bme.mit.gamma.statechart.model.composite.SynchronousCompositeComponent;
-import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory;
-import hu.bme.mit.md2g.transformation.BatchInterfaceTransformation.TransformedElements;
+import hu.bme.mit.gamma.statechart.composite.ComponentInstance;
+import hu.bme.mit.gamma.statechart.composite.CompositeModelFactory;
+import hu.bme.mit.gamma.statechart.composite.InstancePortReference;
+import hu.bme.mit.gamma.statechart.composite.PortBinding;
+import hu.bme.mit.gamma.statechart.composite.SimpleChannel;
+import hu.bme.mit.gamma.statechart.composite.SynchronousComponent;
+import hu.bme.mit.gamma.statechart.composite.SynchronousComponentInstance;
+import hu.bme.mit.gamma.statechart.composite.SynchronousCompositeComponent;
+import hu.bme.mit.gamma.statechart.interface_.Component;
+import hu.bme.mit.gamma.statechart.interface_.InterfaceModelFactory;
+import hu.bme.mit.gamma.statechart.interface_.Port;
+import hu.bme.mit.gamma.statechart.interface_.RealizationMode;
+import hu.bme.mit.gamma.statechart.interface_.Package;
+import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition;
+import hu.bme.mit.gamma.statechart.statechart.StatechartModelFactory;
 import hu.bme.mit.md2g.util.NameSanitizer;
 import hu.bme.mit.md2g.util.profile.SysML;
 
 public class CompositeTransformation {
 
-	private static final InterfaceFactory interfaceFactory = InterfaceFactory.eINSTANCE;
+	private static final InterfaceModelFactory interfaceFactory = InterfaceModelFactory.eINSTANCE;
 	public static final StatechartModelFactory statechartFacory = StatechartModelFactory.eINSTANCE;
-	public static final CompositeFactory compositeFactory = CompositeFactory.eINSTANCE;
+	public static final CompositeModelFactory compositeFactory = CompositeModelFactory.eINSTANCE;
 	private final NameSanitizer nameSanitizer = new NameSanitizer();
 	private final BiMap<Type, Component> typeTraces = HashBiMap.create();
 	private final BiMap<Feature, ComponentInstance> featureTraces = HashBiMap.create();
@@ -57,10 +55,10 @@ public class CompositeTransformation {
 	
 	public List<Package> transform(Class upperMostComponent, boolean splitPackages) {
 		
-		gPackage = statechartFacory.createPackage();
+		gPackage = interfaceFactory.createPackage();
 		gPackage.setName(nameSanitizer.getSenitizedName(upperMostComponent.getOwningPackage()));
 		
-		interfacePackage = statechartFacory.createPackage();
+		interfacePackage = interfaceFactory.createPackage();
 		interfacePackage.setName("Interfaces");
 		
 		gPackage.getImports().add(interfacePackage);
@@ -109,13 +107,14 @@ public class CompositeTransformation {
 				Package p;
 				
 				if (splitPackages) {
-					p = statechartFacory.createPackage();
+					p = interfaceFactory.createPackage();
 					p.setName(nameSanitizer.getSenitizedName(typeType));
 					p.getImports().add(interfacePackage);
-					packages.add(p);
 				} else {
 					p = gPackage;
 				}
+				
+				packages.add(p);
 				
 				if (classType.getClassifierBehavior() != null) {
 					
@@ -139,7 +138,9 @@ public class CompositeTransformation {
 						Component gType = typeTraces.get(prop.getType());
 						Package container = (Package) gType.eContainer();
 						
-						p.getImports().add(container);
+						if (p != container) {
+							p.getImports().add(container);							
+						}
 						
 						SynchronousComponentInstance instance = compositeFactory.createSynchronousComponentInstance();
 						instance.setType((SynchronousComponent) gType);

@@ -38,31 +38,34 @@ import hu.bme.mit.gamma.expression.model.ExpressionModelFactory;
 import hu.bme.mit.gamma.expression.model.IntegerLiteralExpression;
 import hu.bme.mit.gamma.expression.model.TypeDefinition;
 import hu.bme.mit.gamma.expression.model.VariableDeclaration;
-import hu.bme.mit.gamma.statechart.model.DeepHistoryState;
-import hu.bme.mit.gamma.statechart.model.EventTrigger;
-import hu.bme.mit.gamma.statechart.model.ForkState;
-import hu.bme.mit.gamma.statechart.model.InitialState;
-import hu.bme.mit.gamma.statechart.model.InterfaceRealization;
-import hu.bme.mit.gamma.statechart.model.JoinState;
-import hu.bme.mit.gamma.statechart.model.Package;
-import hu.bme.mit.gamma.statechart.model.Port;
-import hu.bme.mit.gamma.statechart.model.PortEventReference;
-import hu.bme.mit.gamma.statechart.model.RealizationMode;
-import hu.bme.mit.gamma.statechart.model.Region;
-import hu.bme.mit.gamma.statechart.model.SetTimeoutAction;
-import hu.bme.mit.gamma.statechart.model.ShallowHistoryState;
-import hu.bme.mit.gamma.statechart.model.State;
-import hu.bme.mit.gamma.statechart.model.StateNode;
-import hu.bme.mit.gamma.statechart.model.StatechartDefinition;
-import hu.bme.mit.gamma.statechart.model.StatechartModelFactory;
-import hu.bme.mit.gamma.statechart.model.TimeSpecification;
-import hu.bme.mit.gamma.statechart.model.TimeUnit;
-import hu.bme.mit.gamma.statechart.model.TimeoutDeclaration;
-import hu.bme.mit.gamma.statechart.model.TimeoutEventReference;
-import hu.bme.mit.gamma.statechart.model.Transition;
-import hu.bme.mit.gamma.statechart.model.composite.Component;
-import hu.bme.mit.gamma.statechart.model.interface_.Event;
-import hu.bme.mit.gamma.statechart.model.interface_.Interface;
+import hu.bme.mit.gamma.statechart.interface_.Component;
+import hu.bme.mit.gamma.statechart.interface_.Event;
+import hu.bme.mit.gamma.statechart.interface_.EventTrigger;
+import hu.bme.mit.gamma.statechart.interface_.Interface;
+import hu.bme.mit.gamma.statechart.interface_.InterfaceModelFactory;
+import hu.bme.mit.gamma.statechart.interface_.InterfaceRealization;
+import hu.bme.mit.gamma.statechart.interface_.Port;
+import hu.bme.mit.gamma.statechart.interface_.RealizationMode;
+import hu.bme.mit.gamma.statechart.interface_.TimeSpecification;
+import hu.bme.mit.gamma.statechart.interface_.TimeUnit;
+import hu.bme.mit.gamma.statechart.statechart.DeepHistoryState;
+import hu.bme.mit.gamma.statechart.statechart.ForkState;
+import hu.bme.mit.gamma.statechart.statechart.InitialState;
+import hu.bme.mit.gamma.statechart.statechart.JoinState;
+import hu.bme.mit.gamma.statechart.statechart.OnCycleTrigger;
+import hu.bme.mit.gamma.statechart.statechart.PortEventReference;
+import hu.bme.mit.gamma.statechart.statechart.Region;
+import hu.bme.mit.gamma.statechart.statechart.SetTimeoutAction;
+import hu.bme.mit.gamma.statechart.statechart.ShallowHistoryState;
+import hu.bme.mit.gamma.statechart.statechart.State;
+import hu.bme.mit.gamma.statechart.statechart.StateNode;
+import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition;
+import hu.bme.mit.gamma.statechart.statechart.StatechartModelFactory;
+import hu.bme.mit.gamma.statechart.statechart.TimeoutDeclaration;
+import hu.bme.mit.gamma.statechart.statechart.TimeoutEventReference;
+import hu.bme.mit.gamma.statechart.statechart.Transition;
+import hu.bme.mit.gamma.statechart.statechart.UnaryTrigger;
+import hu.bme.mit.gamma.statechart.statechart.UnaryType;
 import hu.bme.mit.md2g.transformation.parse.GammaExpression;
 import hu.bme.mit.md2g.transformation.queries.DeepHistoryInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.ForksInStateMachine;
@@ -73,6 +76,7 @@ import hu.bme.mit.md2g.transformation.queries.ShallowHistoryInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.StatesInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.TranisitonsInStateMachine;
 import hu.bme.mit.md2g.util.NameSanitizer;
+import hu.bme.mit.gamma.statechart.interface_.Package;
 
 public class StatechartTransformation {
 
@@ -182,14 +186,14 @@ public class StatechartTransformation {
 		NameSanitizer nameSanitizer = new NameSanitizer();
 		
 		mdClass.getOwnedPort().forEach(port -> {
-			Port gPort = statechartFactory.createPort();
+			Port gPort = InterfaceModelFactory.eINSTANCE.createPort();
 			gPort.setName(nameSanitizer.getSenitizedName(port));
 			component.getPorts().add(gPort);
 			
 			
 			Interface gInterface = interfaceTraces.get((Classifier)port.getType());
 			
-			InterfaceRealization realization = statechartFactory.createInterfaceRealization();
+			InterfaceRealization realization = InterfaceModelFactory.eINSTANCE.createInterfaceRealization();
 			realization.setInterface(gInterface);
 			gPort.setInterfaceRealization(realization);
 			
@@ -289,18 +293,19 @@ public class StatechartTransformation {
 		Signal signal = signalEvent.getSignal();
 		Event gEvent = signalTraces.get(signal);
 		
-		trigger.getPort().stream().findFirst().ifPresent(mdPort -> {			
-			Port port = portTraces.get(mdPort);
-			
-			EventTrigger eventTrigger = statechartFactory.createEventTrigger();
-			
-			PortEventReference ref = statechartFactory.createPortEventReference();
-			ref.setEvent(gEvent);
-			ref.setPort(port);
-			
-			eventTrigger.setEventReference(ref);
-			
-			gTransition.setTrigger(eventTrigger);
+		trigger.getPort().stream().findFirst().ifPresent(mdPort -> {
+			//TODO
+//			Port port = portTraces.get(mdPort);
+//			
+//			EventTrigger eventTrigger = statechartFactory.createOnCycleTrigger();
+//			
+//			PortEventReference ref = statechartFactory.createPortEventReference();
+//			ref.setEvent(gEvent);
+//			ref.setPort(port);
+//			
+//			eventTrigger.setEventReference(ref);
+//			
+//			gTransition.setTrigger(eventTrigger);
 		});
 	}
 
@@ -331,43 +336,43 @@ public class StatechartTransformation {
 	
 	
 	private void transformTimeEvent(Transition transition, TimeEvent event) {
-		TimeoutDeclaration gTimeout = statechartFactory.createTimeoutDeclaration();
-		gTimeout.setName("timeout_"+nextElementSuffixId++);
-		
-		gStatechart.getTimeoutDeclarations().add(gTimeout);
-		
-		TimeoutEventReference timoutEventReference = statechartFactory.createTimeoutEventReference();
-		timoutEventReference.setTimeout(gTimeout);
-		
-		EventTrigger eventTrigger = statechartFactory.createEventTrigger();
-		eventTrigger.setEventReference(timoutEventReference);
-		
-		State sourceState = (State) transition.getSourceState();
-		
-		SetTimeoutAction action = statechartFactory.createSetTimeoutAction();
-		TimeSpecification spec = statechartFactory.createTimeSpecification();
-		
-		LiteralString ls = (LiteralString) event.getWhen().getExpr();
-		String value = ls.getValue().trim();
-		
-		if (value.endsWith("s")) {
-			spec.setUnit(TimeUnit.SECOND);
-		} else {
-			spec.setUnit(TimeUnit.MILLISECOND);
-		}
-		
-	
-		IntegerLiteralExpression literalInt = ExpressionModelFactory.eINSTANCE.createIntegerLiteralExpression();
-		literalInt.setValue(new BigInteger(value.split("[a-zA-z]")[0]));
-		
-		spec.setValue(literalInt);
-		
-		action.setTime(spec);
-		action.setTimeoutDeclaration(gTimeout);
-		
-		sourceState.getEntryActions().add(action);
-		
-		transition.setTrigger(eventTrigger);
+//		TimeoutDeclaration gTimeout = statechartFactory.createTimeoutDeclaration();
+//		gTimeout.setName("timeout_"+nextElementSuffixId++);
+//		
+//		gStatechart.getTimeoutDeclarations().add(gTimeout);
+//		
+//		TimeoutEventReference timoutEventReference = statechartFactory.createTimeoutEventReference();
+//		timoutEventReference.setTimeout(gTimeout);
+//		
+//		EventTrigger eventTrigger = statechartFactory.createEventTrigger();
+//		eventTrigger.setEventReference(timoutEventReference);
+//		
+//		State sourceState = (State) transition.getSourceState();
+//		
+//		SetTimeoutAction action = statechartFactory.createSetTimeoutAction();
+//		TimeSpecification spec = statechartFactory.createTimeSpecification();
+//		
+//		LiteralString ls = (LiteralString) event.getWhen().getExpr();
+//		String value = ls.getValue().trim();
+//		
+//		if (value.endsWith("s")) {
+//			spec.setUnit(TimeUnit.SECOND);
+//		} else {
+//			spec.setUnit(TimeUnit.MILLISECOND);
+//		}
+//		
+//	
+//		IntegerLiteralExpression literalInt = ExpressionModelFactory.eINSTANCE.createIntegerLiteralExpression();
+//		literalInt.setValue(new BigInteger(value.split("[a-zA-z]")[0]));
+//		
+//		spec.setValue(literalInt);
+//		
+//		action.setTime(spec);
+//		action.setTimeoutDeclaration(gTimeout);
+//		
+//		sourceState.getEntryActions().add(action);
+//		
+//		transition.setTrigger(eventTrigger);
 	}
 	
 	public Map<EObject, NamedElement> extractTraces(){

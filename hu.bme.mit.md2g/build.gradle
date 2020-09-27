@@ -3,6 +3,7 @@ import java.time.format.DateTimeFormatter
 import java.util.stream.Collectors
 import java.util.zip.ZipFile
 
+
 plugins {
   id "org.xtext.xtend" version "1.0.21"
 }
@@ -50,6 +51,9 @@ sourceSets {
     }
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 // In this section you declare where to find the dependencies of your project
 repositories {
     ivy {
@@ -65,12 +69,11 @@ repositories {
     		//module = group
     		//name = gamma
     		//revision = version
-    		artifact '/[module]/2_2_1/[classifier]-[revision].[ext]'
+    		artifact '/[module]/2_4_0/[classifier]-[revision].[ext]'
     	}
     }
     jcenter()
     mavenCentral()
-    mavenLocal()
 	maven { url 'https://build.incquerylabs.com/nexus/repository/v4md/' }
  	maven { url "https://repo.eclipse.org/content/groups/viatra/" }
  }
@@ -82,21 +85,8 @@ configurations {
 }
 
 String[] gammaDeps = [
-	'hu.bme.mit.gamma.expression.model_*',
-	'hu.bme.mit.gamma.expression.language_*',
-	'hu.bme.mit.gamma.statechart.model_*',
-	'hu.bme.mit.gamma.statechart.language_*',
-	'hu.bme.mit.gamma.action.model_*',
-	'hu.bme.mit.gamma.action.language_*',
 	'de.uni_paderborn.uppaal_*',
-	'hu.bme.mit.gamma.uppaal.transformation_*',
-	'hu.bme.mit.gamma.uppaal.transformation.traceability_*',
-	'hu.bme.mit.gamma.uppaal.composition.transformation_*',
-	'hu.bme.mit.gamma.uppaal.backannotation_*',
-	'hu.bme.mit.gamma.uppaal.serializer_*',
-	"hu.bme.mit.gamma.genmodel.model*",
-	"hu.bme.mit.gamma.trace.model*",
-	"hu.bme.mit.gamma.trace.language_*"
+	'hu.bme.mit.gamma.*'
 ]
 
 dependencies {    
@@ -126,7 +116,7 @@ dependencies {
     preCompile group: 'com.nomagic', name: 'sysml', version: '190', classifier: 'SysML_Plugin_190_bundle', ext: 'zip'
     
     preCompile group: 'com.incquerylabs.v4md', name: 'com.incquerylabs.v4md', version: v4mdVersion, classifier: 'plugin', ext: 'zip'
-    preCompile group: 'gamma', name: 'gamma', version: '2.2.1', classifier: 'gamma-tool', ext: 'zip'
+    preCompile group: 'gamma', name: 'gamma', version: '2.4.0', classifier: 'gamma-tool', ext: 'zip'
     
     plugin group: 'org.eclipse.viatra', name: 'viatra-query-language', version: viatraVersion, exclusions
     plugin group: 'org.eclipse.xtext',  name: 'org.eclipse.xtext', version: xtextVersion, exclusions
@@ -181,10 +171,10 @@ task extractDependencies {
 	                into 'build/dependency-cache/extracted'
 	            }
         	} else {
-        		copy {
+       			/*copy {
 	                from zipTree(archive)
 	                into 'build/gamma-tool'
-	            }
+	            }*/
         	}
             
         }

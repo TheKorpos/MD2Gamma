@@ -4,14 +4,12 @@ import "http://www.nomagic.com/magicdraw/UML/2.5.1"
 import "http://www.eclipse.org/emf/2002/Ecore"
 
 pattern fragmentTrace(uriFragment: java String, elemnet: NamedElement){
-	Dependency.supplier(dep, prop);
-	Dependency.client(dep, elemnet);
-	Dependency.appliedStereotypeInstance.classifier.name(dep, "Trace");
+	Property.name(attr, uriFragment);
+	Class.ownedAttribute(c, attr);
+	Class.appliedStereotypeInstance(c, stereotypeInstance);
+	InstanceSpecification.classifier.name(stereotypeInstance, "GammaModel");
 	
-	Property.appliedStereotypeInstance(prop, stereotypeInstance);
-	InstanceSpecification.classifier.name(stereotypeInstance, "MD2G_Trace");
-	InstanceSpecification.slot(stereotypeInstance, slot);
-	LiteralString.owningSlot(ls, slot);
-	LiteralString.name(ls, "URIFragment");
-	LiteralString.value(ls, uriFragment);
+	Abstraction.client(dep, attr);
+	Abstraction.supplier(dep, elemnet);
+	Abstraction.appliedStereotypeInstance.classifier.name(dep, "Trace");
 }

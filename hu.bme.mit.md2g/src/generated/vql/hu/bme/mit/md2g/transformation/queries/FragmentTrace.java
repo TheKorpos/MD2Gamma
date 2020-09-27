@@ -49,16 +49,14 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * <p>Original source:
  *         <code><pre>
  *         pattern fragmentTrace(uriFragment: java String, elemnet: NamedElement){
- *         	Dependency.supplier(dep, prop);
- *         	Dependency.client(dep, elemnet);
- *         	Dependency.appliedStereotypeInstance.classifier.name(dep, "Trace");
+ *         	Property.name(attr, uriFragment);
+ *         	Class.ownedAttribute(c, attr);
+ *         	Class.appliedStereotypeInstance(c, stereotypeInstance);
+ *         	InstanceSpecification.classifier.name(stereotypeInstance, "GammaModel");
  *         	
- *         	Property.appliedStereotypeInstance(prop, stereotypeInstance);
- *         	InstanceSpecification.classifier.name(stereotypeInstance, "MD2G_Trace");
- *         	InstanceSpecification.slot(stereotypeInstance, slot);
- *         	LiteralString.owningSlot(ls, slot);
- *         	LiteralString.name(ls, "URIFragment");
- *         	LiteralString.value(ls, uriFragment);
+ *         	Abstraction.client(dep, attr);
+ *         	Abstraction.supplier(dep, elemnet);
+ *         	Abstraction.appliedStereotypeInstance.classifier.name(dep, "Trace");
  *         }
  * </pre></code>
  * 
@@ -94,9 +92,20 @@ public final class FragmentTrace extends BaseGeneratedEMFQuerySpecification<Frag
     
     @Override
     public Object get(final String parameterName) {
-      if ("uriFragment".equals(parameterName)) return this.fUriFragment;
-      if ("elemnet".equals(parameterName)) return this.fElemnet;
-      return null;
+      switch(parameterName) {
+          case "uriFragment": return this.fUriFragment;
+          case "elemnet": return this.fElemnet;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fUriFragment;
+          case 1: return this.fElemnet;
+          default: return null;
+      }
     }
     
     public String getUriFragment() {
@@ -261,16 +270,14 @@ public final class FragmentTrace extends BaseGeneratedEMFQuerySpecification<Frag
    * <p>Original source:
    * <code><pre>
    * pattern fragmentTrace(uriFragment: java String, elemnet: NamedElement){
-   * 	Dependency.supplier(dep, prop);
-   * 	Dependency.client(dep, elemnet);
-   * 	Dependency.appliedStereotypeInstance.classifier.name(dep, "Trace");
+   * 	Property.name(attr, uriFragment);
+   * 	Class.ownedAttribute(c, attr);
+   * 	Class.appliedStereotypeInstance(c, stereotypeInstance);
+   * 	InstanceSpecification.classifier.name(stereotypeInstance, "GammaModel");
    * 	
-   * 	Property.appliedStereotypeInstance(prop, stereotypeInstance);
-   * 	InstanceSpecification.classifier.name(stereotypeInstance, "MD2G_Trace");
-   * 	InstanceSpecification.slot(stereotypeInstance, slot);
-   * 	LiteralString.owningSlot(ls, slot);
-   * 	LiteralString.name(ls, "URIFragment");
-   * 	LiteralString.value(ls, uriFragment);
+   * 	Abstraction.client(dep, attr);
+   * 	Abstraction.supplier(dep, elemnet);
+   * 	Abstraction.appliedStereotypeInstance.classifier.name(dep, "Trace");
    * }
    * </pre></code>
    * 
@@ -635,9 +642,9 @@ public final class FragmentTrace extends BaseGeneratedEMFQuerySpecification<Frag
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.FragmentTrace (visibility: PUBLIC, simpleName: FragmentTrace, identifier: hu.bme.mit.md2g.transformation.queries.FragmentTrace, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link FragmentTrace} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.FragmentTrace (visibility: PUBLIC, simpleName: FragmentTrace, identifier: hu.bme.mit.md2g.transformation.queries.FragmentTrace, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link FragmentTrace#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
@@ -696,86 +703,71 @@ public final class FragmentTrace extends BaseGeneratedEMFQuerySpecification<Frag
           PBody body = new PBody(this);
           PVariable var_uriFragment = body.getOrCreateVariableByName("uriFragment");
           PVariable var_elemnet = body.getOrCreateVariableByName("elemnet");
-          PVariable var_dep = body.getOrCreateVariableByName("dep");
-          PVariable var_prop = body.getOrCreateVariableByName("prop");
+          PVariable var_attr = body.getOrCreateVariableByName("attr");
+          PVariable var_c = body.getOrCreateVariableByName("c");
           PVariable var_stereotypeInstance = body.getOrCreateVariableByName("stereotypeInstance");
-          PVariable var_slot = body.getOrCreateVariableByName("slot");
-          PVariable var_ls = body.getOrCreateVariableByName("ls");
+          PVariable var_dep = body.getOrCreateVariableByName("dep");
           new TypeFilterConstraint(body, Tuples.flatTupleOf(var_uriFragment), new JavaTransitiveInstancesKey(java.lang.String.class));
           new TypeConstraint(body, Tuples.flatTupleOf(var_elemnet), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement")));
           body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
              new ExportedParameter(body, var_uriFragment, parameter_uriFragment),
              new ExportedParameter(body, var_elemnet, parameter_elemnet)
           ));
-          // 	Dependency.supplier(dep, prop)
-          new TypeConstraint(body, Tuples.flatTupleOf(var_dep), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Dependency")));
+          // 	Property.name(attr, uriFragment)
+          new TypeConstraint(body, Tuples.flatTupleOf(var_attr), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Property")));
           PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_dep, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Dependency", "supplier")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_0_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement")));
-          new Equality(body, var__virtual_0_, var_prop);
-          // 	Dependency.client(dep, elemnet)
-          new TypeConstraint(body, Tuples.flatTupleOf(var_dep), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Dependency")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_attr, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement", "name")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_0_), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "String")));
+          new Equality(body, var__virtual_0_, var_uriFragment);
+          // 	Class.ownedAttribute(c, attr)
+          new TypeConstraint(body, Tuples.flatTupleOf(var_c), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Class")));
           PVariable var__virtual_1_ = body.getOrCreateVariableByName(".virtual{1}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_dep, var__virtual_1_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Dependency", "client")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_1_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement")));
-          new Equality(body, var__virtual_1_, var_elemnet);
-          // 	Dependency.appliedStereotypeInstance.classifier.name(dep, "Trace")
+          new TypeConstraint(body, Tuples.flatTupleOf(var_c, var__virtual_1_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "StructuredClassifier", "ownedAttribute")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_1_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Property")));
+          new Equality(body, var__virtual_1_, var_attr);
+          // 	Class.appliedStereotypeInstance(c, stereotypeInstance)
+          new TypeConstraint(body, Tuples.flatTupleOf(var_c), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Class")));
           PVariable var__virtual_2_ = body.getOrCreateVariableByName(".virtual{2}");
-          new ConstantValue(body, var__virtual_2_, "Trace");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_dep), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Dependency")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_c, var__virtual_2_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Element", "appliedStereotypeInstance")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_2_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification")));
+          new Equality(body, var__virtual_2_, var_stereotypeInstance);
+          // 	InstanceSpecification.classifier.name(stereotypeInstance, "GammaModel")
           PVariable var__virtual_3_ = body.getOrCreateVariableByName(".virtual{3}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_dep, var__virtual_3_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Element", "appliedStereotypeInstance")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_3_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification")));
+          new ConstantValue(body, var__virtual_3_, "GammaModel");
+          new TypeConstraint(body, Tuples.flatTupleOf(var_stereotypeInstance), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification")));
           PVariable var__virtual_4_ = body.getOrCreateVariableByName(".virtual{4}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_3_, var__virtual_4_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification", "classifier")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_stereotypeInstance, var__virtual_4_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification", "classifier")));
           new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_4_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Classifier")));
           PVariable var__virtual_5_ = body.getOrCreateVariableByName(".virtual{5}");
           new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_4_, var__virtual_5_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement", "name")));
           new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_5_), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "String")));
-          new Equality(body, var__virtual_5_, var__virtual_2_);
-          // 		Property.appliedStereotypeInstance(prop, stereotypeInstance)
-          new TypeConstraint(body, Tuples.flatTupleOf(var_prop), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Property")));
+          new Equality(body, var__virtual_5_, var__virtual_3_);
+          // 		Abstraction.client(dep, attr)
+          new TypeConstraint(body, Tuples.flatTupleOf(var_dep), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Abstraction")));
           PVariable var__virtual_6_ = body.getOrCreateVariableByName(".virtual{6}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_prop, var__virtual_6_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Element", "appliedStereotypeInstance")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_6_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification")));
-          new Equality(body, var__virtual_6_, var_stereotypeInstance);
-          // 	InstanceSpecification.classifier.name(stereotypeInstance, "MD2G_Trace")
+          new TypeConstraint(body, Tuples.flatTupleOf(var_dep, var__virtual_6_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Dependency", "client")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_6_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement")));
+          new Equality(body, var__virtual_6_, var_attr);
+          // 	Abstraction.supplier(dep, elemnet)
+          new TypeConstraint(body, Tuples.flatTupleOf(var_dep), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Abstraction")));
           PVariable var__virtual_7_ = body.getOrCreateVariableByName(".virtual{7}");
-          new ConstantValue(body, var__virtual_7_, "MD2G_Trace");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_stereotypeInstance), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_dep, var__virtual_7_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Dependency", "supplier")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_7_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement")));
+          new Equality(body, var__virtual_7_, var_elemnet);
+          // 	Abstraction.appliedStereotypeInstance.classifier.name(dep, "Trace")
           PVariable var__virtual_8_ = body.getOrCreateVariableByName(".virtual{8}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_stereotypeInstance, var__virtual_8_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification", "classifier")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_8_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Classifier")));
+          new ConstantValue(body, var__virtual_8_, "Trace");
+          new TypeConstraint(body, Tuples.flatTupleOf(var_dep), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Abstraction")));
           PVariable var__virtual_9_ = body.getOrCreateVariableByName(".virtual{9}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_8_, var__virtual_9_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement", "name")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_9_), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "String")));
-          new Equality(body, var__virtual_9_, var__virtual_7_);
-          // 	InstanceSpecification.slot(stereotypeInstance, slot)
-          new TypeConstraint(body, Tuples.flatTupleOf(var_stereotypeInstance), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_dep, var__virtual_9_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Element", "appliedStereotypeInstance")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_9_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification")));
           PVariable var__virtual_10_ = body.getOrCreateVariableByName(".virtual{10}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_stereotypeInstance, var__virtual_10_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification", "slot")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_10_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Slot")));
-          new Equality(body, var__virtual_10_, var_slot);
-          // 	LiteralString.owningSlot(ls, slot)
-          new TypeConstraint(body, Tuples.flatTupleOf(var_ls), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "LiteralString")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_9_, var__virtual_10_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "InstanceSpecification", "classifier")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_10_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Classifier")));
           PVariable var__virtual_11_ = body.getOrCreateVariableByName(".virtual{11}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_ls, var__virtual_11_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "ValueSpecification", "owningSlot")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_11_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Slot")));
-          new Equality(body, var__virtual_11_, var_slot);
-          // 	LiteralString.name(ls, "URIFragment")
-          PVariable var__virtual_12_ = body.getOrCreateVariableByName(".virtual{12}");
-          new ConstantValue(body, var__virtual_12_, "URIFragment");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_ls), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "LiteralString")));
-          PVariable var__virtual_13_ = body.getOrCreateVariableByName(".virtual{13}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_ls, var__virtual_13_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement", "name")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_13_), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "String")));
-          new Equality(body, var__virtual_13_, var__virtual_12_);
-          // 	LiteralString.value(ls, uriFragment)
-          new TypeConstraint(body, Tuples.flatTupleOf(var_ls), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "LiteralString")));
-          PVariable var__virtual_14_ = body.getOrCreateVariableByName(".virtual{14}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_ls, var__virtual_14_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "LiteralString", "value")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_14_), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "String")));
-          new Equality(body, var__virtual_14_, var_uriFragment);
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_10_, var__virtual_11_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "NamedElement", "name")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_11_), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "String")));
+          new Equality(body, var__virtual_11_, var__virtual_8_);
           bodies.add(body);
       }
       return bodies;

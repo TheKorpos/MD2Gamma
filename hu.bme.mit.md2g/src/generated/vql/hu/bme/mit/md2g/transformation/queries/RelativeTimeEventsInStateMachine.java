@@ -91,10 +91,22 @@ public final class RelativeTimeEventsInStateMachine extends BaseGeneratedEMFQuer
     
     @Override
     public Object get(final String parameterName) {
-      if ("stateMachine".equals(parameterName)) return this.fStateMachine;
-      if ("transition".equals(parameterName)) return this.fTransition;
-      if ("event".equals(parameterName)) return this.fEvent;
-      return null;
+      switch(parameterName) {
+          case "stateMachine": return this.fStateMachine;
+          case "transition": return this.fTransition;
+          case "event": return this.fEvent;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fStateMachine;
+          case 1: return this.fTransition;
+          case 2: return this.fEvent;
+          default: return null;
+      }
     }
     
     public StateMachine getStateMachine() {
@@ -725,9 +737,9 @@ public final class RelativeTimeEventsInStateMachine extends BaseGeneratedEMFQuer
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.RelativeTimeEventsInStateMachine (visibility: PUBLIC, simpleName: RelativeTimeEventsInStateMachine, identifier: hu.bme.mit.md2g.transformation.queries.RelativeTimeEventsInStateMachine, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link RelativeTimeEventsInStateMachine} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.RelativeTimeEventsInStateMachine (visibility: PUBLIC, simpleName: RelativeTimeEventsInStateMachine, identifier: hu.bme.mit.md2g.transformation.queries.RelativeTimeEventsInStateMachine, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link RelativeTimeEventsInStateMachine#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

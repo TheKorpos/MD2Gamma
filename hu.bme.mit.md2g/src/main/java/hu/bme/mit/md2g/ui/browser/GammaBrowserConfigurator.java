@@ -10,12 +10,11 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBehavior;
-import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.StateMachine;
 
-import hu.bme.mit.md2g.ui.browser.action.TransformWorkspaceTargetToGammaAction;
-import hu.bme.mit.md2g.ui.browser.action.PerformFormalVerificationAction;
+import hu.bme.mit.md2g.ui.browser.action.SerializeUppaalModelAction;
 import hu.bme.mit.md2g.ui.browser.action.TransformCompositeStatemachineAction;
 import hu.bme.mit.md2g.ui.browser.action.TransformWorkspaceModelsToUppaalAction;
+import hu.bme.mit.md2g.ui.browser.action.TransformWorkspaceTargetToGammaAction;
 import hu.bme.mit.md2g.ui.browser.action.TransfromSingleStatemachineAction;
 import hu.bme.mit.md2g.util.profile.Gamma;
 
@@ -43,7 +42,7 @@ public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 			
 			//selected object is a class
 			if (userObject instanceof OpaqueBehavior) {
-				category.addAction(new PerformFormalVerificationAction((OpaqueBehavior)userObject));
+				
 			} else if (userObject instanceof Class) {
 				Class selectedClass = (Class) userObject;
 				if (selectedClass.getAppliedStereotypeInstance() != null) {
@@ -63,6 +62,7 @@ public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 				if (Gamma.isGammaWorkspace(mdPackage)) {
 					category.addAction(new TransformWorkspaceTargetToGammaAction("GAMMA_WORKSPACE_TRA", "Transform Targeted Model", mdPackage));
 					category.addAction(new TransformWorkspaceModelsToUppaalAction(mdPackage));
+					category.addAction(new SerializeUppaalModelAction(mdPackage));
 				}
 				
 			}

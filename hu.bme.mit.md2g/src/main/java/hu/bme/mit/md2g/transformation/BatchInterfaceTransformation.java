@@ -9,23 +9,22 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.Signal;
 
-import hu.bme.mit.gamma.statechart.model.Package;
-import hu.bme.mit.gamma.statechart.model.StatechartModelFactory;
-import hu.bme.mit.gamma.statechart.model.interface_.Event;
-import hu.bme.mit.gamma.statechart.model.interface_.EventDeclaration;
-import hu.bme.mit.gamma.statechart.model.interface_.EventDirection;
-import hu.bme.mit.gamma.statechart.model.interface_.Interface;
-import hu.bme.mit.gamma.statechart.model.interface_.InterfaceFactory;
+import hu.bme.mit.gamma.statechart.interface_.Event;
+import hu.bme.mit.gamma.statechart.interface_.EventDeclaration;
+import hu.bme.mit.gamma.statechart.interface_.EventDirection;
+import hu.bme.mit.gamma.statechart.interface_.Interface;
+import hu.bme.mit.gamma.statechart.interface_.InterfaceModelFactory;
 import hu.bme.mit.md2g.util.NameSanitizer;
 import hu.bme.mit.md2g.util.profile.SysML;
 import hu.bme.mit.md2g.util.profile.SysML.FlowDirectionEnum;
+import hu.bme.mit.gamma.statechart.interface_.Package;
 
 public class BatchInterfaceTransformation {
 
 	private Set<Classifier> classifiers;
 	private Map<Signal, Event> signalTraces = new HashMap<>();
-	private Map<Classifier, hu.bme.mit.gamma.statechart.model.interface_.Interface> interfaceTraces = new HashMap<>();
-	private static final InterfaceFactory INTERFACE_FACTORY = InterfaceFactory.eINSTANCE;
+	private Map<Classifier, Interface> interfaceTraces = new HashMap<>();
+	private static final InterfaceModelFactory INTERFACE_FACTORY = InterfaceModelFactory.eINSTANCE;
 	private final NameSanitizer nameSanitizer = new NameSanitizer();
 	
 	public BatchInterfaceTransformation(Set<Classifier> classifiers) {
@@ -36,7 +35,7 @@ public class BatchInterfaceTransformation {
 		
 		for (Classifier classifier : classifiers) {
 			
-			hu.bme.mit.gamma.statechart.model.interface_.Interface gInterface= INTERFACE_FACTORY.createInterface();
+			Interface gInterface= INTERFACE_FACTORY.createInterface();
 			gInterface.setName(nameSanitizer.getSenitizedName(classifier));
 			interfaceTraces.put(classifier, gInterface);
 			gPackage.getInterfaces().add(gInterface);
@@ -77,7 +76,7 @@ public class BatchInterfaceTransformation {
 		private Map<Classifier, Interface> interfaceTraces;
 		private Package interfacePackage;
 
-		public TransformedElements(Package interfacePackage, Map<Signal, Event> signalTraces, Map<Classifier, hu.bme.mit.gamma.statechart.model.interface_.Interface> interfaceTraces) {
+		public TransformedElements(Package interfacePackage, Map<Signal, Event> signalTraces, Map<Classifier, Interface> interfaceTraces) {
 			this.signalTraces = signalTraces;
 			this.interfaceTraces = interfaceTraces;
 			this.interfacePackage = interfacePackage;

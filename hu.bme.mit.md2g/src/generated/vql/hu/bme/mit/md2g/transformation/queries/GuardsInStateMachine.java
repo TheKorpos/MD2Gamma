@@ -101,11 +101,24 @@ public final class GuardsInStateMachine extends BaseGeneratedEMFQuerySpecificati
     
     @Override
     public Object get(final String parameterName) {
-      if ("stateMachine".equals(parameterName)) return this.fStateMachine;
-      if ("transition".equals(parameterName)) return this.fTransition;
-      if ("opaqueExpression".equals(parameterName)) return this.fOpaqueExpression;
-      if ("body".equals(parameterName)) return this.fBody;
-      return null;
+      switch(parameterName) {
+          case "stateMachine": return this.fStateMachine;
+          case "transition": return this.fTransition;
+          case "opaqueExpression": return this.fOpaqueExpression;
+          case "body": return this.fBody;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fStateMachine;
+          case 1: return this.fTransition;
+          case 2: return this.fOpaqueExpression;
+          case 3: return this.fBody;
+          default: return null;
+      }
     }
     
     public StateMachine getStateMachine() {
@@ -835,9 +848,9 @@ public final class GuardsInStateMachine extends BaseGeneratedEMFQuerySpecificati
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.GuardsInStateMachine (visibility: PUBLIC, simpleName: GuardsInStateMachine, identifier: hu.bme.mit.md2g.transformation.queries.GuardsInStateMachine, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link GuardsInStateMachine} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.GuardsInStateMachine (visibility: PUBLIC, simpleName: GuardsInStateMachine, identifier: hu.bme.mit.md2g.transformation.queries.GuardsInStateMachine, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link GuardsInStateMachine#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

@@ -27,7 +27,7 @@ import com.nomagic.magicdraw.ui.MagicDrawProgressStatusRunner;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 
 import hu.bme.mit.gamma.statechart.language.StatechartLanguageStandaloneSetup;
-import hu.bme.mit.gamma.statechart.model.Package;
+import hu.bme.mit.gamma.statechart.interface_.Package;
 import hu.bme.mit.md2g.serialization.StatechartLanguageSerializer;
 import hu.bme.mit.md2g.transformation.CompositeTransformation;
 import hu.bme.mit.md2g.util.NameSanitizer;

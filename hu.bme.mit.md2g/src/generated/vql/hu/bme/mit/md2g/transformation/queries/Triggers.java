@@ -81,9 +81,20 @@ public final class Triggers extends BaseGeneratedEMFQuerySpecification<Triggers.
     
     @Override
     public Object get(final String parameterName) {
-      if ("transition".equals(parameterName)) return this.fTransition;
-      if ("trigger".equals(parameterName)) return this.fTrigger;
-      return null;
+      switch(parameterName) {
+          case "transition": return this.fTransition;
+          case "trigger": return this.fTrigger;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fTransition;
+          case 1: return this.fTrigger;
+          default: return null;
+      }
     }
     
     public Transition getTransition() {
@@ -613,9 +624,9 @@ public final class Triggers extends BaseGeneratedEMFQuerySpecification<Triggers.
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.Triggers (visibility: PUBLIC, simpleName: Triggers, identifier: hu.bme.mit.md2g.transformation.queries.Triggers, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link Triggers} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.Triggers (visibility: PUBLIC, simpleName: Triggers, identifier: hu.bme.mit.md2g.transformation.queries.Triggers, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link Triggers#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

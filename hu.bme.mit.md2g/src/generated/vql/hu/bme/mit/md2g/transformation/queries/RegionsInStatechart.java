@@ -86,9 +86,20 @@ public final class RegionsInStatechart extends BaseGeneratedEMFQuerySpecificatio
     
     @Override
     public Object get(final String parameterName) {
-      if ("stmt".equals(parameterName)) return this.fStmt;
-      if ("region".equals(parameterName)) return this.fRegion;
-      return null;
+      switch(parameterName) {
+          case "stmt": return this.fStmt;
+          case "region": return this.fRegion;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fStmt;
+          case 1: return this.fRegion;
+          default: return null;
+      }
     }
     
     public StateMachine getStmt() {
@@ -621,9 +632,9 @@ public final class RegionsInStatechart extends BaseGeneratedEMFQuerySpecificatio
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.RegionsInStatechart (visibility: PUBLIC, simpleName: RegionsInStatechart, identifier: hu.bme.mit.md2g.transformation.queries.RegionsInStatechart, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link RegionsInStatechart} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.RegionsInStatechart (visibility: PUBLIC, simpleName: RegionsInStatechart, identifier: hu.bme.mit.md2g.transformation.queries.RegionsInStatechart, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link RegionsInStatechart#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

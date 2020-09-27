@@ -1,57 +1,39 @@
 package hu.bme.mit.md2g.ui.browser.action;
 
 import java.awt.event.ActionEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.stream.Collectors;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
-
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.xtext.EcoreUtil2;
 
-import com.google.common.collect.BiMap;
 import com.nomagic.actions.NMAction;
+import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
+import com.nomagic.magicdraw.openapi.uml.ModelElementsManager;
+import com.nomagic.magicdraw.openapi.uml.ReadOnlyElementException;
 import com.nomagic.magicdraw.openapi.uml.SessionManager;
+import com.nomagic.uml2.ext.jmi.helpers.ModelHelper;
 import com.nomagic.uml2.ext.jmi.helpers.StereotypesHelper;
-import com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Abstraction;
-import com.nomagic.uml2.ext.magicdraw.classes.mddependencies.Dependency;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
+import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
-import hu.bme.mit.gamma.statechart.model.composite.Component;
-import hu.bme.mit.gamma.uppaal.composition.transformation.CompositeToUppaalTransformer;
-import hu.bme.mit.gamma.uppaal.composition.transformation.ModelUnfolder;
-import hu.bme.mit.gamma.uppaal.composition.transformation.ModelUnfolder.Trace;
-import hu.bme.mit.gamma.uppaal.composition.transformation.CompositeToUppaalTransformer.Scheduler;
-import hu.bme.mit.gamma.uppaal.composition.transformation.SimpleInstanceHandler;
-import hu.bme.mit.gamma.uppaal.transformation.traceability.G2UTrace;
-import hu.bme.mit.md2g.serialization.StatechartLanguageSerializer;
 import hu.bme.mit.md2g.transformation.CompositeTransformation;
 import hu.bme.mit.md2g.transformation.TraceModelCreator;
-import hu.bme.mit.md2g.util.ModelHelper;
-import hu.bme.mit.md2g.util.NameSanitizer;
 import hu.bme.mit.md2g.util.profile.Gamma;
-import hu.bme.mit.md2g.util.profile.SysML;
-import org.eclipse.emf.common.util.URI;
-
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
-import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
-import com.nomagic.uml2.impl.ElementsFactory;
-
-import uppaal.NTA;
+import hu.bme.mit.md2g.util.profile.Gamma.GammaWorkspace;
 
 public class TransformWorkspaceTargetToGammaAction  extends NMAction {
 	
@@ -76,38 +58,81 @@ public class TransformWorkspaceTargetToGammaAction  extends NMAction {
 		}
 		
 		target.filter(Class.class::isInstance).map(Class.class::cast).ifPresent(t -> {
+			
 				CompositeTransformation compositeTransformation = new CompositeTransformation();
-				List<hu.bme.mit.gamma.statechart.model.Package> gPackages = compositeTransformation.transform(t, false);
+				List<hu.bme.mit.gamma.statechart.interface_.Package> gPackages = compositeTransformation.transform(t, false);
 								
 				Map<URI, EObject> uriMap = new HashMap<>();
 				
-				hu.bme.mit.gamma.statechart.model.Package topmostPack = compositeTransformation.getTopMostComponentPackage();
-				hu.bme.mit.gamma.statechart.model.Package interfacesPack = compositeTransformation.getInterfacesPackage();
+				gPackages.forEach(gp -> {
+					uriMap.put(URI.createFileURI(gp.getName() + ".gsm"), gp);
+				});
 				
-				uriMap.put(StatechartLanguageSerializer.createURI(workspaceUri.get(), topmostPack.getName() + ".gcd"), topmostPack);
-				uriMap.put(StatechartLanguageSerializer.createURI(workspaceUri.get(), interfacesPack.getName() + ".gcd"), interfacesPack);
-
 				try {
-					StatechartLanguageSerializer.serialize(uriMap);
 					Map<EObject, NamedElement> traces = compositeTransformation.extractTraces();
-					
 					TraceModelCreator traceModelCreator = new TraceModelCreator(traces);
 					
-					SessionManager.getInstance().executeInsideSession(project, "Creating Gamma Model Pointers", () -> {
-						uriMap.forEach((uri, eobj) -> {
-							Stereotype gammaWSFile = Gamma.getInstance(workspace).getGammaWorkspaceFile();
-							Class gammaFile = project.getElementsFactory().createClassInstance();
-							StereotypesHelper.addStereotype(gammaFile, gammaWSFile);
-							gammaFile.setName(uri.toFileString());
-							gammaFile.setOwner(workspace);
-							
-							if (eobj instanceof hu.bme.mit.gamma.statechart.model.Package) {
-								hu.bme.mit.gamma.statechart.model.Package pa = (hu.bme.mit.gamma.statechart.model.Package) eobj;
-								traceModelCreator.createWithoutSession(gammaFile, pa.eAllContents());
-							}
-						});
-					});	
+					ResourceSet resourceSet = new ResourceSetImpl();
+					
+					SessionManager.getInstance().createSession(project, "Transforming Gamma model");
+					
+					Element gammaStatechartModel = GammaWorkspace.getGammaStatechartModel(workspace);
+					Element gammaInterfaceModel = GammaWorkspace.getGammaInterfaceModel(workspace);
+					
+					try {
+						if (gammaStatechartModel != null) {
+							ModelElementsManager.getInstance().removeElement(gammaStatechartModel);
+						}
+						
+						if (gammaInterfaceModel != null) {
+							ModelElementsManager.getInstance().removeElement(gammaStatechartModel);
+						}
+					} catch(ReadOnlyElementException e){
+						Application.getInstance().getGUILog().log("Could not remove old gamma models. Please lock the workspace.");
+					}
+	
+					
+					for (Entry<URI, EObject> entry: uriMap.entrySet()) {
+						EObject eObject = entry.getValue();
+						
+						Resource resource = resourceSet.createResource(entry.getKey());
+						resource.getContents().add(eObject);
+					}
+					
+					for (Resource resource: resourceSet.getResources()) {
+						
+						ByteArrayOutputStream stream = new ByteArrayOutputStream();
+						resource.save(stream, Collections.EMPTY_MAP);
+						
+						Stereotype gammaWSFile = Gamma.getInstance(workspace).getGammaModel();
+						Class gammaFile = project.getElementsFactory().createClassInstance();
+						StereotypesHelper.addStereotype(gammaFile, gammaWSFile);
+						
+						if (resource.getContents().contains(compositeTransformation.getInterfacesPackage())) {
+							Gamma.GammaWorkspace.setGammaInterfaceModel(workspace, gammaFile);
+						} else if (resource.getContents().contains(compositeTransformation.getTopMostComponentPackage())) {
+							Gamma.GammaWorkspace.setGammaStatechartModel(workspace, gammaFile);
+						}
+						
+						gammaFile.setName(resource.getURI().toFileString());
+						gammaFile.setOwner(workspace);
+						
+						ModelHelper.setComment(gammaFile, new String(stream.toByteArray()));
+						
+						EObject eObject = resource.getContents().get(0);
+						
+						if (eObject instanceof hu.bme.mit.gamma.statechart.interface_.Package) {
+							hu.bme.mit.gamma.statechart.interface_.Package pa = (hu.bme.mit.gamma.statechart.interface_.Package) eObject;
+							traceModelCreator.createWithoutSession(gammaFile, pa.eAllContents());
+						}
+						
+						stream.close();
+					}
+					
+					SessionManager.getInstance().closeSession(project);
+					
 				} catch (IOException e) {
+					SessionManager.getInstance().cancelSession(project);
 					e.printStackTrace();
 				}
 		});

@@ -84,9 +84,20 @@ public final class StatesInStatemachine extends BaseGeneratedEMFQuerySpecificati
     
     @Override
     public Object get(final String parameterName) {
-      if ("stateMachine".equals(parameterName)) return this.fStateMachine;
-      if ("state".equals(parameterName)) return this.fState;
-      return null;
+      switch(parameterName) {
+          case "stateMachine": return this.fStateMachine;
+          case "state": return this.fState;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fStateMachine;
+          case 1: return this.fState;
+          default: return null;
+      }
     }
     
     public StateMachine getStateMachine() {
@@ -617,9 +628,9 @@ public final class StatesInStatemachine extends BaseGeneratedEMFQuerySpecificati
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.StatesInStatemachine (visibility: PUBLIC, simpleName: StatesInStatemachine, identifier: hu.bme.mit.md2g.transformation.queries.StatesInStatemachine, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link StatesInStatemachine} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.StatesInStatemachine (visibility: PUBLIC, simpleName: StatesInStatemachine, identifier: hu.bme.mit.md2g.transformation.queries.StatesInStatemachine, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link StatesInStatemachine#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

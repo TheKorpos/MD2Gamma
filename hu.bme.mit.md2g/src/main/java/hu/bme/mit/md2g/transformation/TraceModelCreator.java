@@ -13,7 +13,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.NamedElement;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
-import hu.bme.mit.md2g.util.ModelHelper;
+import hu.bme.mit.md2g.util.MD2GModelHelper;
 import hu.bme.mit.md2g.util.profile.Gamma;
 
 
@@ -36,16 +36,10 @@ public class TraceModelCreator {
 			if (traces.containsKey(elem)) {
 				Property trace = project.getElementsFactory().createPropertyInstance();
 				trace.setOwner(container);
-				
-				Stereotype traceStereotype = Gamma.getInstance(project).getMD2G_Trace();
-				StereotypesHelper.addStereotype(trace, traceStereotype);
-				Gamma.MD2G_Trace.setURIFragment(trace, pathFragment);
+				trace.setName(pathFragment);
 				NamedElement mdElement = traces.get(elem);
-				ModelHelper.createTrace(trace, mdElement);
-				trace.setName(mdElement.getQualifiedName());
+				MD2GModelHelper.createTrace(trace, mdElement);
 			}
-			
 		});
 	}
-
 }

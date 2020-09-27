@@ -18,13 +18,14 @@ import com.nomagic.magicdraw.core.Application;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Classifier;
 import com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port;
 
-import hu.bme.mit.gamma.statechart.model.Package;
-import hu.bme.mit.gamma.statechart.model.StatechartModelFactory;
+import hu.bme.mit.gamma.statechart.interface_.InterfaceModelFactory;
+import hu.bme.mit.gamma.statechart.statechart.StatechartModelFactory;
 import hu.bme.mit.md2g.serialization.StatechartLanguageSerializer;
 import hu.bme.mit.md2g.transformation.BatchInterfaceTransformation;
 import hu.bme.mit.md2g.transformation.BatchInterfaceTransformation.TransformedElements;
 import hu.bme.mit.md2g.transformation.StatechartTransformation;
 import hu.bme.mit.md2g.util.NameSanitizer;
+import hu.bme.mit.gamma.statechart.interface_.Package;
 
 public class TransfromSingleStatemachineAction extends NMAction{
 	
@@ -51,10 +52,10 @@ public class TransfromSingleStatemachineAction extends NMAction{
 			
 			String packageName = nameSanitizer.getSenitizedName(target);
 			
-			Package gPackage = StatechartModelFactory.eINSTANCE.createPackage();
+			Package gPackage = InterfaceModelFactory.eINSTANCE.createPackage();
 			gPackage.setName(packageName);
 			
-			Package gInterfacePackage = StatechartModelFactory.eINSTANCE.createPackage();
+			Package gInterfacePackage = InterfaceModelFactory.eINSTANCE.createPackage();
 			gInterfacePackage.setName("Interfaces");
 			
 			gPackage.getImports().add(gInterfacePackage); 

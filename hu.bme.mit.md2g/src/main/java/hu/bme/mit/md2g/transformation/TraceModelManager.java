@@ -19,19 +19,13 @@ import hu.bme.mit.md2g.transformation.queries.FragmentTrace;
 public class TraceModelManager {
 	
 	private final Class container;
-	private final ResourceSetImpl rs;
 	private final Resource resource;
 	private final ViatraQueryEngine engine;
 	
-	public TraceModelManager(ViatraQueryEngine engine, Class container) {
+	public TraceModelManager(ViatraQueryEngine engine, Class container, Resource gammaResource) {
 		this.container = container;
-		this.rs = new ResourceSetImpl();
 		this.engine = engine;
-		this.resource = rs.createResource(URI.createFileURI(container.getName()));
-	}
-	
-	public void loadResource() throws IOException {
-		this.resource.load(Maps.newHashMap());
+		this.resource = gammaResource;
 	}
 	
 	public Set<NamedElement> g2md(EObject eObj) {

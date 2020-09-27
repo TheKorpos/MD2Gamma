@@ -93,9 +93,20 @@ public final class Actions extends BaseGeneratedEMFQuerySpecification<Actions.Ma
     
     @Override
     public Object get(final String parameterName) {
-      if ("action".equals(parameterName)) return this.fAction;
-      if ("body".equals(parameterName)) return this.fBody;
-      return null;
+      switch(parameterName) {
+          case "action": return this.fAction;
+          case "body": return this.fBody;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fAction;
+          case 1: return this.fBody;
+          default: return null;
+      }
     }
     
     public Behavior getAction() {
@@ -632,9 +643,9 @@ public final class Actions extends BaseGeneratedEMFQuerySpecification<Actions.Ma
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.Actions (visibility: PUBLIC, simpleName: Actions, identifier: hu.bme.mit.md2g.transformation.queries.Actions, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link Actions} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.Actions (visibility: PUBLIC, simpleName: Actions, identifier: hu.bme.mit.md2g.transformation.queries.Actions, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link Actions#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 

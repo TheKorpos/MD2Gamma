@@ -84,10 +84,22 @@ public final class PortsOnComponents extends BaseGeneratedEMFQuerySpecification<
     
     @Override
     public Object get(final String parameterName) {
-      if ("component".equals(parameterName)) return this.fComponent;
-      if ("port".equals(parameterName)) return this.fPort;
-      if ("portType".equals(parameterName)) return this.fPortType;
-      return null;
+      switch(parameterName) {
+          case "component": return this.fComponent;
+          case "port": return this.fPort;
+          case "portType": return this.fPortType;
+          default: return null;
+      }
+    }
+    
+    @Override
+    public Object get(final int index) {
+      switch(index) {
+          case 0: return this.fComponent;
+          case 1: return this.fPort;
+          case 2: return this.fPortType;
+          default: return null;
+      }
     }
     
     public com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class getComponent() {
@@ -716,9 +728,9 @@ public final class PortsOnComponents extends BaseGeneratedEMFQuerySpecification<
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.PortsOnComponents (visibility: PUBLIC, simpleName: PortsOnComponents, identifier: hu.bme.mit.md2g.transformation.queries.PortsOnComponents, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)} to be created 
+   * Inner class allowing the singleton instance of {@link PortsOnComponents} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link JvmGenericType: hu.bme.mit.md2g.transformation.queries.PortsOnComponents (visibility: PUBLIC, simpleName: PortsOnComponents, identifier: hu.bme.mit.md2g.transformation.queries.PortsOnComponents, deprecated: <unset>) (abstract: false, static: false, final: true, packageName: hu.bme.mit.md2g.transformation.queries) (interface: false, strictFloatingPoint: false, anonymous: false)#instance()}.
+   *     but rather at the first call to {@link PortsOnComponents#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
