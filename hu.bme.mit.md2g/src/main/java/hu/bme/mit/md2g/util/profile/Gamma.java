@@ -51,6 +51,8 @@ public class Gamma extends StereotypeByProfileCache
 public static final String OPARETOR_DATATYPE = "Oparetor";
 @SuppressWarnings("UnusedDeclaration")
 public static final String RESULTTYPE_DATATYPE = "ResultType";
+@SuppressWarnings("UnusedDeclaration")
+public static final String SEARCHORDER_DATATYPE = "SearchOrder";
 
 @SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
 public Enumeration getOparetor()
@@ -62,6 +64,12 @@ return (Enumeration) getDataType(OPARETOR_DATATYPE);
 public Enumeration getResultType()
 {
 return (Enumeration) getDataType(RESULTTYPE_DATATYPE);
+}
+
+@SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
+public Enumeration getSearchOrder()
+{
+return (Enumeration) getDataType(SEARCHORDER_DATATYPE);
 }
 
 @SuppressWarnings("UnusedDeclaration")
@@ -110,6 +118,8 @@ MUST_EVENTUALLY(OPARETOR_MUST_EVENTUALLY_LITERAL);
 }
 
 @SuppressWarnings("UnusedDeclaration")
+public static final String RESULTTYPE_INDECISIVE_LITERAL = "Indecisive";
+@SuppressWarnings("UnusedDeclaration")
 public static final String RESULTTYPE_NOT_CHECKED_LITERAL = "Not Checked";
 @SuppressWarnings("UnusedDeclaration")
 public static final String RESULTTYPE_SATISFIED_LITERAL = "Satisfied";
@@ -118,7 +128,8 @@ public static final String RESULTTYPE_VIOLATED_LITERAL = "Violated";
 public enum ResultTypeEnum {
 NOT_CHECKED(RESULTTYPE_NOT_CHECKED_LITERAL),
 SATISFIED(RESULTTYPE_SATISFIED_LITERAL),
-VIOLATED(RESULTTYPE_VIOLATED_LITERAL);
+VIOLATED(RESULTTYPE_VIOLATED_LITERAL),
+INDECISIVE(RESULTTYPE_INDECISIVE_LITERAL);
         private String text;
 
        ResultTypeEnum(String text)
@@ -139,6 +150,51 @@ VIOLATED(RESULTTYPE_VIOLATED_LITERAL);
    else if(o != null){text = o.toString();}
             if (text != null) {
                 for (ResultTypeEnum b : ResultTypeEnum.values()) {
+                    if (text.equals(b.text)) {
+                        return b;
+                    }
+                }
+            }
+            return null;
+        }
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static final String SEARCHORDER_BREDTH_FIRST_LITERAL = "Bredth First";
+@SuppressWarnings("UnusedDeclaration")
+public static final String SEARCHORDER_DEPTH_FIRST_LITERAL = "Depth First";
+@SuppressWarnings("UnusedDeclaration")
+public static final String SEARCHORDER_OPTIMAL_FIRST_LITERAL = "Optimal First";
+@SuppressWarnings("UnusedDeclaration")
+public static final String SEARCHORDER_RANDOM_DEPTH_FIRST_LITERAL = "Random Depth First";
+@SuppressWarnings("UnusedDeclaration")
+public static final String SEARCHORDER_RANDOM_OPTIMAL_DEPTH_FIRST_LITERAL = "Random Optimal Depth First";
+public enum SearchOrderEnum {
+BREDTH_FIRST(SEARCHORDER_BREDTH_FIRST_LITERAL),
+DEPTH_FIRST(SEARCHORDER_DEPTH_FIRST_LITERAL),
+RANDOM_DEPTH_FIRST(SEARCHORDER_RANDOM_DEPTH_FIRST_LITERAL),
+OPTIMAL_FIRST(SEARCHORDER_OPTIMAL_FIRST_LITERAL),
+RANDOM_OPTIMAL_DEPTH_FIRST(SEARCHORDER_RANDOM_OPTIMAL_DEPTH_FIRST_LITERAL);
+        private String text;
+
+       SearchOrderEnum(String text)
+        {
+            this.text = text;
+        }
+
+        public String getText()
+        {
+            return this.text;
+        }
+@CheckForNull
+        public static SearchOrderEnum from(@CheckForNull Object o) {
+  String text = null;
+  if(o instanceof EnumerationLiteral)  {
+       text = ((EnumerationLiteral)o).getName();
+   }
+   else if(o != null){text = o.toString();}
+            if (text != null) {
+                for (SearchOrderEnum b : SearchOrderEnum.values()) {
                     if (text.equals(b.text)) {
                         return b;
                     }
@@ -407,56 +463,62 @@ return instance.isTypeOf(element, instance.getExecutionTrace());
 return false;
 }
 
-public static class GammaCheck extends AbstractStereotypeWrapper {
+public static class GammaCheckExpression extends AbstractStereotypeWrapper {
 
 
-//stereotype GammaCheck and its tags
+//stereotype GammaCheckExpression and its tags
 @SuppressWarnings("UnusedDeclaration")
-public static final String STEREOTYPE_NAME = "GammaCheck";
+public static final String STEREOTYPE_NAME = "GammaCheckExpression";
 @SuppressWarnings("UnusedDeclaration")
-public static final String PROPERTIES = "properties";
+public static final String OPERATOR = "operator";
 @SuppressWarnings("UnusedDeclaration")
-public static void setProperties(Element element, java.util.List<Element> value){
-StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaCheck(), PROPERTIES, value);
+public static final String RESULT = "result";
+@SuppressWarnings("UnusedDeclaration")
+public static void setOperator(Element element, OparetorEnum value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaCheckExpression(), OPERATOR, value != null ? value.getText() : null);
 }
 
 @SuppressWarnings("UnusedDeclaration")
-public static void clearProperties(Element element){
-StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaCheck(), PROPERTIES, true);
-}
-
-@SuppressWarnings("UnusedDeclaration")
-public static void addProperties(Element element, Element value){
-StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaCheck(), PROPERTIES, value, true);
-}
-
-@SuppressWarnings("UnusedDeclaration")
-public static void removeProperties(Element element, Element value){
-java.util.List<Element> values = new java.util.ArrayList<>(getProperties(element));
-values.remove(value);
-setProperties(element, values);
+public static void clearOperator(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaCheckExpression(), OPERATOR, true);
 }
 
 @SuppressWarnings("UnusedDeclaration, unchecked")
-@Nonnull
-public static java.util.List<Element> getProperties(Element element){
-return (java.util.List<Element>)(StereotypesHelper.getStereotypePropertyValue(element, getInstance(element).getGammaCheck(), PROPERTIES));
+@CheckForNull
+public static OparetorEnum getOperator(Element element){
+return OparetorEnum.from(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaCheckExpression(), OPERATOR));
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void setResult(Element element, ResultTypeEnum value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaCheckExpression(), RESULT, value != null ? value.getText() : null);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearResult(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaCheckExpression(), RESULT, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static ResultTypeEnum getResult(Element element){
+return ResultTypeEnum.from(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaCheckExpression(), RESULT));
 }
 
 }
 
 @SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
-public Stereotype getGammaCheck()
+public Stereotype getGammaCheckExpression()
 {
-return getStereotype(GammaCheck.STEREOTYPE_NAME);
+return getStereotype(GammaCheckExpression.STEREOTYPE_NAME);
 }
 
 @SuppressWarnings("UnusedDeclaration")
-public static boolean isGammaCheck(@CheckForNull Element element)
+public static boolean isGammaCheckExpression(@CheckForNull Element element)
 {
-if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
+if(element instanceof com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBehavior){
 Gamma instance=getInstance(element);
-return instance.isTypeOf(element, instance.getGammaCheck());
+return instance.isTypeOf(element, instance.getGammaCheckExpression());
 }
 return false;
 }
@@ -505,66 +567,6 @@ public static boolean isGammaModel(@CheckForNull Element element)
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
 Gamma instance=getInstance(element);
 return instance.isTypeOf(element, instance.getGammaModel());
-}
-return false;
-}
-
-public static class GammaProperty extends AbstractStereotypeWrapper {
-
-
-//stereotype GammaProperty and its tags
-@SuppressWarnings("UnusedDeclaration")
-public static final String STEREOTYPE_NAME = "GammaProperty";
-@SuppressWarnings("UnusedDeclaration")
-public static final String OPERATOR = "operator";
-@SuppressWarnings("UnusedDeclaration")
-public static final String RESULT = "result";
-@SuppressWarnings("UnusedDeclaration")
-public static void setOperator(Element element, OparetorEnum value){
-StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaProperty(), OPERATOR, value != null ? value.getText() : null);
-}
-
-@SuppressWarnings("UnusedDeclaration")
-public static void clearOperator(Element element){
-StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaProperty(), OPERATOR, true);
-}
-
-@SuppressWarnings("UnusedDeclaration, unchecked")
-@CheckForNull
-public static OparetorEnum getOperator(Element element){
-return OparetorEnum.from(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaProperty(), OPERATOR));
-}
-
-@SuppressWarnings("UnusedDeclaration")
-public static void setResult(Element element, ResultTypeEnum value){
-StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaProperty(), RESULT, value != null ? value.getText() : null);
-}
-
-@SuppressWarnings("UnusedDeclaration")
-public static void clearResult(Element element){
-StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaProperty(), RESULT, true);
-}
-
-@SuppressWarnings("UnusedDeclaration, unchecked")
-@CheckForNull
-public static ResultTypeEnum getResult(Element element){
-return ResultTypeEnum.from(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaProperty(), RESULT));
-}
-
-}
-
-@SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
-public Stereotype getGammaProperty()
-{
-return getStereotype(GammaProperty.STEREOTYPE_NAME);
-}
-
-@SuppressWarnings("UnusedDeclaration")
-public static boolean isGammaProperty(@CheckForNull Element element)
-{
-if(element instanceof com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBehavior){
-Gamma instance=getInstance(element);
-return instance.isTypeOf(element, instance.getGammaProperty());
 }
 return false;
 }
@@ -775,6 +777,30 @@ public static boolean isGammaWorkspaceFile(@CheckForNull Element element)
 if(element instanceof com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class){
 Gamma instance=getInstance(element);
 return instance.isTypeOf(element, instance.getGammaWorkspaceFile());
+}
+return false;
+}
+
+public static class Indecisive extends AbstractStereotypeWrapper {
+
+
+//stereotype Indecisive and its tags
+@SuppressWarnings("UnusedDeclaration")
+public static final String STEREOTYPE_NAME = "Indecisive";
+}
+
+@SuppressWarnings({"UnusedDeclaration", "ConstantConditions"})
+public Stereotype getIndecisive()
+{
+return getStereotype(Indecisive.STEREOTYPE_NAME);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static boolean isIndecisive(@CheckForNull Element element)
+{
+if(element !=null){
+Gamma instance=getInstance(element);
+return instance.isTypeOf(element, instance.getIndecisive());
 }
 return false;
 }
@@ -1236,12 +1262,12 @@ stereotypes.add(getCascadeCompositeComponent());
 stereotypes.add(getComponentSchedule());
 stereotypes.add(getCycle());
 stereotypes.add(getExecutionTrace());
-stereotypes.add(getGammaCheck());
+stereotypes.add(getGammaCheckExpression());
 stereotypes.add(getGammaComponent());
 stereotypes.add(getGammaModel());
-stereotypes.add(getGammaProperty());
 stereotypes.add(getGammaWorkspace());
 stereotypes.add(getGammaWorkspaceFile());
+stereotypes.add(getIndecisive());
 stereotypes.add(getInstanceState());
 stereotypes.add(getInstanceStateConstant());
 stereotypes.add(getInstanceVariableState());
@@ -1263,3 +1289,4 @@ return super.generatedGetAllStereotypes();
 }
 
 }
+//MD5sum:6EE2C99388C03F2E43F7C1970D32194E

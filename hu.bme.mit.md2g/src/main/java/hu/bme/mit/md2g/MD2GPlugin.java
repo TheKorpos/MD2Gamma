@@ -14,17 +14,14 @@ import hu.bme.mit.md2g.ui.menu.GammaMenuConfigurator;
 public class MD2GPlugin extends Plugin {
 	
 	private static MD2GPlugin INSTANCE;
-	private Injector injector;
 	
 	@Override
 	public boolean close() {
-		INSTANCE = null;
 		return true;
 	}
 
 	@Override
 	public void init() {
-		injector = new StatechartLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 		Application.getInstance().addProjectEventListener(new ProjectSpecificFeatureInitializer());
 		
 		
@@ -44,9 +41,5 @@ public class MD2GPlugin extends Plugin {
 	
 	public static MD2GPlugin getInstance() {
 		return INSTANCE;
-	}
-	
-	public Injector getInjector() {
-		return injector;
 	}
 }

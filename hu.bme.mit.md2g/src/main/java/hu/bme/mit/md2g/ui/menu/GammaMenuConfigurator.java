@@ -4,8 +4,6 @@ import com.nomagic.actions.AMConfigurator;
 import com.nomagic.actions.ActionsCategory;
 import com.nomagic.actions.ActionsManager;
 
-import hu.bme.mit.md2g.ui.menu.action.TestAction;
-
 public class GammaMenuConfigurator implements AMConfigurator {
 
 	@Override
@@ -17,8 +15,5 @@ public class GammaMenuConfigurator implements AMConfigurator {
 	public void configure(ActionsManager actionManager) {
 		ActionsCategory gammaCategory = new ActionsCategory("GAMMA_MAIN_MENU", "Gamma");
 		actionManager.addCategory(gammaCategory);
-		
-		gammaCategory.addAction(new TestAction());
 	}
-
 }

@@ -11,6 +11,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.InstanceSpecification;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBehavior;
 
+import hu.bme.mit.md2g.ui.browser.action.ExecuteVerificationAction;
 import hu.bme.mit.md2g.ui.browser.action.SerializeUppaalModelAction;
 import hu.bme.mit.md2g.ui.browser.action.TransformCompositeStatemachineAction;
 import hu.bme.mit.md2g.ui.browser.action.TransformWorkspaceModelsToUppaalAction;
@@ -42,6 +43,12 @@ public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 			
 			//selected object is a class
 			if (userObject instanceof OpaqueBehavior) {
+				
+				OpaqueBehavior ob = (OpaqueBehavior) userObject;
+				
+				if (Gamma.isGammaCheckExpression(ob)) {
+					category.addAction(new ExecuteVerificationAction(ob));
+				}
 				
 			} else if (userObject instanceof Class) {
 				Class selectedClass = (Class) userObject;
