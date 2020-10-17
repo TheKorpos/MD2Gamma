@@ -5,7 +5,7 @@
                     id="17151"
                     mdVersionMax="higher"
                     mdVersionMin="19.0 beta"
-                    name="Example Plug-in"
+                    name="MD2D Statechart Verification Plugin"
                     product="Example Product"
                     type="Plugin">
     <version human="${human.version}" resource="${internal.version}" internal="${internal.version}"/>

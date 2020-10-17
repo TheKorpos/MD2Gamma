@@ -1,6 +1,6 @@
 <plugin
         id="hu.bme.mit.md2g"
-        name="IncQuery Labs MagicDraw Plugin Example"
+        name="MD2G Statechart Verification Plugin"
         internalVersion="${internal.version}"
         version="${human.version}"
         provider-name="IncQuery Labs Ltd."
