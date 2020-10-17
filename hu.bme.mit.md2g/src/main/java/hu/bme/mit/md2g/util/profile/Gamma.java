@@ -582,11 +582,11 @@ public static final String COUNTER_EXAMPLES = "counter examples";
 @SuppressWarnings("UnusedDeclaration")
 public static final String COUNTER_EXAMPLES_PACKAGE = "counter examples package";
 @SuppressWarnings("UnusedDeclaration")
-public static final String GAMMTOUPPAALTRACE = "gammToUppaalTrace";
-@SuppressWarnings("UnusedDeclaration")
 public static final String GAMMAINTERFACEMODEL = "gammaInterfaceModel";
 @SuppressWarnings("UnusedDeclaration")
 public static final String GAMMASTATECHARTMODEL = "gammaStatechartModel";
+@SuppressWarnings("UnusedDeclaration")
+public static final String GAMMATOUPPAALTRACE = "gammaToUppaalTrace";
 @SuppressWarnings("UnusedDeclaration")
 public static final String TARGET = "target";
 @SuppressWarnings("UnusedDeclaration")
@@ -628,22 +628,6 @@ return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstan
 }
 
 @SuppressWarnings("UnusedDeclaration")
-public static void setGammToUppaalTrace(Element element, Element value){
-StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), GAMMTOUPPAALTRACE, value);
-}
-
-@SuppressWarnings("UnusedDeclaration")
-public static void clearGammToUppaalTrace(Element element){
-StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaWorkspace(), GAMMTOUPPAALTRACE, true);
-}
-
-@SuppressWarnings("UnusedDeclaration, unchecked")
-@CheckForNull
-public static Element getGammToUppaalTrace(Element element){
-return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), GAMMTOUPPAALTRACE));
-}
-
-@SuppressWarnings("UnusedDeclaration")
 public static void setGammaInterfaceModel(Element element, Element value){
 StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), GAMMAINTERFACEMODEL, value);
 }
@@ -673,6 +657,22 @@ StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGamma
 @CheckForNull
 public static Element getGammaStatechartModel(Element element){
 return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), GAMMASTATECHARTMODEL));
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void setGammaToUppaalTrace(Element element, Element value){
+StereotypesHelper.setStereotypePropertyValue(element, getInstance(element).getGammaWorkspace(), GAMMATOUPPAALTRACE, value);
+}
+
+@SuppressWarnings("UnusedDeclaration")
+public static void clearGammaToUppaalTrace(Element element){
+StereotypesHelper.clearStereotypeProperty(element, getInstance(element).getGammaWorkspace(), GAMMATOUPPAALTRACE, true);
+}
+
+@SuppressWarnings("UnusedDeclaration, unchecked")
+@CheckForNull
+public static Element getGammaToUppaalTrace(Element element){
+return (Element)(StereotypesHelper.getStereotypePropertyFirst(element, getInstance(element).getGammaWorkspace(), GAMMATOUPPAALTRACE));
 }
 
 @SuppressWarnings("UnusedDeclaration")
@@ -1289,4 +1289,4 @@ return super.generatedGetAllStereotypes();
 }
 
 }
-//MD5sum:6EE2C99388C03F2E43F7C1970D32194E
+//MD5sum:86D57222DD220BA9778F0D8D9CC77082

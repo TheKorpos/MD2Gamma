@@ -12,11 +12,10 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBehavior;
 
 import hu.bme.mit.md2g.ui.browser.action.ExecuteVerificationAction;
+import hu.bme.mit.md2g.ui.browser.action.ExportToGclAction;
 import hu.bme.mit.md2g.ui.browser.action.SerializeUppaalModelAction;
-import hu.bme.mit.md2g.ui.browser.action.TransformCompositeStatemachineAction;
 import hu.bme.mit.md2g.ui.browser.action.TransformWorkspaceModelsToUppaalAction;
 import hu.bme.mit.md2g.ui.browser.action.TransformWorkspaceTargetToGammaAction;
-import hu.bme.mit.md2g.ui.browser.action.TransfromSingleStatemachineAction;
 import hu.bme.mit.md2g.util.profile.Gamma;
 
 public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
@@ -52,24 +51,14 @@ public class GammaBrowserConfigurator implements BrowserContextAMConfigurator{
 				
 			} else if (userObject instanceof Class) {
 				Class selectedClass = (Class) userObject;
-				if (selectedClass.getAppliedStereotypeInstance() != null) {
-					try {	
-						InstanceSpecification instancespec = selectedClass.getAppliedStereotypeInstance();
-						
-						if (instancespec.getClassifier().stream().filter(it -> "Block".equals(it.getName())).findAny().isPresent()) {
-							category.addAction(new TransfromSingleStatemachineAction(GAMMA_TRA_SINGLE, EXPORT_STATE_MACHINE_AS_GCL, selectedClass));
-							category.addAction(new TransformCompositeStatemachineAction(GAMMA_TRA_COMP, EXPORT_AS_GCL_NAME, selectedClass));
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}	
-				}
+	
 			} else if (userObject instanceof Package) {
 				Package mdPackage = (Package) userObject;
 				if (Gamma.isGammaWorkspace(mdPackage)) {
 					category.addAction(new TransformWorkspaceTargetToGammaAction("GAMMA_WORKSPACE_TRA", "Transform Targeted Model", mdPackage));
 					category.addAction(new TransformWorkspaceModelsToUppaalAction(mdPackage));
 					category.addAction(new SerializeUppaalModelAction(mdPackage));
+					category.addAction(new ExportToGclAction(mdPackage));
 				}
 				
 			}

@@ -20,7 +20,7 @@ import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBeh
 
 import hu.bme.mit.gamma.property.model.PropertyPackage;
 import hu.bme.mit.gamma.querygenerator.serializer.UppaalPropertySerializer;
-import hu.bme.mit.md2g.propertylanguage.CustomPropertyLanguageStandaloneSetup;
+import hu.bme.mit.md2g.serialization.propertylanguage.CustomPropertyLanguageStandaloneSetup;
 import hu.bme.mit.md2g.util.profile.Gamma.GammaWorkspace;
 
 public class PropertySerializer {
@@ -42,7 +42,7 @@ public class PropertySerializer {
 		Class uppaalModel = (Class) GammaWorkspace.getUppaalModel(workspace);
 		Class gammaInterfaceModel = (Class) GammaWorkspace.getGammaInterfaceModel(workspace);
 		Class gammaModel = (Class) GammaWorkspace.getGammaStatechartModel(workspace);
-		Class trace = (Class) GammaWorkspace.getGammToUppaalTrace(workspace);
+		Class trace = (Class) GammaWorkspace.getGammaToUppaalTrace(workspace);
 		
 		Injector injector = new CustomPropertyLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 		

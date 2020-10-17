@@ -11,11 +11,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.util.StringInputStream;
 
-import com.google.inject.Injector;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
@@ -23,25 +20,18 @@ import com.nomagic.magicdraw.openapi.uml.SessionManager;
 import com.nomagic.task.ProgressStatus;
 import com.nomagic.ui.ProgressStatusRunner;
 import com.nomagic.uml2.ext.jmi.helpers.ModelHelper;
-import com.nomagic.uml2.ext.jmi.helpers.StereotypesHelper;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBehavior;
-import com.nomagic.uml2.ext.magicdraw.mdprofiles.Stereotype;
 
-import hu.bme.mit.gamma.property.model.PropertyPackage;
-import hu.bme.mit.gamma.querygenerator.serializer.UppaalPropertySerializer;
 import hu.bme.mit.gamma.trace.model.ExecutionTrace;
 import hu.bme.mit.gamma.uppaal.transformation.traceability.G2UTrace;
 import hu.bme.mit.gamma.uppaal.verification.UppaalVerifier;
 import hu.bme.mit.gamma.uppaal.verification.settings.UppaalSettings;
 import hu.bme.mit.gamma.uppaal.verification.settings.UppaalSettingsSerializer;
 import hu.bme.mit.gamma.verification.result.ThreeStateBoolean;
-import hu.bme.mit.md2g.propertylanguage.CustomPropertyLanguageStandaloneSetup;
-import hu.bme.mit.md2g.propertylanguage.CustomPropertyScopeProvider;
 import hu.bme.mit.md2g.serialization.PropertySerializer;
-import hu.bme.mit.md2g.transformation.parse.GammaExpression;
 import hu.bme.mit.md2g.util.profile.Gamma;
 import hu.bme.mit.md2g.util.profile.Gamma.GammaWorkspace;
 import hu.bme.mit.md2g.util.profile.Gamma.ResultTypeEnum;
@@ -69,7 +59,7 @@ public class ExecuteVerificationAction extends NMAction {
 		Class uppaalModel = (Class) GammaWorkspace.getUppaalModel(workspace);
 		Class gammaInterfaceModel = (Class) GammaWorkspace.getGammaInterfaceModel(workspace);
 		Class gammaModel = (Class) GammaWorkspace.getGammaStatechartModel(workspace);
-		Class trace = (Class) GammaWorkspace.getGammToUppaalTrace(workspace);
+		Class trace = (Class) GammaWorkspace.getGammaToUppaalTrace(workspace);
 		Class uppaalXML = (Class) GammaWorkspace.getUppaalXML(workspace);
 		
 		ResourceSet resourceSet = new ResourceSetImpl();

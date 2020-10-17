@@ -32,6 +32,7 @@ public class StatechartLanguageImporter {
 	
 	public static StatechartLanguageImporter createImporter() {
 		Injector injector = new StatechartLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+		
 		return injector.getInstance(StatechartLanguageImporter.class);
 	}
 	

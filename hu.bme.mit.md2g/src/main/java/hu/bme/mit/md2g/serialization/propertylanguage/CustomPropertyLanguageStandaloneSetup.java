@@ -1,4 +1,4 @@
-package hu.bme.mit.md2g.propertylanguage;
+package hu.bme.mit.md2g.serialization.propertylanguage;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

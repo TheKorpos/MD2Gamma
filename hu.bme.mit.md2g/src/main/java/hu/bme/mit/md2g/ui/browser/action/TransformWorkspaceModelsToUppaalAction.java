@@ -61,6 +61,7 @@ private Package workspace;
 		
 		String workspaceUri = GammaWorkspace.getWorkspaceUri(workspace);
 		
+		Class target = (Class) GammaWorkspace.getTarget(workspace);
 		Class gammaInterfaceModel = (Class) GammaWorkspace.getGammaInterfaceModel(workspace);
 		Class gammaStatechartModel = (Class) GammaWorkspace.getGammaStatechartModel(workspace);
 		
@@ -86,7 +87,7 @@ private Package workspace;
 			Resource g2u = resourceSet.createResource(URI.createFileURI("trace.g2u"));
 			g2u.getContents().add(execute.getValue());
 			
-			Resource uppaal = resourceSet.createResource(URI.createFileURI("Crossroads.uppaal"));
+			Resource uppaal = resourceSet.createResource(URI.createFileURI(target.getName() + ".uppaal"));
 			uppaal.getContents().add(execute.getKey());
 			
 			SessionManager.getInstance().createSession(project, "Saving models");
@@ -95,7 +96,7 @@ private Package workspace;
 			Class uppaalModel = save(project, workspace, uppaal);
 			
 			GammaWorkspace.setUppaalModel(workspace, uppaalModel);
-			GammaWorkspace.setGammToUppaalTrace(workspace, g2uModel);
+			GammaWorkspace.setGammaToUppaalTrace(workspace, g2uModel);
 			
 			SessionManager.getInstance().closeSession(project);
 			

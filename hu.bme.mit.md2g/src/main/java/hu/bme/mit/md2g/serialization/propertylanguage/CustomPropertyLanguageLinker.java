@@ -1,4 +1,4 @@
-package hu.bme.mit.md2g.propertylanguage;
+package hu.bme.mit.md2g.serialization.propertylanguage;
 
 import java.util.List;
 import java.util.stream.Collectors;
