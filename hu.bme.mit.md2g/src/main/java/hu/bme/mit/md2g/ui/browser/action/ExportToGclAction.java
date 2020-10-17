@@ -3,7 +3,6 @@ package hu.bme.mit.md2g.ui.browser.action;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringBufferInputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,18 +14,18 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.util.StringInputStream;
 
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.ui.MainFrame;
 import com.nomagic.uml2.ext.jmi.helpers.ModelHelper;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
+import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
 
 import hu.bme.mit.md2g.serialization.StatechartLanguageSerializer;
 import hu.bme.mit.md2g.util.profile.Gamma;
-import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 
 public class ExportToGclAction extends NMAction {
 
@@ -35,8 +34,13 @@ public class ExportToGclAction extends NMAction {
 	private Package workspace;
 	
 	public ExportToGclAction(Package workspace) {
-		super("GAMMA_TO_GCL", "Export models to Gcl", null, null);
+		super("GAMMA_TO_GCL", "Export models as .gcl...", null, null);
 		this.workspace = workspace;
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return Gamma.GammaWorkspace.getGammaStatechartModel(workspace) != null && Gamma.GammaWorkspace.getGammaInterfaceModel(workspace) != null;
 	}
 	
 	@Override
@@ -76,8 +80,8 @@ public class ExportToGclAction extends NMAction {
 				gammaInterfacesResource.load(new StringInputStream(interfaceString), Collections.emptyMap());
 				gammaModelsResource.load(new StringInputStream(statechartsString), Collections.emptyMap());
 				
-				EObject modelPackage = gammaModelsResource.getContents().get(0);
-				EObject interfacePackage = gammaInterfacesResource.getContents().get(0);
+				EObject modelPackage = EcoreUtil2.copy(gammaModelsResource.getContents().get(0));
+				EObject interfacePackage =  EcoreUtil2.copy(gammaInterfacesResource.getContents().get(0));
 				
 				Map<URI, EObject> exportMap = new HashMap<>();
 				
@@ -89,9 +93,6 @@ public class ExportToGclAction extends NMAction {
 			} catch (IOException e) {
 				Application.getInstance().getGUILog().showError("Failed to export models");
 				LOGGER.error(e);
-			} finally {
-				gammaInterfacesResource.unload();
-				gammaModelsResource.unload();
 			}
 		}
 	}
