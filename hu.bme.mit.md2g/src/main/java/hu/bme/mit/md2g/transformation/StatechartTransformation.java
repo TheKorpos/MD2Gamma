@@ -32,6 +32,7 @@ import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Stat
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Vertex;
 
 import hu.bme.mit.gamma.action.model.Action;
+import hu.bme.mit.gamma.action.model.ActionModelFactory;
 import hu.bme.mit.gamma.expression.model.Declaration;
 import hu.bme.mit.gamma.expression.model.Expression;
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory;
@@ -80,7 +81,9 @@ import hu.bme.mit.gamma.statechart.interface_.Package;
 
 public class StatechartTransformation {
 
-	private final StatechartModelFactory statechartFactory = StatechartModelFactory.eINSTANCE;
+	private static final InterfaceModelFactory INTERFACE_FACTORY = InterfaceModelFactory.eINSTANCE;
+	private static final StatechartModelFactory STATECHART_FACTORY = StatechartModelFactory.eINSTANCE;
+	
 	private final Project project = Application.getInstance().getProject();
 	private final Map<Vertex, StateNode> vertexTraces = new HashMap<>();
 	private final Map<com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Region, Region> regionTraces = new HashMap<>();
@@ -114,7 +117,7 @@ public class StatechartTransformation {
 		
 		StateMachine stateMachine = (StateMachine) stateMachineClass.getClassifierBehavior();
 	
-		gStatechart = statechartFactory.createStatechartDefinition();
+		gStatechart = STATECHART_FACTORY.createStatechartDefinition();
 		gStatechart.setName(nameSanitizer.getSenitizedName(stateMachine) + "_Statechart");
 		
 		stateMachineClass.getMember().stream()
@@ -186,14 +189,14 @@ public class StatechartTransformation {
 		NameSanitizer nameSanitizer = new NameSanitizer();
 		
 		mdClass.getOwnedPort().forEach(port -> {
-			Port gPort = InterfaceModelFactory.eINSTANCE.createPort();
+			Port gPort = INTERFACE_FACTORY.createPort();
 			gPort.setName(nameSanitizer.getSenitizedName(port));
 			component.getPorts().add(gPort);
 			
 			
 			Interface gInterface = interfaceTraces.get((Classifier)port.getType());
 			
-			InterfaceRealization realization = InterfaceModelFactory.eINSTANCE.createInterfaceRealization();
+			InterfaceRealization realization = INTERFACE_FACTORY.createInterfaceRealization();
 			realization.setInterface(gInterface);
 			gPort.setInterfaceRealization(realization);
 			
@@ -208,19 +211,19 @@ public class StatechartTransformation {
 	}
 
 	private void transformRegions(RegionsInStatemachine.Match match) {
-		Region gRegion = statechartFactory.createRegion();
+		Region gRegion = STATECHART_FACTORY.createRegion();
 		gRegion.setName(nameSanitizer.getSenitizedName(match.getSubregion()));
 		regionTraces.put(match.getSubregion(), gRegion);
 	}
 
 	private void transformInitialState(InitialStatesInStatemachine.Match match) {
-		InitialState gInitState = statechartFactory.createInitialState();
+		InitialState gInitState = STATECHART_FACTORY.createInitialState();
 		gInitState.setName(nameSanitizer.getSenitizedName(match.getInitialState()));
 		vertexTraces.put(match.getInitialState(), gInitState);
 	}
 	
 	private void transformState(StatesInStatemachine.Match match, Map<Signal, Event> signalTraces) {
-		State gState = statechartFactory.createState();
+		State gState = STATECHART_FACTORY.createState();
 		gState.setName(nameSanitizer.getSenitizedName(match.getState()));
 		
 		transformAction(match.getState().getEntry(), gState.getEntryActions(), signalTraces);
@@ -236,13 +239,13 @@ public class StatechartTransformation {
 	}
 
 	private void transformShallowHistory(ShallowHistoryInStatemachine.Match match) {
-		ShallowHistoryState gShallow = statechartFactory.createShallowHistoryState();
+		ShallowHistoryState gShallow = STATECHART_FACTORY.createShallowHistoryState();
 		gShallow.setName(nameSanitizer.getSenitizedName(match.getHistory()));
 		vertexTraces.put(match.getHistory(), gShallow);
 	}
 	
 	private void transformDeepHistory(DeepHistoryInStateMachine.Match match) {
-		DeepHistoryState gDeep = statechartFactory.createDeepHistoryState();
+		DeepHistoryState gDeep = STATECHART_FACTORY.createDeepHistoryState();
 		gDeep.setName(nameSanitizer.getSenitizedName(match.getHistory()));
 		vertexTraces.put(match.getHistory(), gDeep);
 	}
@@ -251,7 +254,7 @@ public class StatechartTransformation {
 		Vertex source = match.getTransition().getSource();
 		Vertex target = match.getTransition().getTarget();
 		
-		Transition gTransition = statechartFactory.createTransition();
+		Transition gTransition = STATECHART_FACTORY.createTransition();
 		
 		gTransition.setSourceState(vertexTraces.get(source));
 		gTransition.setTargetState(vertexTraces.get(target));
@@ -294,18 +297,18 @@ public class StatechartTransformation {
 		Event gEvent = signalTraces.get(signal);
 		
 		trigger.getPort().stream().findFirst().ifPresent(mdPort -> {
-			//TODO
-//			Port port = portTraces.get(mdPort);
-//			
-//			EventTrigger eventTrigger = statechartFactory.createOnCycleTrigger();
-//			
-//			PortEventReference ref = statechartFactory.createPortEventReference();
-//			ref.setEvent(gEvent);
-//			ref.setPort(port);
-//			
-//			eventTrigger.setEventReference(ref);
-//			
-//			gTransition.setTrigger(eventTrigger);
+			
+			Port port = portTraces.get(mdPort);
+			
+			EventTrigger eventTrigger = INTERFACE_FACTORY.createEventTrigger();
+			
+			PortEventReference ref = STATECHART_FACTORY.createPortEventReference();
+			ref.setEvent(gEvent);
+			ref.setPort(port);
+			
+			eventTrigger.setEventReference(ref);
+			
+			gTransition.setTrigger(eventTrigger);
 		});
 	}
 
@@ -319,13 +322,13 @@ public class StatechartTransformation {
 	}
 	
 	private void transformForkState(ForksInStateMachine.Match match) {
-		ForkState forkState = statechartFactory.createForkState();
+		ForkState forkState = STATECHART_FACTORY.createForkState();
 		forkState.setName(nameSanitizer.getSenitizedName(match.getForkState()));
 		vertexTraces.put(match.getForkState(), forkState);
 	}
 	
 	public void transformJoinSate(JoinsInStateMachine.Match match) {
-		JoinState createJoinState = statechartFactory.createJoinState();
+		JoinState createJoinState = STATECHART_FACTORY.createJoinState();
 		createJoinState.setName(nameSanitizer.getSenitizedName(match.getJoinState()));
 		vertexTraces.put(match.getJoinState(), createJoinState);
 	}
@@ -336,43 +339,43 @@ public class StatechartTransformation {
 	
 	
 	private void transformTimeEvent(Transition transition, TimeEvent event) {
-//		TimeoutDeclaration gTimeout = statechartFactory.createTimeoutDeclaration();
-//		gTimeout.setName("timeout_"+nextElementSuffixId++);
-//		
-//		gStatechart.getTimeoutDeclarations().add(gTimeout);
-//		
-//		TimeoutEventReference timoutEventReference = statechartFactory.createTimeoutEventReference();
-//		timoutEventReference.setTimeout(gTimeout);
-//		
-//		EventTrigger eventTrigger = statechartFactory.createEventTrigger();
-//		eventTrigger.setEventReference(timoutEventReference);
-//		
-//		State sourceState = (State) transition.getSourceState();
-//		
-//		SetTimeoutAction action = statechartFactory.createSetTimeoutAction();
-//		TimeSpecification spec = statechartFactory.createTimeSpecification();
-//		
-//		LiteralString ls = (LiteralString) event.getWhen().getExpr();
-//		String value = ls.getValue().trim();
-//		
-//		if (value.endsWith("s")) {
-//			spec.setUnit(TimeUnit.SECOND);
-//		} else {
-//			spec.setUnit(TimeUnit.MILLISECOND);
-//		}
-//		
-//	
-//		IntegerLiteralExpression literalInt = ExpressionModelFactory.eINSTANCE.createIntegerLiteralExpression();
-//		literalInt.setValue(new BigInteger(value.split("[a-zA-z]")[0]));
-//		
-//		spec.setValue(literalInt);
-//		
-//		action.setTime(spec);
-//		action.setTimeoutDeclaration(gTimeout);
-//		
-//		sourceState.getEntryActions().add(action);
-//		
-//		transition.setTrigger(eventTrigger);
+		TimeoutDeclaration gTimeout = STATECHART_FACTORY.createTimeoutDeclaration();
+		gTimeout.setName("timeout_"+nextElementSuffixId++);
+		
+		gStatechart.getTimeoutDeclarations().add(gTimeout);
+		
+		TimeoutEventReference timoutEventReference = STATECHART_FACTORY.createTimeoutEventReference();
+		timoutEventReference.setTimeout(gTimeout);
+		
+		EventTrigger eventTrigger = INTERFACE_FACTORY.createEventTrigger();
+		eventTrigger.setEventReference(timoutEventReference);
+		
+		State sourceState = (State) transition.getSourceState();
+		
+		SetTimeoutAction action = STATECHART_FACTORY.createSetTimeoutAction();
+		TimeSpecification spec = INTERFACE_FACTORY.createTimeSpecification();
+		
+		LiteralString ls = (LiteralString) event.getWhen().getExpr();
+		String value = ls.getValue().trim();
+		
+		if (value.endsWith("s")) {
+			spec.setUnit(TimeUnit.SECOND);
+		} else {
+			spec.setUnit(TimeUnit.MILLISECOND);
+		}
+		
+	
+		IntegerLiteralExpression literalInt = ExpressionModelFactory.eINSTANCE.createIntegerLiteralExpression();
+		literalInt.setValue(new BigInteger(value.split("[a-zA-z]")[0]));
+		
+		spec.setValue(literalInt);
+		
+		action.setTime(spec);
+		action.setTimeoutDeclaration(gTimeout);
+		
+		sourceState.getEntryActions().add(action);
+		
+		transition.setTrigger(eventTrigger);
 	}
 	
 	public Map<EObject, NamedElement> extractTraces(){
