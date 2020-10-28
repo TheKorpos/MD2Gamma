@@ -32,7 +32,6 @@ import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Stat
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Vertex;
 
 import hu.bme.mit.gamma.action.model.Action;
-import hu.bme.mit.gamma.action.model.ActionModelFactory;
 import hu.bme.mit.gamma.expression.model.Declaration;
 import hu.bme.mit.gamma.expression.model.Expression;
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory;
@@ -45,15 +44,17 @@ import hu.bme.mit.gamma.statechart.interface_.EventTrigger;
 import hu.bme.mit.gamma.statechart.interface_.Interface;
 import hu.bme.mit.gamma.statechart.interface_.InterfaceModelFactory;
 import hu.bme.mit.gamma.statechart.interface_.InterfaceRealization;
+import hu.bme.mit.gamma.statechart.interface_.Package;
 import hu.bme.mit.gamma.statechart.interface_.Port;
 import hu.bme.mit.gamma.statechart.interface_.RealizationMode;
 import hu.bme.mit.gamma.statechart.interface_.TimeSpecification;
 import hu.bme.mit.gamma.statechart.interface_.TimeUnit;
+import hu.bme.mit.gamma.statechart.statechart.ChoiceState;
 import hu.bme.mit.gamma.statechart.statechart.DeepHistoryState;
 import hu.bme.mit.gamma.statechart.statechart.ForkState;
 import hu.bme.mit.gamma.statechart.statechart.InitialState;
 import hu.bme.mit.gamma.statechart.statechart.JoinState;
-import hu.bme.mit.gamma.statechart.statechart.OnCycleTrigger;
+import hu.bme.mit.gamma.statechart.statechart.MergeState;
 import hu.bme.mit.gamma.statechart.statechart.PortEventReference;
 import hu.bme.mit.gamma.statechart.statechart.Region;
 import hu.bme.mit.gamma.statechart.statechart.SetTimeoutAction;
@@ -65,19 +66,19 @@ import hu.bme.mit.gamma.statechart.statechart.StatechartModelFactory;
 import hu.bme.mit.gamma.statechart.statechart.TimeoutDeclaration;
 import hu.bme.mit.gamma.statechart.statechart.TimeoutEventReference;
 import hu.bme.mit.gamma.statechart.statechart.Transition;
-import hu.bme.mit.gamma.statechart.statechart.UnaryTrigger;
-import hu.bme.mit.gamma.statechart.statechart.UnaryType;
 import hu.bme.mit.md2g.transformation.parse.GammaExpression;
+import hu.bme.mit.md2g.transformation.queries.ChoiceStates;
 import hu.bme.mit.md2g.transformation.queries.DeepHistoryInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.ForksInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.InitialStatesInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.JoinsInStateMachine;
+import hu.bme.mit.md2g.transformation.queries.Juncitons;
+import hu.bme.mit.md2g.transformation.queries.Juncitons.Match;
 import hu.bme.mit.md2g.transformation.queries.RegionsInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.ShallowHistoryInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.StatesInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.TranisitonsInStateMachine;
 import hu.bme.mit.md2g.util.NameSanitizer;
-import hu.bme.mit.gamma.statechart.interface_.Package;
 
 public class StatechartTransformation {
 
@@ -138,6 +139,11 @@ public class StatechartTransformation {
 				.forEach(this::transformRegions);;
 		InitialStatesInStatemachine.Matcher.on(engine).getAllMatches(stateMachine, null)
 				.forEach(this::transformInitialState);
+		ChoiceStates.Matcher.on(engine)
+				.getAllMatches(stateMachine, null).forEach(this::transformChoiceState);
+		
+		Juncitons.Matcher.on(engine).getAllMatches(stateMachine, null).forEach(this::transformJunction);
+		
 		StatesInStatemachine.Matcher.on(engine).getAllMatches(stateMachine, null)
 				.forEach(it -> transformState(it, signalTraces));
 		ShallowHistoryInStatemachine.Matcher.on(engine).getAllMatches(stateMachine, null)
@@ -173,6 +179,19 @@ public class StatechartTransformation {
 	
 		return gStatechart;
 	}
+
+	private void transformJunction(Match match) {
+		MergeState mergeState = STATECHART_FACTORY.createMergeState();
+		mergeState.setName(nameSanitizer.getSenitizedName(match.getPseudoState()));
+		vertexTraces.put(match.getPseudoState(), mergeState);
+	}
+
+	private void transformChoiceState(hu.bme.mit.md2g.transformation.queries.ChoiceStates.Match choice) {
+		ChoiceState choiceState = STATECHART_FACTORY.createChoiceState();
+		choiceState.setName(nameSanitizer.getSenitizedName(choice.getPseudoState()));
+		vertexTraces.put(choice.getPseudoState(), choiceState);
+	}
+
 
 	private void createVariable(Property prop, TypeDefinition gType) {
 		VariableDeclaration variable = ExpressionModelFactory.eINSTANCE.createVariableDeclaration();

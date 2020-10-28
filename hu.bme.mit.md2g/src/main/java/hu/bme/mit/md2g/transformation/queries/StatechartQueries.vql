@@ -83,10 +83,16 @@ pattern StatesInRegions(containingRegion: Region, state: State){
 	Region.subvertex(containingRegion, state);
 }
 
-pattern PseudoStates(containingRegion: Region, pseudoState: Pseudostate, kind: PseudostateKind){
+pattern ChoiceStates(statemachine: StateMachine, pseudoState: Pseudostate){
+	find RegionsInStatechart(statemachine, containingRegion);
 	Region.subvertex(containingRegion, pseudoState);
-	Pseudostate.kind(pseudoState, kind);
+	Pseudostate.kind(pseudoState, ::choice);
+}
 
+pattern Juncitons(statemachine: StateMachine, pseudoState: Pseudostate){
+	find RegionsInStatechart(statemachine, containingRegion);
+	Region.subvertex(containingRegion, pseudoState);
+	Pseudostate.kind(pseudoState, ::junction);
 }
 
 pattern FinalStates(containingRegion: Region, finalState: FinalState){

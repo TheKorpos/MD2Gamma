@@ -24,14 +24,11 @@ import com.google.inject.Injector;
 import com.nomagic.magicdraw.core.Application;
 
 import hu.bme.mit.gamma.statechart.language.StatechartLanguageStandaloneSetup;
+import hu.bme.mit.md2g.serialization.statechartlanguage.CustomStatechartLanguageStandaloneSetup;
 import hu.bme.mit.gamma.statechart.interface_.Package;
 
 public class StatechartLanguageSerializer {
 
-	static {
-		StatechartLanguageStandaloneSetup.doSetup();
-	}
-	
 	private XtextResourceSet resourceSet;
 
 	@Inject
@@ -106,7 +103,7 @@ public class StatechartLanguageSerializer {
 	}
 	
 	public static void serialize(EObject rootElem, String parentFolder, String fileName) throws IOException {
-		Injector injector = new StatechartLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+		Injector injector = new CustomStatechartLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 		StatechartLanguageSerializer serializer = injector.getInstance(StatechartLanguageSerializer.class);
 		serializer.save(rootElem, URI.decode(parentFolder + File.separator + fileName));
    }
@@ -150,7 +147,7 @@ public class StatechartLanguageSerializer {
 	}
 	
 	private static void saveModel(Map<URI, EObject> rootObjects) throws IOException {
-		Injector injector = new StatechartLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
+		Injector injector = new CustomStatechartLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 		StatechartLanguageSerializer serializer = injector.getInstance(StatechartLanguageSerializer.class);
 		serializer.save(rootObjects);
 	}

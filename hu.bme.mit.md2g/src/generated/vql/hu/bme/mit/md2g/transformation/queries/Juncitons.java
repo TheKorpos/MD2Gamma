@@ -4,8 +4,8 @@
 package hu.bme.mit.md2g.transformation.queries;
 
 import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Pseudostate;
-import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.PseudostateKind;
-import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Region;
+import com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.StateMachine;
+import hu.bme.mit.md2g.transformation.queries.RegionsInStatechart;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -34,6 +34,8 @@ import org.eclipse.viatra.query.runtime.matchers.psystem.PBody;
 import org.eclipse.viatra.query.runtime.matchers.psystem.PVariable;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.Equality;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicdeferred.ExportedParameter;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.ConstantValue;
+import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.PositivePatternCall;
 import org.eclipse.viatra.query.runtime.matchers.psystem.basicenumerables.TypeConstraint;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameter;
 import org.eclipse.viatra.query.runtime.matchers.psystem.queries.PParameterDirection;
@@ -47,10 +49,10 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * 
  * <p>Original source:
  *         <code><pre>
- *         pattern PseudoStates(containingRegion: Region, pseudoState: Pseudostate, kind: PseudostateKind){
+ *         pattern Juncitons(statemachine: StateMachine, pseudoState: Pseudostate){
+ *         	find RegionsInStatechart(statemachine, containingRegion);
  *         	Region.subvertex(containingRegion, pseudoState);
- *         	Pseudostate.kind(pseudoState, kind);
- *         
+ *         	Pseudostate.kind(pseudoState, ::junction);
  *         }
  * </pre></code>
  * 
@@ -59,9 +61,9 @@ import org.eclipse.viatra.query.runtime.util.ViatraQueryLoggingUtil;
  * 
  */
 @SuppressWarnings("all")
-public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<PseudoStates.Matcher> {
+public final class Juncitons extends BaseGeneratedEMFQuerySpecification<Juncitons.Matcher> {
   /**
-   * Pattern-specific match representation of the hu.bme.mit.md2g.transformation.queries.PseudoStates pattern,
+   * Pattern-specific match representation of the hu.bme.mit.md2g.transformation.queries.Juncitons pattern,
    * to be used in conjunction with {@link Matcher}.
    * 
    * <p>Class fields correspond to parameters of the pattern. Fields with value null are considered unassigned.
@@ -73,26 +75,22 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
    * 
    */
   public static abstract class Match extends BasePatternMatch {
-    private Region fContainingRegion;
+    private StateMachine fStatemachine;
     
     private Pseudostate fPseudoState;
     
-    private PseudostateKind fKind;
+    private static List<String> parameterNames = makeImmutableList("statemachine", "pseudoState");
     
-    private static List<String> parameterNames = makeImmutableList("containingRegion", "pseudoState", "kind");
-    
-    private Match(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      this.fContainingRegion = pContainingRegion;
+    private Match(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      this.fStatemachine = pStatemachine;
       this.fPseudoState = pPseudoState;
-      this.fKind = pKind;
     }
     
     @Override
     public Object get(final String parameterName) {
       switch(parameterName) {
-          case "containingRegion": return this.fContainingRegion;
+          case "statemachine": return this.fStatemachine;
           case "pseudoState": return this.fPseudoState;
-          case "kind": return this.fKind;
           default: return null;
       }
     }
@@ -100,46 +98,37 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
     @Override
     public Object get(final int index) {
       switch(index) {
-          case 0: return this.fContainingRegion;
+          case 0: return this.fStatemachine;
           case 1: return this.fPseudoState;
-          case 2: return this.fKind;
           default: return null;
       }
     }
     
-    public Region getContainingRegion() {
-      return this.fContainingRegion;
+    public StateMachine getStatemachine() {
+      return this.fStatemachine;
     }
     
     public Pseudostate getPseudoState() {
       return this.fPseudoState;
     }
     
-    public PseudostateKind getKind() {
-      return this.fKind;
-    }
-    
     @Override
     public boolean set(final String parameterName, final Object newValue) {
       if (!isMutable()) throw new java.lang.UnsupportedOperationException();
-      if ("containingRegion".equals(parameterName) ) {
-          this.fContainingRegion = (Region) newValue;
+      if ("statemachine".equals(parameterName) ) {
+          this.fStatemachine = (StateMachine) newValue;
           return true;
       }
       if ("pseudoState".equals(parameterName) ) {
           this.fPseudoState = (Pseudostate) newValue;
           return true;
       }
-      if ("kind".equals(parameterName) ) {
-          this.fKind = (PseudostateKind) newValue;
-          return true;
-      }
       return false;
     }
     
-    public void setContainingRegion(final Region pContainingRegion) {
+    public void setStatemachine(final StateMachine pStatemachine) {
       if (!isMutable()) throw new java.lang.UnsupportedOperationException();
-      this.fContainingRegion = pContainingRegion;
+      this.fStatemachine = pStatemachine;
     }
     
     public void setPseudoState(final Pseudostate pPseudoState) {
@@ -147,43 +136,37 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
       this.fPseudoState = pPseudoState;
     }
     
-    public void setKind(final PseudostateKind pKind) {
-      if (!isMutable()) throw new java.lang.UnsupportedOperationException();
-      this.fKind = pKind;
-    }
-    
     @Override
     public String patternName() {
-      return "hu.bme.mit.md2g.transformation.queries.PseudoStates";
+      return "hu.bme.mit.md2g.transformation.queries.Juncitons";
     }
     
     @Override
     public List<String> parameterNames() {
-      return PseudoStates.Match.parameterNames;
+      return Juncitons.Match.parameterNames;
     }
     
     @Override
     public Object[] toArray() {
-      return new Object[]{fContainingRegion, fPseudoState, fKind};
+      return new Object[]{fStatemachine, fPseudoState};
     }
     
     @Override
-    public PseudoStates.Match toImmutable() {
-      return isMutable() ? newMatch(fContainingRegion, fPseudoState, fKind) : this;
+    public Juncitons.Match toImmutable() {
+      return isMutable() ? newMatch(fStatemachine, fPseudoState) : this;
     }
     
     @Override
     public String prettyPrint() {
       StringBuilder result = new StringBuilder();
-      result.append("\"containingRegion\"=" + prettyPrintValue(fContainingRegion) + ", ");
-      result.append("\"pseudoState\"=" + prettyPrintValue(fPseudoState) + ", ");
-      result.append("\"kind\"=" + prettyPrintValue(fKind));
+      result.append("\"statemachine\"=" + prettyPrintValue(fStatemachine) + ", ");
+      result.append("\"pseudoState\"=" + prettyPrintValue(fPseudoState));
       return result.toString();
     }
     
     @Override
     public int hashCode() {
-      return Objects.hash(fContainingRegion, fPseudoState, fKind);
+      return Objects.hash(fStatemachine, fPseudoState);
     }
     
     @Override
@@ -193,9 +176,9 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
       if (obj == null) {
           return false;
       }
-      if ((obj instanceof PseudoStates.Match)) {
-          PseudoStates.Match other = (PseudoStates.Match) obj;
-          return Objects.equals(fContainingRegion, other.fContainingRegion) && Objects.equals(fPseudoState, other.fPseudoState) && Objects.equals(fKind, other.fKind);
+      if ((obj instanceof Juncitons.Match)) {
+          Juncitons.Match other = (Juncitons.Match) obj;
+          return Objects.equals(fStatemachine, other.fStatemachine) && Objects.equals(fPseudoState, other.fPseudoState);
       } else {
           // this should be infrequent
           if (!(obj instanceof IPatternMatch)) {
@@ -207,8 +190,8 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
     }
     
     @Override
-    public PseudoStates specification() {
-      return PseudoStates.instance();
+    public Juncitons specification() {
+      return Juncitons.instance();
     }
     
     /**
@@ -218,41 +201,39 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @return the empty match.
      * 
      */
-    public static PseudoStates.Match newEmptyMatch() {
-      return new Mutable(null, null, null);
+    public static Juncitons.Match newEmptyMatch() {
+      return new Mutable(null, null);
     }
     
     /**
      * Returns a mutable (partial) match.
      * Fields of the mutable match can be filled to create a partial match, usable as matcher input.
      * 
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @return the new, mutable (partial) match object.
      * 
      */
-    public static PseudoStates.Match newMutableMatch(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return new Mutable(pContainingRegion, pPseudoState, pKind);
+    public static Juncitons.Match newMutableMatch(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      return new Mutable(pStatemachine, pPseudoState);
     }
     
     /**
      * Returns a new (partial) match.
      * This can be used e.g. to call the matcher with a partial match.
      * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @return the (partial) match object.
      * 
      */
-    public static PseudoStates.Match newMatch(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return new Immutable(pContainingRegion, pPseudoState, pKind);
+    public static Juncitons.Match newMatch(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      return new Immutable(pStatemachine, pPseudoState);
     }
     
-    private static final class Mutable extends PseudoStates.Match {
-      Mutable(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-        super(pContainingRegion, pPseudoState, pKind);
+    private static final class Mutable extends Juncitons.Match {
+      Mutable(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+        super(pStatemachine, pPseudoState);
       }
       
       @Override
@@ -261,9 +242,9 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
       }
     }
     
-    private static final class Immutable extends PseudoStates.Match {
-      Immutable(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-        super(pContainingRegion, pPseudoState, pKind);
+    private static final class Immutable extends Juncitons.Match {
+      Immutable(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+        super(pStatemachine, pPseudoState);
       }
       
       @Override
@@ -274,7 +255,7 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
   }
   
   /**
-   * Generated pattern matcher API of the hu.bme.mit.md2g.transformation.queries.PseudoStates pattern,
+   * Generated pattern matcher API of the hu.bme.mit.md2g.transformation.queries.Juncitons pattern,
    * providing pattern-specific query methods.
    * 
    * <p>Use the pattern matcher on a given model via {@link #on(ViatraQueryEngine)},
@@ -284,18 +265,18 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
    * 
    * <p>Original source:
    * <code><pre>
-   * pattern PseudoStates(containingRegion: Region, pseudoState: Pseudostate, kind: PseudostateKind){
+   * pattern Juncitons(statemachine: StateMachine, pseudoState: Pseudostate){
+   * 	find RegionsInStatechart(statemachine, containingRegion);
    * 	Region.subvertex(containingRegion, pseudoState);
-   * 	Pseudostate.kind(pseudoState, kind);
-   * 
+   * 	Pseudostate.kind(pseudoState, ::junction);
    * }
    * </pre></code>
    * 
    * @see Match
-   * @see PseudoStates
+   * @see Juncitons
    * 
    */
-  public static class Matcher extends BaseMatcher<PseudoStates.Match> {
+  public static class Matcher extends BaseMatcher<Juncitons.Match> {
     /**
      * Initializes the pattern matcher within an existing VIATRA Query engine.
      * If the pattern matcher is already constructed in the engine, only a light-weight reference is returned.
@@ -304,7 +285,7 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @throws ViatraQueryRuntimeException if an error occurs during pattern matcher creation
      * 
      */
-    public static PseudoStates.Matcher on(final ViatraQueryEngine engine) {
+    public static Juncitons.Matcher on(final ViatraQueryEngine engine) {
       // check if matcher already exists
       Matcher matcher = engine.getExistingMatcher(querySpecification());
       if (matcher == null) {
@@ -319,17 +300,15 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @noreference This method is for internal matcher initialization by the framework, do not call it manually.
      * 
      */
-    public static PseudoStates.Matcher create() {
+    public static Juncitons.Matcher create() {
       return new Matcher();
     }
     
-    private static final int POSITION_CONTAININGREGION = 0;
+    private static final int POSITION_STATEMACHINE = 0;
     
     private static final int POSITION_PSEUDOSTATE = 1;
     
-    private static final int POSITION_KIND = 2;
-    
-    private static final Logger LOGGER = ViatraQueryLoggingUtil.getLogger(PseudoStates.Matcher.class);
+    private static final Logger LOGGER = ViatraQueryLoggingUtil.getLogger(Juncitons.Matcher.class);
     
     /**
      * Initializes the pattern matcher within an existing VIATRA Query engine.
@@ -345,14 +324,13 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
     
     /**
      * Returns the set of all matches of the pattern that conform to the given fixed values of some parameters.
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @return matches represented as a Match object.
      * 
      */
-    public Collection<PseudoStates.Match> getAllMatches(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return rawStreamAllMatches(new Object[]{pContainingRegion, pPseudoState, pKind}).collect(Collectors.toSet());
+    public Collection<Juncitons.Match> getAllMatches(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      return rawStreamAllMatches(new Object[]{pStatemachine, pPseudoState}).collect(Collectors.toSet());
     }
     
     /**
@@ -361,111 +339,105 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * <strong>NOTE</strong>: It is important not to modify the source model while the stream is being processed.
      * If the match set of the pattern changes during processing, the contents of the stream is <strong>undefined</strong>.
      * In such cases, either rely on {@link #getAllMatches()} or collect the results of the stream in end-user code.
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @return a stream of matches represented as a Match object.
      * 
      */
-    public Stream<PseudoStates.Match> streamAllMatches(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return rawStreamAllMatches(new Object[]{pContainingRegion, pPseudoState, pKind});
+    public Stream<Juncitons.Match> streamAllMatches(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      return rawStreamAllMatches(new Object[]{pStatemachine, pPseudoState});
     }
     
     /**
      * Returns an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
      * Neither determinism nor randomness of selection is guaranteed.
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @return a match represented as a Match object, or null if no match is found.
      * 
      */
-    public Optional<PseudoStates.Match> getOneArbitraryMatch(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return rawGetOneArbitraryMatch(new Object[]{pContainingRegion, pPseudoState, pKind});
+    public Optional<Juncitons.Match> getOneArbitraryMatch(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      return rawGetOneArbitraryMatch(new Object[]{pStatemachine, pPseudoState});
     }
     
     /**
      * Indicates whether the given combination of specified pattern parameters constitute a valid pattern match,
      * under any possible substitution of the unspecified parameters (if any).
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @return true if the input is a valid (partial) match of the pattern.
      * 
      */
-    public boolean hasMatch(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return rawHasMatch(new Object[]{pContainingRegion, pPseudoState, pKind});
+    public boolean hasMatch(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      return rawHasMatch(new Object[]{pStatemachine, pPseudoState});
     }
     
     /**
      * Returns the number of all matches of the pattern that conform to the given fixed values of some parameters.
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @return the number of pattern matches found.
      * 
      */
-    public int countMatches(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return rawCountMatches(new Object[]{pContainingRegion, pPseudoState, pKind});
+    public int countMatches(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      return rawCountMatches(new Object[]{pStatemachine, pPseudoState});
     }
     
     /**
      * Executes the given processor on an arbitrarily chosen match of the pattern that conforms to the given fixed values of some parameters.
      * Neither determinism nor randomness of selection is guaranteed.
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @param processor the action that will process the selected match.
      * @return true if the pattern has at least one match with the given parameter values, false if the processor was not invoked
      * 
      */
-    public boolean forOneArbitraryMatch(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind, final Consumer<? super PseudoStates.Match> processor) {
-      return rawForOneArbitraryMatch(new Object[]{pContainingRegion, pPseudoState, pKind}, processor);
+    public boolean forOneArbitraryMatch(final StateMachine pStatemachine, final Pseudostate pPseudoState, final Consumer<? super Juncitons.Match> processor) {
+      return rawForOneArbitraryMatch(new Object[]{pStatemachine, pPseudoState}, processor);
     }
     
     /**
      * Returns a new (partial) match.
      * This can be used e.g. to call the matcher with a partial match.
      * <p>The returned match will be immutable. Use {@link #newEmptyMatch()} to obtain a mutable match object.
-     * @param pContainingRegion the fixed value of pattern parameter containingRegion, or null if not bound.
+     * @param pStatemachine the fixed value of pattern parameter statemachine, or null if not bound.
      * @param pPseudoState the fixed value of pattern parameter pseudoState, or null if not bound.
-     * @param pKind the fixed value of pattern parameter kind, or null if not bound.
      * @return the (partial) match object.
      * 
      */
-    public PseudoStates.Match newMatch(final Region pContainingRegion, final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return PseudoStates.Match.newMatch(pContainingRegion, pPseudoState, pKind);
+    public Juncitons.Match newMatch(final StateMachine pStatemachine, final Pseudostate pPseudoState) {
+      return Juncitons.Match.newMatch(pStatemachine, pPseudoState);
     }
     
     /**
-     * Retrieve the set of values that occur in matches for containingRegion.
+     * Retrieve the set of values that occur in matches for statemachine.
      * @return the Set of all values or empty set if there are no matches
      * 
      */
-    protected Stream<Region> rawStreamAllValuesOfcontainingRegion(final Object[] parameters) {
-      return rawStreamAllValues(POSITION_CONTAININGREGION, parameters).map(Region.class::cast);
+    protected Stream<StateMachine> rawStreamAllValuesOfstatemachine(final Object[] parameters) {
+      return rawStreamAllValues(POSITION_STATEMACHINE, parameters).map(StateMachine.class::cast);
     }
     
     /**
-     * Retrieve the set of values that occur in matches for containingRegion.
+     * Retrieve the set of values that occur in matches for statemachine.
      * @return the Set of all values or empty set if there are no matches
      * 
      */
-    public Set<Region> getAllValuesOfcontainingRegion() {
-      return rawStreamAllValuesOfcontainingRegion(emptyArray()).collect(Collectors.toSet());
+    public Set<StateMachine> getAllValuesOfstatemachine() {
+      return rawStreamAllValuesOfstatemachine(emptyArray()).collect(Collectors.toSet());
     }
     
     /**
-     * Retrieve the set of values that occur in matches for containingRegion.
+     * Retrieve the set of values that occur in matches for statemachine.
      * @return the Set of all values or empty set if there are no matches
      * 
      */
-    public Stream<Region> streamAllValuesOfcontainingRegion() {
-      return rawStreamAllValuesOfcontainingRegion(emptyArray());
+    public Stream<StateMachine> streamAllValuesOfstatemachine() {
+      return rawStreamAllValuesOfstatemachine(emptyArray());
     }
     
     /**
-     * Retrieve the set of values that occur in matches for containingRegion.
+     * Retrieve the set of values that occur in matches for statemachine.
      * </p>
      * <strong>NOTE</strong>: It is important not to modify the source model while the stream is being processed.
      * If the match set of the pattern changes during processing, the contents of the stream is <strong>undefined</strong>.
@@ -474,12 +446,12 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @return the Stream of all values or empty set if there are no matches
      * 
      */
-    public Stream<Region> streamAllValuesOfcontainingRegion(final PseudoStates.Match partialMatch) {
-      return rawStreamAllValuesOfcontainingRegion(partialMatch.toArray());
+    public Stream<StateMachine> streamAllValuesOfstatemachine(final Juncitons.Match partialMatch) {
+      return rawStreamAllValuesOfstatemachine(partialMatch.toArray());
     }
     
     /**
-     * Retrieve the set of values that occur in matches for containingRegion.
+     * Retrieve the set of values that occur in matches for statemachine.
      * </p>
      * <strong>NOTE</strong>: It is important not to modify the source model while the stream is being processed.
      * If the match set of the pattern changes during processing, the contents of the stream is <strong>undefined</strong>.
@@ -488,26 +460,26 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @return the Stream of all values or empty set if there are no matches
      * 
      */
-    public Stream<Region> streamAllValuesOfcontainingRegion(final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return rawStreamAllValuesOfcontainingRegion(new Object[]{null, pPseudoState, pKind});
+    public Stream<StateMachine> streamAllValuesOfstatemachine(final Pseudostate pPseudoState) {
+      return rawStreamAllValuesOfstatemachine(new Object[]{null, pPseudoState});
     }
     
     /**
-     * Retrieve the set of values that occur in matches for containingRegion.
+     * Retrieve the set of values that occur in matches for statemachine.
      * @return the Set of all values or empty set if there are no matches
      * 
      */
-    public Set<Region> getAllValuesOfcontainingRegion(final PseudoStates.Match partialMatch) {
-      return rawStreamAllValuesOfcontainingRegion(partialMatch.toArray()).collect(Collectors.toSet());
+    public Set<StateMachine> getAllValuesOfstatemachine(final Juncitons.Match partialMatch) {
+      return rawStreamAllValuesOfstatemachine(partialMatch.toArray()).collect(Collectors.toSet());
     }
     
     /**
-     * Retrieve the set of values that occur in matches for containingRegion.
+     * Retrieve the set of values that occur in matches for statemachine.
      * @return the Set of all values or empty set if there are no matches
      * 
      */
-    public Set<Region> getAllValuesOfcontainingRegion(final Pseudostate pPseudoState, final PseudostateKind pKind) {
-      return rawStreamAllValuesOfcontainingRegion(new Object[]{null, pPseudoState, pKind}).collect(Collectors.toSet());
+    public Set<StateMachine> getAllValuesOfstatemachine(final Pseudostate pPseudoState) {
+      return rawStreamAllValuesOfstatemachine(new Object[]{null, pPseudoState}).collect(Collectors.toSet());
     }
     
     /**
@@ -547,7 +519,7 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @return the Stream of all values or empty set if there are no matches
      * 
      */
-    public Stream<Pseudostate> streamAllValuesOfpseudoState(final PseudoStates.Match partialMatch) {
+    public Stream<Pseudostate> streamAllValuesOfpseudoState(final Juncitons.Match partialMatch) {
       return rawStreamAllValuesOfpseudoState(partialMatch.toArray());
     }
     
@@ -561,8 +533,8 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @return the Stream of all values or empty set if there are no matches
      * 
      */
-    public Stream<Pseudostate> streamAllValuesOfpseudoState(final Region pContainingRegion, final PseudostateKind pKind) {
-      return rawStreamAllValuesOfpseudoState(new Object[]{pContainingRegion, null, pKind});
+    public Stream<Pseudostate> streamAllValuesOfpseudoState(final StateMachine pStatemachine) {
+      return rawStreamAllValuesOfpseudoState(new Object[]{pStatemachine, null});
     }
     
     /**
@@ -570,7 +542,7 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @return the Set of all values or empty set if there are no matches
      * 
      */
-    public Set<Pseudostate> getAllValuesOfpseudoState(final PseudoStates.Match partialMatch) {
+    public Set<Pseudostate> getAllValuesOfpseudoState(final Juncitons.Match partialMatch) {
       return rawStreamAllValuesOfpseudoState(partialMatch.toArray()).collect(Collectors.toSet());
     }
     
@@ -579,87 +551,14 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @return the Set of all values or empty set if there are no matches
      * 
      */
-    public Set<Pseudostate> getAllValuesOfpseudoState(final Region pContainingRegion, final PseudostateKind pKind) {
-      return rawStreamAllValuesOfpseudoState(new Object[]{pContainingRegion, null, pKind}).collect(Collectors.toSet());
-    }
-    
-    /**
-     * Retrieve the set of values that occur in matches for kind.
-     * @return the Set of all values or empty set if there are no matches
-     * 
-     */
-    protected Stream<PseudostateKind> rawStreamAllValuesOfkind(final Object[] parameters) {
-      return rawStreamAllValues(POSITION_KIND, parameters).map(PseudostateKind.class::cast);
-    }
-    
-    /**
-     * Retrieve the set of values that occur in matches for kind.
-     * @return the Set of all values or empty set if there are no matches
-     * 
-     */
-    public Set<PseudostateKind> getAllValuesOfkind() {
-      return rawStreamAllValuesOfkind(emptyArray()).collect(Collectors.toSet());
-    }
-    
-    /**
-     * Retrieve the set of values that occur in matches for kind.
-     * @return the Set of all values or empty set if there are no matches
-     * 
-     */
-    public Stream<PseudostateKind> streamAllValuesOfkind() {
-      return rawStreamAllValuesOfkind(emptyArray());
-    }
-    
-    /**
-     * Retrieve the set of values that occur in matches for kind.
-     * </p>
-     * <strong>NOTE</strong>: It is important not to modify the source model while the stream is being processed.
-     * If the match set of the pattern changes during processing, the contents of the stream is <strong>undefined</strong>.
-     * In such cases, either rely on {@link #getAllMatches()} or collect the results of the stream in end-user code.
-     *      
-     * @return the Stream of all values or empty set if there are no matches
-     * 
-     */
-    public Stream<PseudostateKind> streamAllValuesOfkind(final PseudoStates.Match partialMatch) {
-      return rawStreamAllValuesOfkind(partialMatch.toArray());
-    }
-    
-    /**
-     * Retrieve the set of values that occur in matches for kind.
-     * </p>
-     * <strong>NOTE</strong>: It is important not to modify the source model while the stream is being processed.
-     * If the match set of the pattern changes during processing, the contents of the stream is <strong>undefined</strong>.
-     * In such cases, either rely on {@link #getAllMatches()} or collect the results of the stream in end-user code.
-     *      
-     * @return the Stream of all values or empty set if there are no matches
-     * 
-     */
-    public Stream<PseudostateKind> streamAllValuesOfkind(final Region pContainingRegion, final Pseudostate pPseudoState) {
-      return rawStreamAllValuesOfkind(new Object[]{pContainingRegion, pPseudoState, null});
-    }
-    
-    /**
-     * Retrieve the set of values that occur in matches for kind.
-     * @return the Set of all values or empty set if there are no matches
-     * 
-     */
-    public Set<PseudostateKind> getAllValuesOfkind(final PseudoStates.Match partialMatch) {
-      return rawStreamAllValuesOfkind(partialMatch.toArray()).collect(Collectors.toSet());
-    }
-    
-    /**
-     * Retrieve the set of values that occur in matches for kind.
-     * @return the Set of all values or empty set if there are no matches
-     * 
-     */
-    public Set<PseudostateKind> getAllValuesOfkind(final Region pContainingRegion, final Pseudostate pPseudoState) {
-      return rawStreamAllValuesOfkind(new Object[]{pContainingRegion, pPseudoState, null}).collect(Collectors.toSet());
+    public Set<Pseudostate> getAllValuesOfpseudoState(final StateMachine pStatemachine) {
+      return rawStreamAllValuesOfpseudoState(new Object[]{pStatemachine, null}).collect(Collectors.toSet());
     }
     
     @Override
-    protected PseudoStates.Match tupleToMatch(final Tuple t) {
+    protected Juncitons.Match tupleToMatch(final Tuple t) {
       try {
-          return PseudoStates.Match.newMatch((Region) t.get(POSITION_CONTAININGREGION), (Pseudostate) t.get(POSITION_PSEUDOSTATE), (PseudostateKind) t.get(POSITION_KIND));
+          return Juncitons.Match.newMatch((StateMachine) t.get(POSITION_STATEMACHINE), (Pseudostate) t.get(POSITION_PSEUDOSTATE));
       } catch(ClassCastException e) {
           LOGGER.error("Element(s) in tuple not properly typed!",e);
           return null;
@@ -667,9 +566,9 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
     }
     
     @Override
-    protected PseudoStates.Match arrayToMatch(final Object[] match) {
+    protected Juncitons.Match arrayToMatch(final Object[] match) {
       try {
-          return PseudoStates.Match.newMatch((Region) match[POSITION_CONTAININGREGION], (Pseudostate) match[POSITION_PSEUDOSTATE], (PseudostateKind) match[POSITION_KIND]);
+          return Juncitons.Match.newMatch((StateMachine) match[POSITION_STATEMACHINE], (Pseudostate) match[POSITION_PSEUDOSTATE]);
       } catch(ClassCastException e) {
           LOGGER.error("Element(s) in array not properly typed!",e);
           return null;
@@ -677,9 +576,9 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
     }
     
     @Override
-    protected PseudoStates.Match arrayToMatchMutable(final Object[] match) {
+    protected Juncitons.Match arrayToMatchMutable(final Object[] match) {
       try {
-          return PseudoStates.Match.newMutableMatch((Region) match[POSITION_CONTAININGREGION], (Pseudostate) match[POSITION_PSEUDOSTATE], (PseudostateKind) match[POSITION_KIND]);
+          return Juncitons.Match.newMutableMatch((StateMachine) match[POSITION_STATEMACHINE], (Pseudostate) match[POSITION_PSEUDOSTATE]);
       } catch(ClassCastException e) {
           LOGGER.error("Element(s) in array not properly typed!",e);
           return null;
@@ -691,12 +590,12 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
      * @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
      * 
      */
-    public static IQuerySpecification<PseudoStates.Matcher> querySpecification() {
-      return PseudoStates.instance();
+    public static IQuerySpecification<Juncitons.Matcher> querySpecification() {
+      return Juncitons.instance();
     }
   }
   
-  private PseudoStates() {
+  private Juncitons() {
     super(GeneratedPQuery.INSTANCE);
   }
   
@@ -705,7 +604,7 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
    * @throws ViatraQueryRuntimeException if the pattern definition could not be loaded
    * 
    */
-  public static PseudoStates instance() {
+  public static Juncitons instance() {
     try{
         return LazyHolder.INSTANCE;
     } catch (ExceptionInInitializerError err) {
@@ -714,35 +613,35 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
   }
   
   @Override
-  protected PseudoStates.Matcher instantiate(final ViatraQueryEngine engine) {
-    return PseudoStates.Matcher.on(engine);
+  protected Juncitons.Matcher instantiate(final ViatraQueryEngine engine) {
+    return Juncitons.Matcher.on(engine);
   }
   
   @Override
-  public PseudoStates.Matcher instantiate() {
-    return PseudoStates.Matcher.create();
+  public Juncitons.Matcher instantiate() {
+    return Juncitons.Matcher.create();
   }
   
   @Override
-  public PseudoStates.Match newEmptyMatch() {
-    return PseudoStates.Match.newEmptyMatch();
+  public Juncitons.Match newEmptyMatch() {
+    return Juncitons.Match.newEmptyMatch();
   }
   
   @Override
-  public PseudoStates.Match newMatch(final Object... parameters) {
-    return PseudoStates.Match.newMatch((com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Region) parameters[0], (com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Pseudostate) parameters[1], (com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.PseudostateKind) parameters[2]);
+  public Juncitons.Match newMatch(final Object... parameters) {
+    return Juncitons.Match.newMatch((com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.StateMachine) parameters[0], (com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Pseudostate) parameters[1]);
   }
   
   /**
-   * Inner class allowing the singleton instance of {@link PseudoStates} to be created 
+   * Inner class allowing the singleton instance of {@link Juncitons} to be created 
    *     <b>not</b> at the class load time of the outer class, 
-   *     but rather at the first call to {@link PseudoStates#instance()}.
+   *     but rather at the first call to {@link Juncitons#instance()}.
    * 
    * <p> This workaround is required e.g. to support recursion.
    * 
    */
   private static class LazyHolder {
-    private static final PseudoStates INSTANCE = new PseudoStates();
+    private static final Juncitons INSTANCE = new Juncitons();
     
     /**
      * Statically initializes the query specification <b>after</b> the field {@link #INSTANCE} is assigned.
@@ -760,15 +659,13 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
   }
   
   private static class GeneratedPQuery extends BaseGeneratedEMFPQuery {
-    private static final PseudoStates.GeneratedPQuery INSTANCE = new GeneratedPQuery();
+    private static final Juncitons.GeneratedPQuery INSTANCE = new GeneratedPQuery();
     
-    private final PParameter parameter_containingRegion = new PParameter("containingRegion", "com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Region", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5.1", "Region")), PParameterDirection.INOUT);
+    private final PParameter parameter_statemachine = new PParameter("statemachine", "com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.StateMachine", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5.1", "StateMachine")), PParameterDirection.INOUT);
     
     private final PParameter parameter_pseudoState = new PParameter("pseudoState", "com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Pseudostate", new EClassTransitiveInstancesKey((EClass)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5.1", "Pseudostate")), PParameterDirection.INOUT);
     
-    private final PParameter parameter_kind = new PParameter("kind", "com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.PseudostateKind", new EDataTypeInSlotsKey((EDataType)getClassifierLiteralSafe("http://www.nomagic.com/magicdraw/UML/2.5.1", "PseudostateKind")), PParameterDirection.INOUT);
-    
-    private final List<PParameter> parameters = Arrays.asList(parameter_containingRegion, parameter_pseudoState, parameter_kind);
+    private final List<PParameter> parameters = Arrays.asList(parameter_statemachine, parameter_pseudoState);
     
     private GeneratedPQuery() {
       super(PVisibility.PUBLIC);
@@ -776,12 +673,12 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
     
     @Override
     public String getFullyQualifiedName() {
-      return "hu.bme.mit.md2g.transformation.queries.PseudoStates";
+      return "hu.bme.mit.md2g.transformation.queries.Juncitons";
     }
     
     @Override
     public List<String> getParameterNames() {
-      return Arrays.asList("containingRegion","pseudoState","kind");
+      return Arrays.asList("statemachine","pseudoState");
     }
     
     @Override
@@ -795,29 +692,31 @@ public final class PseudoStates extends BaseGeneratedEMFQuerySpecification<Pseud
       Set<PBody> bodies = new LinkedHashSet<>();
       {
           PBody body = new PBody(this);
-          PVariable var_containingRegion = body.getOrCreateVariableByName("containingRegion");
+          PVariable var_statemachine = body.getOrCreateVariableByName("statemachine");
           PVariable var_pseudoState = body.getOrCreateVariableByName("pseudoState");
-          PVariable var_kind = body.getOrCreateVariableByName("kind");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_containingRegion), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Region")));
+          PVariable var_containingRegion = body.getOrCreateVariableByName("containingRegion");
+          new TypeConstraint(body, Tuples.flatTupleOf(var_statemachine), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "StateMachine")));
           new TypeConstraint(body, Tuples.flatTupleOf(var_pseudoState), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Pseudostate")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var_kind), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "PseudostateKind")));
           body.setSymbolicParameters(Arrays.<ExportedParameter>asList(
-             new ExportedParameter(body, var_containingRegion, parameter_containingRegion),
-             new ExportedParameter(body, var_pseudoState, parameter_pseudoState),
-             new ExportedParameter(body, var_kind, parameter_kind)
+             new ExportedParameter(body, var_statemachine, parameter_statemachine),
+             new ExportedParameter(body, var_pseudoState, parameter_pseudoState)
           ));
+          // 	find RegionsInStatechart(statemachine, containingRegion)
+          new PositivePatternCall(body, Tuples.flatTupleOf(var_statemachine, var_containingRegion), RegionsInStatechart.instance().getInternalQueryRepresentation());
           // 	Region.subvertex(containingRegion, pseudoState)
           new TypeConstraint(body, Tuples.flatTupleOf(var_containingRegion), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Region")));
           PVariable var__virtual_0_ = body.getOrCreateVariableByName(".virtual{0}");
           new TypeConstraint(body, Tuples.flatTupleOf(var_containingRegion, var__virtual_0_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Region", "subvertex")));
           new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_0_), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Vertex")));
           new Equality(body, var__virtual_0_, var_pseudoState);
-          // 	Pseudostate.kind(pseudoState, kind)
-          new TypeConstraint(body, Tuples.flatTupleOf(var_pseudoState), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Pseudostate")));
+          // 	Pseudostate.kind(pseudoState, ::junction)
           PVariable var__virtual_1_ = body.getOrCreateVariableByName(".virtual{1}");
-          new TypeConstraint(body, Tuples.flatTupleOf(var_pseudoState, var__virtual_1_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Pseudostate", "kind")));
-          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_1_), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "PseudostateKind")));
-          new Equality(body, var__virtual_1_, var_kind);
+          new ConstantValue(body, var__virtual_1_, com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.PseudostateKindEnum.get("junction"));
+          new TypeConstraint(body, Tuples.flatTupleOf(var_pseudoState), new EClassTransitiveInstancesKey((EClass)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Pseudostate")));
+          PVariable var__virtual_2_ = body.getOrCreateVariableByName(".virtual{2}");
+          new TypeConstraint(body, Tuples.flatTupleOf(var_pseudoState, var__virtual_2_), new EStructuralFeatureInstancesKey(getFeatureLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "Pseudostate", "kind")));
+          new TypeConstraint(body, Tuples.flatTupleOf(var__virtual_2_), new EDataTypeInSlotsKey((EDataType)getClassifierLiteral("http://www.nomagic.com/magicdraw/UML/2.5.1", "PseudostateKind")));
+          new Equality(body, var__virtual_2_, var__virtual_1_);
           bodies.add(body);
       }
       return bodies;

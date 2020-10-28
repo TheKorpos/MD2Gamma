@@ -5,6 +5,7 @@ package hu.bme.mit.md2g.transformation.queries;
 
 import hu.bme.mit.md2g.transformation.queries.Actions;
 import hu.bme.mit.md2g.transformation.queries.ActionsOnTransitions;
+import hu.bme.mit.md2g.transformation.queries.ChoiceStates;
 import hu.bme.mit.md2g.transformation.queries.DeepHistoryInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.EntryActions;
 import hu.bme.mit.md2g.transformation.queries.ExitActions;
@@ -13,11 +14,11 @@ import hu.bme.mit.md2g.transformation.queries.ForksInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.GuardsInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.InitialStatesInStatemachine;
 import hu.bme.mit.md2g.transformation.queries.JoinsInStateMachine;
+import hu.bme.mit.md2g.transformation.queries.Juncitons;
 import hu.bme.mit.md2g.transformation.queries.MainRegions;
 import hu.bme.mit.md2g.transformation.queries.OwnedTransitions;
 import hu.bme.mit.md2g.transformation.queries.ParametersInStateMachine;
 import hu.bme.mit.md2g.transformation.queries.PropertiesInStateMachine;
-import hu.bme.mit.md2g.transformation.queries.PseudoStates;
 import hu.bme.mit.md2g.transformation.queries.RegionsInRegion;
 import hu.bme.mit.md2g.transformation.queries.RegionsInStatechart;
 import hu.bme.mit.md2g.transformation.queries.RegionsInStatemachine;
@@ -59,7 +60,8 @@ import org.eclipse.viatra.query.runtime.api.impl.BaseGeneratedPatternGroup;
  * <li>MainRegions</li>
  * <li>StatesInMainRegion</li>
  * <li>StatesInRegions</li>
- * <li>PseudoStates</li>
+ * <li>ChoiceStates</li>
+ * <li>Juncitons</li>
  * <li>FinalStates</li>
  * <li>RegionsInStates</li>
  * <li>Transitions</li>
@@ -113,7 +115,8 @@ public final class StatechartQueries extends BaseGeneratedPatternGroup {
     querySpecifications.add(MainRegions.instance());
     querySpecifications.add(StatesInMainRegion.instance());
     querySpecifications.add(StatesInRegions.instance());
-    querySpecifications.add(PseudoStates.instance());
+    querySpecifications.add(ChoiceStates.instance());
+    querySpecifications.add(Juncitons.instance());
     querySpecifications.add(FinalStates.instance());
     querySpecifications.add(RegionsInStates.instance());
     querySpecifications.add(Transitions.instance());
@@ -250,12 +253,20 @@ public final class StatechartQueries extends BaseGeneratedPatternGroup {
     return StatesInRegions.Matcher.on(engine);
   }
   
-  public PseudoStates getPseudoStates() {
-    return PseudoStates.instance();
+  public ChoiceStates getChoiceStates() {
+    return ChoiceStates.instance();
   }
   
-  public PseudoStates.Matcher getPseudoStates(final ViatraQueryEngine engine) {
-    return PseudoStates.Matcher.on(engine);
+  public ChoiceStates.Matcher getChoiceStates(final ViatraQueryEngine engine) {
+    return ChoiceStates.Matcher.on(engine);
+  }
+  
+  public Juncitons getJuncitons() {
+    return Juncitons.instance();
+  }
+  
+  public Juncitons.Matcher getJuncitons(final ViatraQueryEngine engine) {
+    return Juncitons.Matcher.on(engine);
   }
   
   public FinalStates getFinalStates() {
