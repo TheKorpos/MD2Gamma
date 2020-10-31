@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -87,6 +88,7 @@ public class CompositeTransformation {
 								.map(Class.class::cast)
 								.flatMap(c -> c.getOwnedPort().stream())
 								.map(p -> (Classifier) p.getType())
+								.filter(Objects::nonNull)
 								.collect(Collectors.toSet());
 		
 		BatchInterfaceTransformation interfaceTransformation = new BatchInterfaceTransformation(portClassifiers);

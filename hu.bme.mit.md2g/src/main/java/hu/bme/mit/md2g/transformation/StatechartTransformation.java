@@ -24,6 +24,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.OpaqueExpression;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Property;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Type;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.Behavior;
+import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdbasicbehaviors.OpaqueBehavior;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.Signal;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.SignalEvent;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.TimeEvent;
@@ -304,11 +305,21 @@ public class StatechartTransformation {
 				Activity activity = (Activity) behavior;
 				List<Action> tryTransform = ActivityTransformer.tryTransform(activity, signalTraces, portTraces);
 				tryTransform.forEach(gTransition.getEffects()::add);
+			} else if (behavior instanceof OpaqueBehavior) {
+				OpaqueBehavior ob = (OpaqueBehavior) behavior;
+				
+				
+				if (!ob.getBody().isEmpty()) {
+					String string = ob.getBody().get(0);
+					Action action = GammaExpression.action(string, variables, signalTraces, portTraces);
+					gTransition.getEffects().add(action);
+				}
 			}
 		}
 		
 		transitionTraces.put(match.getTransition(), gTransition);
 	}
+	
 	
 	private void transformSignalEvent(Transition gTransition, Trigger trigger, Map<Signal, Event> signalTraces) {
 		final SignalEvent signalEvent = (SignalEvent) trigger.getEvent();
@@ -334,7 +345,7 @@ public class StatechartTransformation {
 	private void transformGuards(Transition transition, OpaqueExpression expression) {
 		if (!expression.getBody().isEmpty()) {
 			String body = expression.getBody().get(0);
-			Expression gExpression = GammaExpression.of(body, variables);
+			Expression gExpression = GammaExpression.guard(body, variables);
 			Transition gTransition = transition;
 			gTransition.setGuard(gExpression);
 		}
