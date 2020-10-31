@@ -5,6 +5,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -98,7 +104,22 @@ public class ExecuteVerificationAction extends NMAction {
 				fileWriter.write(propSerializer.serialize());
 				fileWriter.close();
 				
-				ExecutionTrace executionTrace = uppaalVerifier.verifyQuery(traceModel, serializer.serialize(settings), xmlFile, query, true, false);
+				ExecutorService executor = Executors.newSingleThreadExecutor();
+				
+				Future<ExecutionTrace>   future = executor.submit(() -> {
+					return uppaalVerifier.verifyQuery(traceModel, serializer.serialize(settings), xmlFile, query, true, false);
+				});
+				
+				try {
+					ExecutionTrace executionTrace = future.get(30, TimeUnit.SECONDS);
+				} catch (TimeoutException e) {
+					
+					ThreeStateBoolean result = uppaalVerifier.getResult();
+					
+					if (!result.equals(ThreeStateBoolean.UNDEF)) {
+						Application.getInstance().getGUILog().log("Verification returned but could not produce a counter example");
+					}
+				}
 				
 				ThreeStateBoolean result = uppaalVerifier.getResult();
 				
@@ -119,6 +140,12 @@ public class ExecuteVerificationAction extends NMAction {
 			}
 			
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
