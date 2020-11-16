@@ -205,7 +205,15 @@ public class CompositeTransformation {
 				}
 			}
 		}
-
+		
+		Map<EObject, NamedElement> portMap = new HashMap<>();
+		
+		portTraces.forEach((k, v)  -> {
+			portMap.put(v, k);
+		});
+		
+		statechartTraceMaps.add(portMap);
+		
 		return packages;
 	}
 

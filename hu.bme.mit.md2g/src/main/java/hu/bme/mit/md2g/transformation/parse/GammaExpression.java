@@ -11,6 +11,12 @@ import org.eclipse.xtext.parser.IParseResult;
 
 import com.google.inject.Injector;
 import com.nomagic.magicdraw.core.Application;
+import com.nomagic.magicdraw.hyperlinks.ElementHyperlink;
+import com.nomagic.magicdraw.hyperlinks.Hyperlink;
+import com.nomagic.magicdraw.hyperlinks.HyperlinkHTMLUtils;
+import com.nomagic.magicdraw.hyperlinks.HyperlinkHelper;
+import com.nomagic.magicdraw.hyperlinks.HyperlinkUtils;
+import com.nomagic.magicdraw.hyperlinks.HyperlinksUIUtilsInternal;
 import com.nomagic.uml2.ext.magicdraw.commonbehaviors.mdcommunications.Signal;
 import com.nomagic.uml2.ext.magicdraw.compositestructures.mdports.Port;
 
@@ -31,6 +37,7 @@ import hu.bme.mit.gamma.statechart.language.parser.antlr.StatechartLanguageParse
 import hu.bme.mit.gamma.statechart.language.services.StatechartLanguageGrammarAccess;
 import hu.bme.mit.gamma.statechart.statechart.StatechartModelFactory;
 import hu.bme.mit.gamma.statechart.statechart.StatechartModelPackage;
+import hu.bme.mit.gamma.statechart.statechart.Transition;
 
 public class GammaExpression {
 	
@@ -40,7 +47,7 @@ public class GammaExpression {
 	
 	private static final Injector INJECTOR = new StatechartLanguageStandaloneSetup().createInjectorAndDoEMFRegistration();
 	
-	public static Expression guard(String expression, Map<String, Declaration> scope) {
+	public static Expression guard(com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Transition mdTransition, String expression, Map<String, Declaration> scope) {
 		
 		ParserRule expressionRule = INJECTOR.getInstance(StatechartLanguageGrammarAccess.class).getExpressionRule();
 		
@@ -54,8 +61,10 @@ public class GammaExpression {
 			
 			if (result.hasSyntaxErrors()) {
 				
+				Hyperlink link =HyperlinkHTMLUtils.createHyperlink("guard", mdTransition);
+				
 				result.getSyntaxErrors()
-					  .forEach(node -> Application.getInstance().getGUILog().log(node.getSyntaxErrorMessage().getMessage() + '\n'));
+					  .forEach(node -> Application.getInstance().getGUILog().log("Syntax error in " + HyperlinkHTMLUtils.toHREF(link) + ". Error: " + node.getSyntaxErrorMessage().getMessage() + '\n'));
 				
 				return createOpaqueExpression(expression);
 			}

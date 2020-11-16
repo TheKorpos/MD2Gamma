@@ -1,8 +1,11 @@
 package hu.bme.mit.md2g.ui.browser.action;
 
 import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +28,7 @@ import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
 
 import hu.bme.mit.md2g.serialization.StatechartLanguageSerializer;
+import hu.bme.mit.md2g.util.OpaqueExpressoinToRawConverter;
 import hu.bme.mit.md2g.util.profile.Gamma;
 
 public class ExportToGclAction extends NMAction {
@@ -89,6 +93,14 @@ public class ExportToGclAction extends NMAction {
 				exportMap.put(URI.createFileURI(file.getAbsolutePath() + File.separator + modelNameWithoutExt + ".gcd"), modelPackage);
 				
 				StatechartLanguageSerializer.serialize(exportMap);
+				
+				OpaqueExpressoinToRawConverter converter = new OpaqueExpressoinToRawConverter();
+				
+				String convertFile = converter.convertFile(file.getAbsolutePath() + File.separator + modelNameWithoutExt + ".gcd");
+				
+				try(RandomAccessFile raf = new RandomAccessFile(file.getAbsolutePath() + File.separator + modelNameWithoutExt + "_escaped.gcd", "rw")){
+					raf.write(convertFile.getBytes());
+				}
 				
 			} catch (IOException e) {
 				Application.getInstance().getGUILog().showError("Failed to export models");

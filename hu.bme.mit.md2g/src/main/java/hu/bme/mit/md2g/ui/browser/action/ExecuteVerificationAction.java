@@ -17,8 +17,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.viatra.query.runtime.api.AdvancedViatraQueryEngine;
 import org.eclipse.xtext.util.StringInputStream;
 
+import com.incquerylabs.v4md.ViatraQueryAdapter;
 import com.nomagic.actions.NMAction;
 import com.nomagic.magicdraw.core.Application;
 import com.nomagic.magicdraw.core.Project;
@@ -26,6 +28,7 @@ import com.nomagic.magicdraw.openapi.uml.SessionManager;
 import com.nomagic.task.ProgressStatus;
 import com.nomagic.ui.ProgressStatusRunner;
 import com.nomagic.uml2.ext.jmi.helpers.ModelHelper;
+import com.nomagic.uml2.ext.magicdraw.activities.mdfundamentalactivities.Activity;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Class;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Element;
 import com.nomagic.uml2.ext.magicdraw.classes.mdkernel.Package;
@@ -38,6 +41,8 @@ import hu.bme.mit.gamma.uppaal.verification.settings.UppaalSettings;
 import hu.bme.mit.gamma.uppaal.verification.settings.UppaalSettingsSerializer;
 import hu.bme.mit.gamma.verification.result.ThreeStateBoolean;
 import hu.bme.mit.md2g.serialization.PropertySerializer;
+import hu.bme.mit.md2g.transformation.TraceModelManager;
+import hu.bme.mit.md2g.transformation.backannotation.MDBackAnnotator;
 import hu.bme.mit.md2g.util.profile.Gamma;
 import hu.bme.mit.md2g.util.profile.Gamma.GammaWorkspace;
 import hu.bme.mit.md2g.util.profile.Gamma.ResultTypeEnum;
@@ -75,7 +80,7 @@ public class ExecuteVerificationAction extends NMAction {
 		try {
 			loadModel(resourceSet, workspaceUri, uppaalModel);
 			loadModel(resourceSet, workspaceUri, gammaInterfaceModel);
-			loadModel(resourceSet, workspaceUri, gammaModel);
+			Resource modelResource = loadModel(resourceSet, workspaceUri, gammaModel);
 			Resource traceResource = loadModel(resourceSet, workspaceUri, trace);
 			
 			EObject eObject = traceResource.getContents().get(0);
@@ -111,7 +116,14 @@ public class ExecuteVerificationAction extends NMAction {
 				});
 				
 				try {
+					Project project = Project.getProject(workspace);
+					AdvancedViatraQueryEngine engine = ViatraQueryAdapter.getOrCreateAdapter(project).getEngine();
+					
 					ExecutionTrace executionTrace = future.get(30, TimeUnit.SECONDS);
+					
+					MDBackAnnotator mdBackAnnotator = new MDBackAnnotator(workspace, executionTrace);
+					mdBackAnnotator.executeInSession(new TraceModelManager(engine, gammaModel, modelResource));
+					
 				} catch (TimeoutException e) {
 					
 					ThreeStateBoolean result = uppaalVerifier.getResult();
@@ -159,5 +171,4 @@ public class ExecuteVerificationAction extends NMAction {
 		
 		return resource;
 	}
-
 }

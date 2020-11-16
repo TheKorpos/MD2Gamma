@@ -295,7 +295,7 @@ public class StatechartTransformation {
 		
 		if (guard != null) {
 			if (guard.getSpecification() instanceof OpaqueExpression) {
-				transformGuards(gTransition, (OpaqueExpression) guard.getSpecification()); 
+				transformGuards(match.getTransition(), gTransition, (OpaqueExpression) guard.getSpecification()); 
 			}
 		}
 		
@@ -342,10 +342,10 @@ public class StatechartTransformation {
 		});
 	}
 
-	private void transformGuards(Transition transition, OpaqueExpression expression) {
+	private void transformGuards(com.nomagic.uml2.ext.magicdraw.statemachines.mdbehaviorstatemachines.Transition mdTransition, Transition transition, OpaqueExpression expression) {
 		if (!expression.getBody().isEmpty()) {
 			String body = expression.getBody().get(0);
-			Expression gExpression = GammaExpression.guard(body, variables);
+			Expression gExpression = GammaExpression.guard(mdTransition, body, variables);
 			Transition gTransition = transition;
 			gTransition.setGuard(gExpression);
 		}
