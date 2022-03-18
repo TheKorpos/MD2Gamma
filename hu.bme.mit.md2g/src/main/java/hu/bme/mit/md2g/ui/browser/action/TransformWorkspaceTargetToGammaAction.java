@@ -74,7 +74,6 @@ public class TransformWorkspaceTargetToGammaAction  extends NMAction {
 					
 					ResourceSet resourceSet = new ResourceSetImpl();
 					
-					SessionManager.getInstance().createSession(project, "Transforming Gamma model");
 					
 					Element gammaStatechartModel = GammaWorkspace.getGammaStatechartModel(workspace);
 					Element gammaInterfaceModel = GammaWorkspace.getGammaInterfaceModel(workspace);
@@ -85,7 +84,7 @@ public class TransformWorkspaceTargetToGammaAction  extends NMAction {
 						}
 						
 						if (gammaInterfaceModel != null) {
-							ModelElementsManager.getInstance().removeElement(gammaStatechartModel);
+							ModelElementsManager.getInstance().removeElement(gammaInterfaceModel);
 						}
 					} catch(ReadOnlyElementException e){
 						Application.getInstance().getGUILog().log("Could not remove old gamma models. Please lock the workspace.");
@@ -99,10 +98,13 @@ public class TransformWorkspaceTargetToGammaAction  extends NMAction {
 						resource.getContents().add(eObject);
 					}
 					
+					SessionManager.getInstance().createSession(project, "Transforming Gamma model");
+					
 					for (Resource resource: resourceSet.getResources()) {
 						
 						ByteArrayOutputStream stream = new ByteArrayOutputStream();
 						resource.save(stream, Collections.EMPTY_MAP);
+						
 						
 						Stereotype gammaWSFile = Gamma.getInstance(workspace).getGammaModel();
 						Class gammaFile = project.getElementsFactory().createClassInstance();
@@ -126,6 +128,7 @@ public class TransformWorkspaceTargetToGammaAction  extends NMAction {
 							traceModelCreator.createWithoutSession(gammaFile, pa.eAllContents());
 						}
 						
+					
 						stream.close();
 					}
 					

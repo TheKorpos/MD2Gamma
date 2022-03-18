@@ -408,7 +408,7 @@ tasks.withType(JavaExec) {
     errorOutput = System.err
 	
     main = 'com.nomagic.osgi.launcher.ProductionFrameworkLauncher'
-    jvmArgs = platformConfigSetting + ['-Xmx8192M', '-Xss512M', '-noverify', '-splash:data/splash.png','-Dmd.class.path=$java.class.path']
+    jvmArgs = platformConfigSetting + ['-Xmx10G', '-Xss512M', '-noverify', '-splash:data/splash.png','-Dmd.class.path=$java.class.path']
 	args 'DEVELOPER'
 }
 

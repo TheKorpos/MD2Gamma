@@ -1,5 +1,8 @@
 package hu.bme.mit.md2g.listener;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Callable;
+
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine;
 
 import com.incquerylabs.v4md.ViatraQueryAdapter;
@@ -20,8 +23,8 @@ public class ProjectSpecificFeatureInitializer extends ProjectEventListenerAdapt
 	
 	@Override
 	public void projectOpened(Project project) {
-		ViatraQueryAdapter adapter = ViatraQueryAdapter.getOrCreateAdapter(project);
-		ViatraQueryEngine engine = adapter.getEngine();
+		//ViatraQueryAdapter adapter = ViatraQueryAdapter.getOrCreateAdapter(project);
+		//ViatraQueryEngine engine = adapter.getEngine();
 	
 		StatechartModelPackage.eINSTANCE.getNsURI();
 		ExpressionModelPackage.eINSTANCE.getNsURI();
@@ -30,8 +33,20 @@ public class ProjectSpecificFeatureInitializer extends ProjectEventListenerAdapt
 		TraceabilityPackage.eINSTANCE.getNsURI();
 		PropertyModelPackage.eINSTANCE.getNsURI();
 		
-		CompositeQueries.instance().prepare(engine);
-		StatechartQueries.instance().prepare(engine);
+//		try {
+//			engine.getBaseIndex().coalesceTraversals(new Callable<Void>() {
+//
+//				@Override
+//				public Void call() throws Exception {
+//					
+//					CompositeQueries.instance().prepare(engine);
+//					StatechartQueries.instance().prepare(engine);
+//					
+//					return null;
+//				}
+//			});
+//		} catch (InvocationTargetException e) {
+//			e.printStackTrace();
+//		}
 	}
-	
 }
